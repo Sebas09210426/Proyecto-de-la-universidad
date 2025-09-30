@@ -4,10 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public class MascotaTest{
   @Test
   void testAssertEquals(){
-    LOG.info("Inicio test assertEquals");
-    int result = 2 + 3;
-    assertEquals(5, result);
-    LOG.info("Fin test assertEquals");
+ Mascota mascota1 = new Mascota("Canela", "Perro","husky","8","1N2K");
+    assertEquals("1N2K", mascota1.getId());
   }
 }
 
