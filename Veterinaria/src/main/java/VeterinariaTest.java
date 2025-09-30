@@ -47,4 +47,25 @@ public class VeterinariaTest {
         LOG.info("Fin testAssertNull");
     }
 
+    @Test
+    void testAssertEquals(){
+        LOG.info("Inicio testAssertEquals");
+        assertEquals("222222",mascota4.getId());
+        LOG.info("Fin testAssertEquals");
+    }
+
+    @Test
+    void testAssertNotEquals(){
+        LOG.info("Inicio testAssertNotEquals");
+        assertNotEquals("Luna", mascota2.getNombre());
+        LOG.info("Fin testAssertNotEquals");
+    }
+
+    @Test
+    void testAssertTrue(){
+        LOG.info("Inicio testAssertTrue");
+        assertTrue(mascota1.getEdad() == "5");
+        LOG.info("Fin testAssertTrue");
+    }   
+
 }
