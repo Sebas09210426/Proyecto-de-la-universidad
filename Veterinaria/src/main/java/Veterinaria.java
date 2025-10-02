@@ -6,8 +6,9 @@ public class Veterinaria {
     private String ubicacion;
 
 
-    //Lista
+    //Listas
     private Mascota[] listaMascotas;
+    private Propietario[] listaPropietarios;
 
 
     //Constructor
@@ -15,7 +16,8 @@ public class Veterinaria {
         this.nombre = nombre;
         this.nit = nit;
         this.ubicacion = ubicacion;
-        listaMascotas = new Mascota[15];
+        this.listaMascotas = new Mascota[15];
+        this.listaPropietarios = new Propietario[15];
     }
 
 
@@ -41,33 +43,87 @@ public class Veterinaria {
 
 
     //CRUD
-    public boolean agregarMascota(Mascota mascota) {
+    public boolean agregarMascota(String nombre,String especie, String raza, int edad, double peso, String identificacion, String nombrePropietario, String numeroPropietario) {
+        Mascota nuevaMascota = new Mascota(nombre, especie, raza, edad, peso, identificacion, nombrePropietario, numeroPropietario);
 
-        for (int i = 0; i < listaMascotas.length; i++)
-            if (listaMascotas[i] == null) {
-                listaMascotas[i] = mascota;
-                return true;
-            } else if (listaMascotas[i] != null && listaMascotas[i].getIdentificacion().equals(mascota.getIdentificacion())) {
+        for (int i = 0; i < listaMascotas.length; i++) {
+            if (listaMascotas[i] != null && listaMascotas[i].getIdentificacion().equals(identificacion)) {
                 return false;
+            } else if (listaMascotas[i] == null) {
+                listaMascotas[i] = nuevaMascota;
+                return true;
             }
+        }
         return false;
     }
 
-    public Mascota buscarMascotaPorId(String identificacion) {
-        for (Mascota mascota : listaMascotas)
-            if (mascota != null && mascota.getIdentificacion().equals(identificacion)) {
+    public boolean agregarPropietario(String nombreMascota, String nombres, String apellidos, String numero, String direccion) {
+        Propietario nuevoPropietario = new Propietario(nombreMascota, nombres, apellidos, numero, direccion);
+
+        for (int i = 0; i < listaPropietarios.length; i++) {
+            if (listaPropietarios[i] != null && listaPropietarios[i].getNumero().equals(numero)) {
+                return false;
+            } else if (listaPropietarios[i] == null) {
+                listaPropietarios[i] = nuevoPropietario;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Mascota buscarMascotaPorId(String id) {
+        for (Mascota mascota : listaMascotas) {
+            if (mascota != null && mascota.getIdentificacion().equals(id)) {
                 return mascota;
             }
+        }
         return null;
     }
 
-    public boolean eliminarMascotaPorId(String identificacion) {
+    public Propietario buscarPropietarioPorNumero(String numero) {
+        for (Propietario propietario : listaPropietarios) {
+            if (propietario != null && propietario.getNumero().equals(numero)) {
+                return propietario;
+            }
+        }
+        return null;
+    }
+
+    public boolean eliminarMascota(String id) {
         for (int i = 0; i < listaMascotas.length; i++) {
-            if (listaMascotas[i] != null && listaMascotas[i].getIdentificacion().equals(identificacion)) {
+            if (listaMascotas[i] != null && listaMascotas[i].getIdentificacion().equals(id)) {
                 listaMascotas[i] = null;
                 return true;
             }
         }
         return false;
+    }
+
+    public boolean eliminarPropietario(String numero) {
+        for (int i = 0; i < listaPropietarios.length; i++) {
+            if (listaPropietarios[i] != null && listaPropietarios[i].getNumero().equals(numero)) {
+                listaPropietarios[i] = null;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public double evaluarCostoConsulta(double costo, String id) {
+        Mascota mascota = buscarMascotaPorId(id);
+        if (mascota != null) {
+            String especie = mascota.getEspecie();
+            switch (especie) {
+                case "perro":
+                    return costo + 15000;
+                case "gato":
+                    return costo + 10000;
+                case"pajaro":
+                    return costo + 20000;
+                default:
+                    return costo + 25000;
+            }
+        }
+        return 0;
     }
 }
