@@ -25,6 +25,9 @@ public class veterinariaViewController {
     @FXML
     private VBox VBoxRequisitosDeGestion;
 
+    @FXML
+    private VBox VBoxPropietariosRegistrados;
+
     public void setApp(App app) {
         this.app = app;
     }
@@ -117,5 +120,9 @@ public class veterinariaViewController {
         System.out.println("Creando Propietario");
         veterinariaController.agregarPropietario(nuevoPropietario);
         System.out.println("Propietario agregado");
+    }
+
+    private void mostrarPropietarioRegistrado() {
+
     }
 }

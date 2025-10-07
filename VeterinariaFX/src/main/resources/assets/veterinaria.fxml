@@ -60,5 +60,22 @@
                </children></AnchorPane>
         </items>
       </SplitPane>
+      <TabPane layoutY="258.0" prefHeight="393.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+          <Tab text="Propietarios Registrados">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <VBox prefHeight="368.0" prefWidth="600.0" />
+                     </children></AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="Mascotas Registradas">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+            </content>
+          </Tab>
+        </tabs>
+      </TabPane>
    </children>
 </AnchorPane>
