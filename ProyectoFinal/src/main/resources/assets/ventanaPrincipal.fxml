@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="viewController.VentanaPrincipalViewController">
+   <children>
+      <VBox alignment="TOP_CENTER" layoutY="1.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="400.0" prefWidth="600.0" spacing="30.0">
+         <children>
+            <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="51.0" prefWidth="346.0" text="Seleccione su tipo de gestión" textAlignment="CENTER">
+               <font>
+                  <Font name="Century" size="20.0" />
+               </font>
+               <VBox.margin>
+                  <Insets top="40.0" />
+               </VBox.margin></Label>
+            <ChoiceBox fx:id="choiceBox" prefHeight="26.0" prefWidth="235.0" />
+            <Button fx:id="boton" mnemonicParsing="false" prefHeight="26.0" prefWidth="117.0" text="Confirmar" />
+         </children></VBox>
+   </children>
+</AnchorPane>

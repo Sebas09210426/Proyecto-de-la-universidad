@@ -4,12 +4,19 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import model.Academia;
+import viewController.VentanaEstudiantesViewController;
+import viewController.VentanaPrincipalViewController;
 import viewController.PrimaryViewController;
+import viewController.VentanaProfesoresViewController;
 
 import java.io.IOException;
 
 public class App extends Application {
+    //Crear la academia de la aplicacion
+    public static Academia academia = new Academia("UQ Música", "12345");
 
+    //Iniciar la aplicacion
     Stage stage;
 
     @Override
@@ -25,4 +32,39 @@ public class App extends Application {
     }
 
     public static void main(String[] args) {launch(args);}
+
+    //Cambiar de ventanas
+
+    //Cambiar a la ventana principal
+    public void abrirVentanaPrincipal() throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/assets/ventanaPrincipal.fxml"));
+        Scene scene = new Scene(loader.load());
+        VentanaPrincipalViewController ventanaPrincipalViewController = loader.getController();
+        ventanaPrincipalViewController.setApp(this);
+        stage.setScene(scene);
+        stage.setTitle("Musical");
+        stage.show();
+    }
+
+    //Cambiar a la ventana de estudiantes
+    public void abrirVentanaEstudiantes() throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/assets/ventanaEstudiantes.fxml"));
+        Scene scene = new Scene(loader.load());
+        VentanaEstudiantesViewController  ventanaEstudiantesViewController = loader.getController();
+        ventanaEstudiantesViewController.setApp(this);
+        stage.setScene(scene);
+        stage.setTitle("Musical gestión de estudiantes");
+        stage.show();
+    }
+
+    //Cambiar a la ventana de profesores
+    public void abrirVentanaProfesores() throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/assets/ventanaProfesores.fxml"));
+        Scene scene = new Scene(loader.load());
+        VentanaProfesoresViewController ventanaProfesoresViewController = loader.getController();
+        ventanaProfesoresViewController.setApp(this);
+        stage.setScene(scene);
+        stage.setTitle("Musical getión de profesores");
+        stage.show();
+    }
 }

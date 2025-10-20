@@ -19,4 +19,7 @@ module java {
 
     opens model to javafx.fxml;
     exports model;
+
+    opens controller to javafx.fxml;
+    exports controller;
 }

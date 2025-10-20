@@ -62,4 +62,18 @@ public class Academia {
     public void setListaCursos(LinkedList listaCursos) {
         this.listaCursos = listaCursos;
     }
+
+    //CRUD
+    public boolean agregarEstudiante(Estudiante estudiante){
+        if (estudiante == null){
+            return false;
+        }
+        for (Estudiante e : listaEstudiantes) {
+            if (e.getIdentificacion().equals(estudiante.getIdentificacion())){
+                return false;
+            }
+        }
+        listaEstudiantes.add(estudiante);
+        return true;
+    }
 }
