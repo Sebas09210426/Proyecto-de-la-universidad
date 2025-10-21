@@ -34,8 +34,8 @@ public class VentanaPrincipalViewController {
         boton.setOnAction((event) -> {
             try {
                 cambiarVentanaDeGestion(choiceBox.getValue());
-            } catch (IOException ex) {
-                ex.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         });
 
@@ -46,7 +46,7 @@ public class VentanaPrincipalViewController {
                 try {
                     cambiarVentanaDeGestion(newValue);
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    e.printStackTrace();
                 }
             });
         });
