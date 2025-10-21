@@ -5,10 +5,10 @@ import java.util.LinkedList;
 public class Profesor extends Persona {
     //Atributos
     private LinkedList<Estudiante> listaEstudiantesAsignados;
-    private LinkedList<Profesor> listaCursosAsignados;
+    private LinkedList<Curso> listaCursosAsignados;
 
     //Constructor
-    public Profesor(String nombre, String apellido, String identificacion, LinkedList<Estudiante> listaEstudiantesAsignados, LinkedList<Profesor> listaCursosAsignados) {
+    public Profesor(String nombre, String apellido, String identificacion, LinkedList<Estudiante> listaEstudiantesAsignados, LinkedList<Curso> listaCursosAsignados) {
         super(nombre, apellido, identificacion);
         this.listaEstudiantesAsignados = listaEstudiantesAsignados;
         this.listaCursosAsignados = listaCursosAsignados;
@@ -24,11 +24,11 @@ public class Profesor extends Persona {
         this.listaEstudiantesAsignados = listaEstudiantesAsignados;
     }
 
-    public LinkedList<Profesor> getListaCursosAsignados() {
+    public LinkedList<Curso> getListaCursosAsignados() {
         return listaCursosAsignados;
     }
 
-    public void setListaCursosAsignados(LinkedList<Profesor> listaCursosAsignados) {
+    public void setListaCursosAsignados(LinkedList<Curso> listaCursosAsignados) {
         this.listaCursosAsignados = listaCursosAsignados;
     }
 
