@@ -76,4 +76,45 @@ public class Academia {
         listaEstudiantes.add(estudiante);
         return true;
     }
+
+    public boolean agregarProfesor(Profesor profesor){
+        if (profesor == null){
+            return false;
+        }
+        for (Profesor p : listaProfesores) {
+            if (p.getIdentificacion().equals(profesor.getIdentificacion())){
+                return false;
+            }
+        }
+        listaProfesores.add(profesor);
+        return true;
+    }
+
+    public Estudiante buscarEstudiante(String identificacion){
+        for (Estudiante e : listaEstudiantes) {
+            if (e.getIdentificacion().equals(identificacion)){
+                return e;
+            }
+        }
+        return null;
+    }
+
+    public Profesor buscarProfesor(String identificacion){
+        for (Profesor p : listaProfesores) {
+            if (p.getIdentificacion().equals(identificacion)){
+                return p;
+            }
+        }
+        return null;
+    }
+
+    public boolean modificarEstudiante(String identificacion, String nombre){
+        Estudiante e = buscarEstudiante(identificacion);
+
+        if (e == null) {
+            return false;
+        }
+        e.setNombre(nombre);
+        return true;
+    }
 }
