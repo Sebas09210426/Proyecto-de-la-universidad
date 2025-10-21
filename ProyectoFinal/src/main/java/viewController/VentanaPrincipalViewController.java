@@ -4,9 +4,10 @@ import app.App;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
 
 import java.io.IOException;
+
+import static viewController.PrimaryViewController.mostrarAlerta;
 
 public class VentanaPrincipalViewController {
     App app;
@@ -28,6 +29,15 @@ public class VentanaPrincipalViewController {
         //Agregar opciones al choiceBox
         choiceBox.getItems().addAll("Gestionar Estudiantes", "Gestionar Profesores");
         choiceBox.setValue("Seleccione una opción");
+
+        //Inicializar la funcion de cambiar ventanas en el boton
+        boton.setOnAction((event) -> {
+            try {
+                cambiarVentanaDeGestion(choiceBox.getValue());
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        });
 
         //Obtener cambio de seleccion del choiceBox
         choiceBox.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, newValue) -> {
@@ -53,6 +63,8 @@ public class VentanaPrincipalViewController {
                 app.abrirVentanaProfesores();
                 break;
             default:
+                mostrarAlerta("Opción no seleccionada", "Por favor, seleccione una opción");
+                break;
         }
     }
 }

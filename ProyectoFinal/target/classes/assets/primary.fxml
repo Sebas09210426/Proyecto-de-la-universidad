@@ -10,5 +10,6 @@
             <Label fx:id="mensaje" layoutX="48.0" layoutY="67.0" prefHeight="65.0" prefWidth="104.0" text="Hola mundo" />
          </children>
       </AnchorPane>
+      <Button layoutX="231.0" layoutY="278.0" mnemonicParsing="false" onAction="#abrirVentanaPrincipal" prefHeight="46.0" prefWidth="137.0" text="Gestionar Musical" />
    </children>
 </AnchorPane>
