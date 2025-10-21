@@ -68,12 +68,11 @@
                      <children>
                         <TableView fx:id="TableViewPropietariosRegistrados" layoutX="-1.0" layoutY="-1.0" prefHeight="366.0" prefWidth="602.0">
                           <columns>
-                            <TableColumn fx:id="nombreDeProfesoresRegistradosTableColumn" prefWidth="122.19998013973236" text="Nombre" />
-                            <TableColumn fx:id="apellidoDeProfesoresRegistradosTableColumn" prefWidth="107.00000762939453" text="Apellidos" />
-                              <TableColumn fx:id="identificacionProfesoresRegistradosTableColumn" prefWidth="84.79998779296875" text="Identificación" />
-                              <TableColumn fx:id="estudiantesAsignadosTableColumn" prefWidth="107.800048828125" text="Estudiantes Asignados" />
-                              <TableColumn fx:id="cursosAsignadosProfesoresRegistradosTableColumn" minWidth="0.0" prefWidth="114.39999389648438" text="Mascota" />
-                              <TableColumn fx:id="TableColumnFidelidadesDePropietarios" minWidth="8.5999755859375" prefWidth="64.80002441406248" text="Fidelidad" />
+                            <TableColumn fx:id="nombreProfesoresRegistradosTableColumn" prefWidth="122.19998013973236" text="Nombre" />
+                            <TableColumn fx:id="apellidoProfesoresRegistradosTableColumn" prefWidth="107.00000762939453" text="Apellidos" />
+                              <TableColumn fx:id="identificacionProfesoresRegistradosTableColumn" prefWidth="99.79998779296875" text="Identificación" />
+                              <TableColumn fx:id="estudiantesAsignadosTableColumn" prefWidth="131.4000244140625" text="Estudiantes Asignados" />
+                              <TableColumn fx:id="cursosAsignadosProfesoresRegistradosTableColumn" minWidth="0.0" prefWidth="142.60000610351562" text="Cursos Asignados" />
                           </columns>
                         </TableView>
                      </children></AnchorPane>
