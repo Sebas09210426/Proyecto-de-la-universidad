@@ -1,5 +1,16 @@
 package model;
 
 public enum Instrumento {
-    PIANO, GUITARRA, VIOLIN, CANTO, FLAUTA, OTRO;
+    PIANO("Piano"), GUITARRA("Guitarra"), VIOLIN("Violín"), CANTO("Canto"), FLAUTA("Flauta"), OTRO("Otro");
+
+    private final String instrumento;
+
+    Instrumento(String instrumento) {
+        this.instrumento = instrumento;
+    }
+
+    @Override
+    public String toString() {
+        return instrumento;
+    }
 }
