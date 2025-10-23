@@ -53,10 +53,13 @@
             </AnchorPane>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="252.0" prefWidth="299.0">
                <children>
-                  <VBox fx:id="VBoxRequisitosDeGestion" alignment="CENTER" layoutX="1.0" prefHeight="252.0" prefWidth="296.0" spacing="10">
+                  <VBox fx:id="requisitosDeGestionDeEstudiantesVBox" alignment="CENTER" layoutX="1.0" prefHeight="252.0" prefWidth="296.0" spacing="10">
                      <opaqueInsets>
                         <Insets left="3.0" />
-                     </opaqueInsets></VBox>
+                     </opaqueInsets>
+                     <padding>
+                        <Insets left="20.0" />
+                     </padding></VBox>
                </children></AnchorPane>
         </items>
       </SplitPane>
