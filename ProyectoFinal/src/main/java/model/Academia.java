@@ -108,13 +108,101 @@ public class Academia {
         return null;
     }
 
-    public boolean modificarEstudiante(String identificacion, String nombre){
+    public boolean modificarEstudiante(String identificacion, String modificacion, int opcion){
         Estudiante e = buscarEstudiante(identificacion);
 
         if (e == null) {
             return false;
         }
-        e.setNombre(nombre);
-        return true;
+
+        switch (opcion){
+            case 1:
+                e.setNombre(modificacion);
+                return  true;
+            case 2:
+                e.setApellido(modificacion);
+                return  true;
+            case 3:
+                e.setIdentificacion(modificacion);
+                return  true;
+            case 4:
+                switch (modificacion){
+                    case "guitarra":
+                        e.setInstrumento(Instrumento.GUITARRA);
+                        return  true;
+                    case "canto":
+                        e.setInstrumento(Instrumento.CANTO);
+                        return  true;
+                    case "piano":
+                        e.setInstrumento(Instrumento.PIANO);
+                        return  true;
+                    case "flauta":
+                        e.setInstrumento(Instrumento.FLAUTA);
+                        return  true;
+                    case "violin":
+                        e.setInstrumento(Instrumento.VIOLIN);
+                        return  true;
+                    default:
+                        e.setInstrumento(Instrumento.OTRO);
+                        return  true;
+                }
+            case 5:
+                switch (modificacion){
+                    case "basico":
+                        e.setNivelDeEstudio(NivelDeEstudio.BASICO);
+                        return  true;
+                    case "medio":
+                        e.setNivelDeEstudio(NivelDeEstudio.MEDIO);
+                        return  true;
+                    case "avanzado":
+                        e.setNivelDeEstudio(NivelDeEstudio.AVANZADO);
+                        return  true;
+                    default:
+                        return false;
+                }
+            default:
+                return false;
+        }
     }
+
+    public boolean modificarProfesor(String identificacion, String modificacion, int opcion){
+        Profesor p = buscarProfesor(identificacion);
+        if (p == null) {
+            return false;
+        }
+
+        switch (opcion){
+            case 1:
+                p.setNombre(modificacion);
+                return  true;
+            case 2:
+                p.setApellido(modificacion);
+                return  true;
+            case 3:
+                p.setIdentificacion(modificacion);
+                return  true;
+            default:
+                return false;
+        }
+    }
+
+    public boolean eliminarEstudiante(String identificacion){
+        for (Estudiante e : listaEstudiantes) {
+            if (e.getIdentificacion().equals(identificacion)){
+                listaEstudiantes.remove(e);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean eliminarProfesor(String identificacion){
+        for (Profesor p : listaProfesores) {
+            if (p.getIdentificacion().equals(identificacion)){
+                listaProfesores.remove(p);
+            }
+        }
+        return false;
+    }
+
 }
