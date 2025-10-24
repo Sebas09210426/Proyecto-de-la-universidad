@@ -1,7 +1,7 @@
 package model;
 
 public enum Instrumento {
-    PIANO("Piano"), GUITARRA("Guitarra"), VIOLIN("Violín"), CANTO("Canto"), FLAUTA("Flauta"), OTRO("Otro");
+    PIANO("Piano"), GUITARRA("Guitarra"), VIOLIN("Violín"), CANTO("Canto"), FLAUTA("Flauta"), OTRO("Otro"), DEFAULT("Predeterminado");
 
     private final String instrumento;
 

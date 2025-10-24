@@ -31,4 +31,11 @@ public class PrimaryViewController {
         alert.setContentText(mensaje);
         alert.showAndWait();
     }
+
+    public static void mostrarMensaje(String titulo, String mensaje){
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(titulo);
+        alert.setContentText(mensaje);
+        alert.showAndWait();
+    }
 }

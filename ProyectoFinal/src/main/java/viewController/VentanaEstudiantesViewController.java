@@ -1,6 +1,8 @@
 package viewController;
 
 import app.App;
+import static viewController.PrimaryViewController.mostrarAlerta;
+import static viewController.PrimaryViewController.mostrarMensaje;
 import controller.AcademiaController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -16,6 +18,7 @@ import javafx.scene.control.*;
 public class VentanaEstudiantesViewController {
 
     App app;
+    AcademiaController academiaController;
 
     //Adquirir los elementos del fxml
 
@@ -52,7 +55,7 @@ public class VentanaEstudiantesViewController {
 
     @FXML
     public void initialize() {
-        AcademiaController academiaController = new AcademiaController(App.academia);
+        academiaController = new AcademiaController(App.academia);
 
         //Preparar columnas de los estudiantes registrados
         nombreEstudiantesRegistradosTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getNombre()));
@@ -80,6 +83,7 @@ public class VentanaEstudiantesViewController {
     }
 
     private void mostrarRequisitosCrearEstudiante() {
+        //Crear elementos del vbox
         Label label = new Label("Crear Estudiante");
 
         Label nombreEstudianteLabel = new Label("Nombre:");
@@ -89,10 +93,14 @@ public class VentanaEstudiantesViewController {
         Label identificacionEstudianteLabel = new Label("Identificacion:");
         TextField identificacionEstudianteTextField = new TextField();
         Label instrumentoEstudianteLabel = new Label("Instrumento:");
-        TextField instrumentoEstudianteTextField = new TextField();
+        //Agregarle opciones para los enums
+        ChoiceBox<String> instrumentoEstudianteChoiceBox = new ChoiceBox<String>();
+        instrumentoEstudianteChoiceBox.getItems().addAll("Guitarra", "Piano", "Canto", "Violín", "Flauta", "Otro");
         Label nivelDeEstudioLabel = new Label("Nivel de Estudio:");
-        TextField nivelDeEstudioTextField = new TextField();
+        ChoiceBox<String> nivelDeEstudioChoiceBox = new ChoiceBox<String>();
+        nivelDeEstudioChoiceBox.getItems().addAll("Básico", "Medio", "Avanzado");
 
+        //Agregar los elementos creados a un gridPane
         GridPane gridPane = new GridPane();
         gridPane.setHgap(10);
         gridPane.setVgap(10);
@@ -103,17 +111,86 @@ public class VentanaEstudiantesViewController {
         gridPane.add(identificacionEstudianteLabel, 0, 2);
         gridPane.add(identificacionEstudianteTextField, 1, 2);
         gridPane.add(instrumentoEstudianteLabel, 0, 3);
-        gridPane.add(instrumentoEstudianteTextField, 1, 3);
+        gridPane.add(instrumentoEstudianteChoiceBox, 1, 3);
         gridPane.add(nivelDeEstudioLabel, 0, 4);
-        gridPane.add(nivelDeEstudioTextField, 1, 4);
+        gridPane.add(nivelDeEstudioChoiceBox, 1, 4);
 
+        //Crear el boton para crear estudiante
         Button boton = new Button("Crear Estudiante");
+
+        //Vincular la funcion al boton creado
+        boton.setOnAction(event -> {
+
+            //Verificar que los campos de String esten llenados
+            if(nombreEstudianteTextField.getText().isEmpty() || apellidoEstudianteTextField.getText().isEmpty() || identificacionEstudianteTextField.getText().isEmpty()){
+                mostrarAlerta("Campo vacío", "Por favor, diligencie todos los campos");
+                return;
+            }
+
+            //Convertir el String seleccionado a la clase Instrumento
+            Instrumento instrumento = Instrumento.DEFAULT;
+            switch (instrumentoEstudianteChoiceBox.getSelectionModel().getSelectedItem()) {
+                case "Guitarra":
+                    instrumento = Instrumento.GUITARRA;
+                    break;
+                case "Piano":
+                    instrumento = Instrumento.PIANO;
+                    break;
+                case "Canto":
+                    instrumento = Instrumento.CANTO;
+                    break;
+                case "Flauta":
+                    instrumento = Instrumento.FLAUTA;
+                    break;
+                case "Otro":
+                    instrumento = Instrumento.OTRO;
+                    break;
+                case "Violín":
+                    instrumento = Instrumento.VIOLIN;
+                    break;
+                case null:
+                    mostrarAlerta("Instrumento no seleccionado", "Por favor, elija un instrumento");
+                    return;
+                default:
+                    break;
+            }
+
+            //Convertir el String seleccionado a la clase NivelDeEstudio
+            NivelDeEstudio nivelDeEstudio = NivelDeEstudio.DEFAULT;
+            switch (nivelDeEstudioChoiceBox.getSelectionModel().getSelectedItem()) {
+                case "Avanzado":
+                    nivelDeEstudio = NivelDeEstudio.AVANZADO;
+                    break;
+                case "Básico":
+                    nivelDeEstudio = NivelDeEstudio.BASICO;
+                    break;
+                case "Medio":
+                    nivelDeEstudio = NivelDeEstudio.MEDIO;
+                    break;
+                case null:
+                    mostrarAlerta("Nivel de estudio no seleccionado", "Por favor, elija un nivel de estudio");
+                    return;
+                default:
+                    break;
+            }
+
+            //Crear el estuiante
+            crearEstudiante(nombreEstudianteTextField.getText(), apellidoEstudianteTextField.getText(), identificacionEstudianteTextField.getText(), nivelDeEstudio, instrumento);
+        });
 
         requisitosDeGestionDeEstudiantesVBox.getChildren().clear();
         requisitosDeGestionDeEstudiantesVBox.getChildren().addAll(label, gridPane, boton);
     }
 
-    private void crearEstudiante() {
+    private void crearEstudiante(String nombre, String apellido, String identificacion, NivelDeEstudio nivelDeEstudio, Instrumento instrumento) {
+        Estudiante nuevoEstudiante = new Estudiante(nombre, apellido, identificacion, nivelDeEstudio, instrumento);
+
+        if (academiaController.crearEstudiante(nuevoEstudiante)) {
+            mostrarEstudianteRegistrado(nuevoEstudiante);
+            mostrarMensaje("Estudiante creado", "Estudiante creado exitosamente");
+        } else {
+            mostrarAlerta("Error al crear estudiante", "El estudiante ya existe");
+        }
 
     }
 
@@ -134,7 +211,39 @@ public class VentanaEstudiantesViewController {
 
         Button boton = new Button("Eliminar");
 
+        //Vincular la funcion al boton creado
+        boton.setOnAction(e -> {
+            //Verificar que el campo del String este diligenciado
+            if (identificacionEstudianteTextField.getText().isEmpty()) {
+                mostrarAlerta("Campo vacío", "Por favor, escriba la identificacion del estudiante");
+                return;
+            }
+            eliminarEstudiante(identificacionEstudianteTextField.getText());
+        });
+
         requisitosDeGestionDeEstudiantesVBox.getChildren().clear();
         requisitosDeGestionDeEstudiantesVBox.getChildren().addAll(label, gridPane, boton);
+    }
+
+    private void eliminarEstudiante(String identificacion) {
+        if(academiaController.eliminarEstudiante(identificacion)) {
+            quitarEstudianteEliminado(identificacion);
+            mostrarMensaje("Estudiante eliminado", "Estudiante eliminado exitosamente");
+        } else {
+            mostrarAlerta("Error al eliminar estudiante", "El número no está registrado");
+        }
+    }
+
+    private void quitarEstudianteEliminado(String identificacion) {
+        Estudiante estudiante = null;
+
+        for (Estudiante e : estudiantesAsignadosObservableList) {
+            if (e.getIdentificacion().equals(identificacion)) {
+                estudiante = e;
+                break;
+            }
+        }
+
+        estudiantesAsignadosObservableList.remove(estudiante);
     }
 }

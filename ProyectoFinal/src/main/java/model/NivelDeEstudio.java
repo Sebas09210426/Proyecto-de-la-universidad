@@ -1,7 +1,7 @@
 package model;
 
 public enum NivelDeEstudio {
-    BASICO("Básico"), MEDIO("Medio"), AVANZADO("Avanzado");
+    BASICO("Básico"), MEDIO("Medio"), AVANZADO("Avanzado"), DEFAULT("Predeterminado");
 
     private final String nivelDeEstudio;
 
