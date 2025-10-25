@@ -18,5 +18,13 @@ public class AcademiaController {
         return academia.eliminarEstudiante(identificacion);
     }
 
+    public boolean consultarExistenciaEstudiante(String identificacion) {
+        return academia.buscarEstudiante(identificacion) != null;
+    }
+
+    public Estudiante buscarEstudiante(String identificacion) {
+        return academia.buscarEstudiante(identificacion);
+    }
+
     //Conectar funciondes del model con el viewController
 }

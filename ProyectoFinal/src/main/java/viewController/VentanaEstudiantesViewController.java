@@ -68,7 +68,7 @@ public class VentanaEstudiantesViewController {
         estudiantesRegistradosTableView.setItems(estudiantesAsignadosObservableList);
 
         //Añadir opciones al ChoiceBox
-        gestionChoiceBox.getItems().addAll("Crear Estudiante", "Eliminar Estudiante");
+        gestionChoiceBox.getItems().addAll("Crear Estudiante", "Eliminar Estudiante", "Modificar Estudiante");
 
         //Obtener el cambio de eleccion del ChoiceBox
         gestionChoiceBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -78,8 +78,20 @@ public class VentanaEstudiantesViewController {
                     break;
                 case "Eliminar Estudiante":
                     mostrarRequisitosEliminarEstudiante();
+                    break;
+                case "Modificar Estudiante":
+                    mostrarRequisitosModificarEstudiante();
+                    break;
             }
         });
+    }
+
+    private boolean consultarExistenciaEstudiante(String identificacion) {
+        return academiaController.consultarExistenciaEstudiante(identificacion);
+    }
+
+    private Estudiante buscarEstudiante(String identificacion) {
+        return academiaController.buscarEstudiante(identificacion);
     }
 
     private void mostrarRequisitosCrearEstudiante() {
@@ -178,6 +190,7 @@ public class VentanaEstudiantesViewController {
             crearEstudiante(nombreEstudianteTextField.getText(), apellidoEstudianteTextField.getText(), identificacionEstudianteTextField.getText(), nivelDeEstudio, instrumento);
         });
 
+        //Mostrar los requisitos en el VBox
         requisitosDeGestionDeEstudiantesVBox.getChildren().clear();
         requisitosDeGestionDeEstudiantesVBox.getChildren().addAll(label, gridPane, boton);
     }
@@ -199,10 +212,12 @@ public class VentanaEstudiantesViewController {
     }
 
     private void mostrarRequisitosEliminarEstudiante() {
+        //Crear elementos del VBox
         Label label = new Label("Eliminar Estudiante");
         Label identificacionEstudianteLabel = new Label("Identificación:");
         TextField identificacionEstudianteTextField = new TextField();
 
+        //Asignar los elementos crados a un GridPane
         GridPane gridPane = new GridPane();
         gridPane.setHgap(10);
         gridPane.setVgap(10);
@@ -215,12 +230,13 @@ public class VentanaEstudiantesViewController {
         boton.setOnAction(e -> {
             //Verificar que el campo del String este diligenciado
             if (identificacionEstudianteTextField.getText().isEmpty()) {
-                mostrarAlerta("Campo vacío", "Por favor, escriba la identificacion del estudiante");
+                mostrarAlerta("Campo vacío", "Por favor, diligencie la identificacion del estudiante");
                 return;
             }
             eliminarEstudiante(identificacionEstudianteTextField.getText());
         });
 
+        //Mostrar los requisitos en el VBox
         requisitosDeGestionDeEstudiantesVBox.getChildren().clear();
         requisitosDeGestionDeEstudiantesVBox.getChildren().addAll(label, gridPane, boton);
     }
@@ -245,5 +261,374 @@ public class VentanaEstudiantesViewController {
         }
 
         estudiantesAsignadosObservableList.remove(estudiante);
+    }
+
+    private void mostrarRequisitosModificarEstudiante() {
+        //Crear elementos del Vbox
+        Label label = new Label("Modificar Estudiante");
+        Label identificacionEstudianteLabel = new Label("Identificacion:");
+        TextField identificacionEstudianteTextField = new TextField();
+        Label modificacionEstudianteLabel = new Label("Modificación:");
+        ChoiceBox<String> modificacionEstudianteChoiceBox = new ChoiceBox<>();
+        //Añadir opciones al ChoiceBox
+        modificacionEstudianteChoiceBox.getItems().addAll("Cambiar nombre", "Cambiar apellido", "Cambiar identificación", "Cambiar instrumento", "Cambiar nivel de estudio");
+
+        //Asignar elementos creados a un GridPane
+        GridPane gridPane = new GridPane();
+        gridPane.setHgap(10);
+        gridPane.setVgap(10);
+        gridPane.add(identificacionEstudianteLabel, 0, 0);
+        gridPane.add(identificacionEstudianteTextField, 1, 0);
+        gridPane.add(modificacionEstudianteLabel, 0, 1);
+        gridPane.add(modificacionEstudianteChoiceBox, 1, 1);
+
+        //Crear boton del VBox
+        Button boton = new Button("Modificar");
+
+        //Asginar funciones al boton creado
+        boton.setOnAction(e -> {
+            //Verificar que los campos esten diligenciados
+            if (identificacionEstudianteTextField.getText().isEmpty()) {
+                mostrarAlerta("Campo vacío", "Por favor, diligencie la identificación del estudiante");
+                return;
+            } else if (modificacionEstudianteChoiceBox.getSelectionModel().isEmpty()) {
+                mostrarAlerta("Campo vacío", "Por favor, seleccione una opción de modificación");
+                return;
+            }
+
+            //Mostrar los requisitos de la gestion seleccionada
+            String gestionActual = "Defecto";
+            switch (modificacionEstudianteChoiceBox.getSelectionModel().getSelectedItem()) {
+                case "Cambiar nombre":
+                    //Verificar que exista el estudiante con esa identificacion
+                    if (consultarExistenciaEstudiante(identificacionEstudianteTextField.getText())) {
+                        mostrarRequisitosModificarNombreEstudiante(identificacionEstudianteTextField.getText());
+                        boton.setVisible(false); //Ocultar boton para evitar que el usuario pueda volver a crear la misma interfaz
+                        boton.setDisable(true); //Desactivar el boton para evitar que el usuario pueda volver a crear la misma interfaz
+                        gestionActual = "Cambiar nombre";
+                        break;
+                    } else {
+                        mostrarAlerta("Estudiante no encontrado", "La identificacion del estudiante no esta registrada");
+                        break;
+                    }
+                case "Cambiar apellido":
+                    //Verificar que exista el estudiante con esa identificacion
+                    if (consultarExistenciaEstudiante(identificacionEstudianteTextField.getText())) {
+                        mostrarRequisitosModificarApellidoEstudiante(identificacionEstudianteTextField.getText());
+                        boton.setVisible(false); //Ocultar boton para evitar que el usuario pueda volver a crear la misma interfaz
+                        boton.setDisable(true); //Desactivar el boton para evitar que el usuario pueda volver a crear la misma interfaz
+                        gestionActual = "Cambiar apellido";
+                        break;
+                    } else {
+                        mostrarAlerta("Estudiante no encontrado", "La identificacion del estudiante no esta registrada");
+                        break;
+                    }
+                case "Cambiar identificación":
+                    //Verificar que exista el estudiante con esa identificacion
+                    if (consultarExistenciaEstudiante(identificacionEstudianteTextField.getText())) {
+                        mostrarRequisitosModificarIdentificacionEstudiante(identificacionEstudianteTextField.getText());
+                        boton.setVisible(false); //Ocultar boton para evitar que el usuario pueda volver a crear la misma interfaz
+                        boton.setDisable(true); //Desactivar el boton para evitar que el usuario pueda volver a crear la misma interfaz
+                        gestionActual = "Cambiar identificacion";
+                        break;
+                    } else {
+                        mostrarAlerta("Estudiante no encontrado", "La identificacion del estudiante no esta registrada");
+                        break;
+                    }
+                case "Cambiar instrumento":
+                    //Verificar que exista el estudiante con esa identificacion
+                    if (consultarExistenciaEstudiante(identificacionEstudianteTextField.getText())) {
+                        mostrarRequisitosModificarInstrumentoEstudiante(identificacionEstudianteTextField.getText());
+                        boton.setVisible(false); //Ocultar boton para evitar que el usuario pueda volver a crear la misma interfaz
+                        boton.setDisable(true); //Desactivar el boton para evitar que el usuario pueda volver a crear la misma interfaz
+                        gestionActual = "Cambiar instrumento";
+                        break;
+                    } else {
+                        mostrarAlerta("Estudiante no encontrado", "La identificacion del estudiante no esta registrada");
+                        break;
+                    }
+                case "Cambiar nivel de estudio":
+                    //Verificar que exista el estudiante con esa identificacion
+                    if (consultarExistenciaEstudiante(identificacionEstudianteTextField.getText())) {
+                        mostrarRequisitosModificarNivelDeEstudioEstudiante(identificacionEstudianteTextField.getText());
+                        boton.setVisible(false); //Ocultar boton para evitar que el usuario pueda volver a crear la misma interfaz
+                        boton.setDisable(true);
+                        gestionActual = "Cambiar nivel de estudio";
+                        break;
+                    } else {
+                        mostrarAlerta("Estudiante no encontrado", "La identificacion del estudiante no esta registrada");
+                        break;
+                    }
+            }
+
+            //Obtener el cambio de eleccion del ChoiceBox
+            String finalGestionActual = gestionActual;
+            modificacionEstudianteChoiceBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+                //Habilitar boton nuevamente
+                if(!newValue.equals(oldValue) && !newValue.equals(finalGestionActual)) {
+                    boton.setVisible(true); // Volver a hacer visible el boton para cambiar de interfaz
+                    boton.setDisable(false); // Volver a activar la funcion del boton para cambiar de interfaz
+                } else  {
+                    boton.setVisible(false);
+                    boton.setDisable(true);
+                }
+            });
+
+        });
+
+        //VBox adicional para la gestion deseada
+        VBox gestionElegidaVBox = new VBox();
+        gestionElegidaVBox.setSpacing(10);
+
+        //Mostrar los requisitos en el VBox
+        requisitosDeGestionDeEstudiantesVBox.getChildren().clear();
+        requisitosDeGestionDeEstudiantesVBox.getChildren().addAll(label, gridPane, boton, gestionElegidaVBox);
+    }
+
+    private void mostrarRequisitosModificarNombreEstudiante(String identificacion) {
+        //Crear elementos adicionales para el VBox
+        Label label = new Label("Nuevo nombre:");
+        TextField nuevoNombreEstudianteTextField = new TextField();
+
+        //Agregar los elementos creados a un GridPane
+        GridPane gridPane = new GridPane();
+        gridPane.setMaxSize(300, 300);
+        gridPane.setHgap(10);
+        gridPane.setVgap(10);
+        gridPane.add(label, 0, 0);
+        gridPane.add(nuevoNombreEstudianteTextField, 1, 0);
+
+        //Crear boton adicional
+        Button boton = new Button("Confirmar");
+        //Agregar funcion al boton creado
+        boton.setOnAction(e -> {
+           //Verificar que el campo no este vacio
+            if (nuevoNombreEstudianteTextField.getText().isEmpty()) {
+                mostrarAlerta("Campo vacío", "Por favor, diligencie el nuevo nombre del estudiante");
+                return;
+            }
+            modificarNombreEstudiante(identificacion,  nuevoNombreEstudianteTextField.getText());
+            mostrarMensaje("Estudiante actualizado", "Estudiante actualizado exitosamente");
+        });
+
+        VBox adicionalVBox = new VBox();
+        adicionalVBox.getChildren().addAll(gridPane, boton);
+
+        //Agregar los nuevos elementos al VBox
+        requisitosDeGestionDeEstudiantesVBox.getChildren().removeLast();
+        requisitosDeGestionDeEstudiantesVBox.getChildren().addAll(adicionalVBox);
+    }
+
+    private void modificarNombreEstudiante(String identificacion, String nuevoNombre) {
+        Estudiante estudiante = buscarEstudiante(identificacion);
+        estudiante.setNombre(nuevoNombre);
+        actualizarListaEstudiantesRegistrados(); //Si no se actualiza la lista, no se ven reflejados los cambios
+    }
+
+    private void mostrarRequisitosModificarApellidoEstudiante(String identificacion) {
+        //Crear elementos adicionales para el VBox
+        Label label = new Label("Nuevo apellido:");
+        TextField nuevoApellidoEstudianteTextField = new TextField();
+
+        //Agregar los elementos creados a un GridPane
+        GridPane gridPane = new GridPane();
+        gridPane.setMaxSize(300, 300);
+        gridPane.setHgap(10);
+        gridPane.setVgap(10);
+        gridPane.add(label, 0, 0);
+        gridPane.add(nuevoApellidoEstudianteTextField, 1, 0);
+
+        //Crear boton adicional
+        Button boton = new Button("Confirmar");
+        //Agregar funcion al boton creado
+        boton.setOnAction(e -> {
+            //Verificar que el campo no este vacio
+            if (nuevoApellidoEstudianteTextField.getText().isEmpty()) {
+                mostrarAlerta("Campo vacío", "Por favor, diligencie el nuevo apellido del estudiante");
+                return;
+            }
+            modificarApellidoEstudiante(identificacion,  nuevoApellidoEstudianteTextField.getText());
+            mostrarMensaje("Estudiante actualizado", "Estudiante actualizado exitosamente");
+        });
+
+        VBox adicionalVBox = new VBox();
+        adicionalVBox.getChildren().addAll(gridPane, boton);
+
+        //Agregar los nuevos elementos al VBox
+        requisitosDeGestionDeEstudiantesVBox.getChildren().removeLast();
+        requisitosDeGestionDeEstudiantesVBox.getChildren().addAll(adicionalVBox);
+    }
+
+    private void modificarApellidoEstudiante(String identificacion, String nuevoApellido) {
+        Estudiante estudiante = buscarEstudiante(identificacion);
+        estudiante.setApellido(nuevoApellido);
+        actualizarListaEstudiantesRegistrados(); //Si no se actualiza la lista, no se ven reflejados los cambios
+    }
+
+    private void mostrarRequisitosModificarIdentificacionEstudiante(String identificacion) {
+        //Crear elementos adicionales para el VBox
+        Label label = new Label("Nueva  identificacion:");
+        TextField nuevaIdentificacionEstudianteTextField = new TextField();
+
+        //Agregar los elementos creados a un GridPane
+        GridPane gridPane = new GridPane();
+        gridPane.setMaxSize(300, 300);
+        gridPane.setHgap(10);
+        gridPane.setVgap(10);
+        gridPane.add(label, 0, 0);
+        gridPane.add(nuevaIdentificacionEstudianteTextField, 1, 0);
+
+        //Crear boton adicional
+        Button boton = new Button("Confirmar");
+        //Agregar funcion al boton creado
+        boton.setOnAction(e -> {
+            //Verificar que el campo no este vacio
+            if (nuevaIdentificacionEstudianteTextField.getText().isEmpty()) {
+                mostrarAlerta("Campo vacío", "Por favor, diligencie la nueva identificación del estudiante");
+                return;
+            }
+            modificarIdentificacionEstudiante(identificacion,  nuevaIdentificacionEstudianteTextField.getText());
+            mostrarMensaje("Estudiante actualizado", "Estudiante actualizado exitosamente");
+        });
+
+        VBox adicionalVBox = new VBox();
+        adicionalVBox.getChildren().addAll(gridPane, boton);
+
+        //Agregar los nuevos elementos al VBox
+        requisitosDeGestionDeEstudiantesVBox.getChildren().removeLast();
+        requisitosDeGestionDeEstudiantesVBox.getChildren().addAll(adicionalVBox);
+    }
+
+    private void modificarIdentificacionEstudiante(String identificacion, String nuevaIdentificacion) {
+        Estudiante estudiante = buscarEstudiante(identificacion);
+        estudiante.setIdentificacion(nuevaIdentificacion);
+        actualizarListaEstudiantesRegistrados(); //Si no se actualiza la lista, no se ven reflejados los cambios
+    }
+
+    private void mostrarRequisitosModificarInstrumentoEstudiante(String identificacion) {
+        //Crear elementos adicionales para el VBox
+        Label label = new Label("Nuevo intrumento:");
+        ChoiceBox<String> instrumentoEstudianteChoiceBox = new ChoiceBox<>();
+
+        //Añadir opciones al ChoiceBox
+        instrumentoEstudianteChoiceBox.getItems().addAll("Guitarra", "Canto", "Piano", "Violín", "Flauta", "Otro");
+
+        //Agregar los elementos creados a un GridPane
+        GridPane gridPane = new GridPane();
+        gridPane.setMaxSize(300, 300);
+        gridPane.setHgap(10);
+        gridPane.setVgap(10);
+        gridPane.add(label, 0, 0);
+        gridPane.add(instrumentoEstudianteChoiceBox, 1, 0);
+
+        //Crear boton adicional
+        Button boton = new Button("Confirmar");
+        //Agregar funcion al boton creado
+        boton.setOnAction(e -> {
+            //Verificar que el campo no este vacio
+            if (instrumentoEstudianteChoiceBox.getSelectionModel().getSelectedItem().isEmpty()) {
+                mostrarAlerta("Campo vacío", "Por favor, seleccione el nuevo instrumento del estudiante");
+                return;
+            }
+
+            //Convertir la seleccion del ChoiceBox a la clase Instrumento
+            Instrumento nuevoInstrumento = Instrumento.DEFAULT;
+            switch (instrumentoEstudianteChoiceBox.getSelectionModel().getSelectedItem()) {
+                case "Guitarra":
+                    nuevoInstrumento = Instrumento.GUITARRA;
+                    break;
+                case "Canto":
+                    nuevoInstrumento = Instrumento.CANTO;
+                    break;
+                case "Piano":
+                    nuevoInstrumento = Instrumento.PIANO;
+                    break;
+                case "Flauta":
+                    nuevoInstrumento = Instrumento.FLAUTA;
+                    break;
+                case "Violín":
+                    nuevoInstrumento = Instrumento.VIOLIN;
+                    break;
+                case "Otro":
+                    nuevoInstrumento = Instrumento.OTRO;
+            }
+            modificarInstrumentoEstudiante(identificacion, nuevoInstrumento);
+            mostrarMensaje("Estudiante actualizado", "Estudiante actualizado exitosamente");
+        });
+
+        VBox adicionalVBox = new VBox();
+        adicionalVBox.getChildren().addAll(gridPane, boton);
+
+        //Agregar los nuevos elementos al VBox
+        requisitosDeGestionDeEstudiantesVBox.getChildren().removeLast();
+        requisitosDeGestionDeEstudiantesVBox.getChildren().addAll(adicionalVBox);
+    }
+
+    private void modificarInstrumentoEstudiante(String identificacion, Instrumento instrumento) {
+        Estudiante estudiante = buscarEstudiante(identificacion);
+        estudiante.setInstrumento(instrumento);
+        actualizarListaEstudiantesRegistrados(); //Si no se actualiza la lista, no se ven reflejados los cambios
+    }
+
+    private void mostrarRequisitosModificarNivelDeEstudioEstudiante(String identificacion) {
+        //Crear elementos adicionales para el VBox
+        Label label = new Label("Nuevo nivel de estudio:");
+        ChoiceBox<String> nivelDeEstudioEstudianteChoiceBox = new ChoiceBox<>();
+
+        //Añadir opciones al ChoiceBox
+        nivelDeEstudioEstudianteChoiceBox.getItems().addAll("Básico", "Medio", "Avanzado");
+
+        //Agregar los elementos creados a un GridPane
+        GridPane gridPane = new GridPane();
+        gridPane.setMaxSize(300, 300);
+        gridPane.setHgap(10);
+        gridPane.setVgap(10);
+        gridPane.add(label, 0, 0);
+        gridPane.add(nivelDeEstudioEstudianteChoiceBox, 1, 0);
+
+        //Crear boton adicional
+        Button boton = new Button("Confirmar");
+        //Agregar funcion al boton creado
+        boton.setOnAction(e -> {
+            //Verificar que el campo no este vacio
+            if (nivelDeEstudioEstudianteChoiceBox.getSelectionModel().getSelectedItem().isEmpty()) {
+                mostrarAlerta("Campo vacío", "Por favor, seleccione el nuevo nivel de estudio del estudiante");
+                return;
+            }
+
+            //Convertir la seleccion del ChoiceBox a la clase Instrumento
+            NivelDeEstudio nuevoNivelDeEstudio = NivelDeEstudio.DEFAULT;
+            switch (nivelDeEstudioEstudianteChoiceBox.getSelectionModel().getSelectedItem()) {
+                case "Básico":
+                    nuevoNivelDeEstudio = NivelDeEstudio.BASICO;
+                    break;
+                case "Medio":
+                    nuevoNivelDeEstudio = NivelDeEstudio.MEDIO;
+                    break;
+                case "Avanzado":
+                    nuevoNivelDeEstudio = NivelDeEstudio.AVANZADO;
+                    break;
+            }
+            modificarNivelDeEstudioEstudiante(identificacion, nuevoNivelDeEstudio);
+            mostrarMensaje("Estudiante actualizado", "Estudiante actualizado exitosamente");
+        });
+
+        VBox adicionalVBox = new VBox();
+        adicionalVBox.getChildren().addAll(gridPane, boton);
+
+        //Agregar los nuevos elementos al VBox
+        requisitosDeGestionDeEstudiantesVBox.getChildren().removeLast();
+        requisitosDeGestionDeEstudiantesVBox.getChildren().addAll(adicionalVBox);
+    }
+
+    private void modificarNivelDeEstudioEstudiante(String identificacion, NivelDeEstudio nivelDeEstudio) {
+        Estudiante estudiante = buscarEstudiante(identificacion);
+        estudiante.setNivelDeEstudio(nivelDeEstudio);
+        actualizarListaEstudiantesRegistrados(); //Si no se actualiza la lista, no se ven reflejados los cambios
+    }
+
+
+    private void actualizarListaEstudiantesRegistrados() {
+        estudiantesRegistradosTableView.refresh();
     }
 }
