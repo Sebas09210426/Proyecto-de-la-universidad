@@ -27,7 +27,7 @@ public class VentanaPrincipalViewController {
     @FXML
     public void initialize() {
         //Agregar opciones al choiceBox
-        choiceBox.getItems().addAll("Gestionar Estudiantes", "Gestionar Profesores");
+        choiceBox.getItems().addAll("Gestionar Estudiantes", "Gestionar Profesores", "Entrar como estudiante");
         choiceBox.setValue("Seleccione una opción");
 
         //Inicializar la funcion de cambiar ventanas en el boton
@@ -61,6 +61,9 @@ public class VentanaPrincipalViewController {
                 break;
             case "Gestionar Profesores":
                 app.abrirVentanaProfesores();
+                break;
+            case "Entrar como estudiante":
+                app.abrirVentanaPersonalEstudiante();
                 break;
             default:
                 mostrarAlerta("Opción no seleccionada", "Por favor, seleccione una opción");

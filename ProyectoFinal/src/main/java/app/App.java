@@ -5,10 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import model.Academia;
-import viewController.VentanaEstudiantesViewController;
-import viewController.VentanaPrincipalViewController;
-import viewController.PrimaryViewController;
-import viewController.VentanaProfesoresViewController;
+import viewController.*;
 
 import java.io.IOException;
 
@@ -48,7 +45,7 @@ public class App extends Application {
 
     //Cambiar a la ventana de estudiantes
     public void abrirVentanaEstudiantes() throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/assets/ventanaEstudiantes.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/assets/ventanaEstudiante.fxml"));
         Scene scene = new Scene(loader.load());
         VentanaEstudiantesViewController  ventanaEstudiantesViewController = loader.getController();
         ventanaEstudiantesViewController.setApp(this);
@@ -65,6 +62,16 @@ public class App extends Application {
         ventanaProfesoresViewController.setApp(this);
         stage.setScene(scene);
         stage.setTitle("Musical getión de profesores");
+        stage.show();
+    }
+
+    public void abrirVentanaPersonalEstudiante() throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/assets/ventanaPersonalEstudiante.fxml"));
+        Scene scene = new Scene(loader.load());
+        VentanaPersonalEstudianteViewController ventanaPersonalEstudianteViewController = loader.getController();
+        ventanaPersonalEstudianteViewController.setApp(this);
+        stage.setScene(scene);
+        stage.setTitle("Gestion personal estudiante");
         stage.show();
     }
 }

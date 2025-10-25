@@ -11,6 +11,7 @@ module java {
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
     requires java.desktop;
+    requires javafx.graphics;
 
     opens app to javafx.fxml;
     exports app;

@@ -3,6 +3,7 @@ package viewController;
 import app.App;
 import static viewController.PrimaryViewController.mostrarAlerta;
 import static viewController.PrimaryViewController.mostrarMensaje;
+import static viewController.PrimaryViewController.mostrarConfirmacion;
 import controller.AcademiaController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -15,6 +16,8 @@ import model.Instrumento;
 import model.NivelDeEstudio;
 import javafx.scene.control.*;
 
+import java.io.IOException;
+
 public class VentanaEstudiantesViewController {
 
     App app;
@@ -23,10 +26,16 @@ public class VentanaEstudiantesViewController {
     //Adquirir los elementos del fxml
 
     @FXML
-    ChoiceBox<String> gestionChoiceBox;
+    private ChoiceBox<String> gestionChoiceBox;
 
     @FXML
-    VBox requisitosDeGestionDeEstudiantesVBox;
+    private VBox requisitosDeGestionDeEstudiantesVBox;
+
+    @FXML
+    private Button volverAlMenuAnteriorButton;
+
+    @FXML
+    private Button cerrarSesionButton;
 
     @FXML
     private TableView<Estudiante> estudiantesRegistradosTableView;
@@ -54,7 +63,7 @@ public class VentanaEstudiantesViewController {
     }
 
     @FXML
-    public void initialize() {
+    private void initialize() {
         academiaController = new AcademiaController(App.academia);
 
         //Preparar columnas de los estudiantes registrados
@@ -83,6 +92,20 @@ public class VentanaEstudiantesViewController {
                     mostrarRequisitosModificarEstudiante();
                     break;
             }
+        });
+
+        //Configurar botones de volver atras y cerrar sesion
+        volverAlMenuAnteriorButton.setOnAction(event -> {
+            if(mostrarConfirmacion("Confirmación", "¿Seguro que quiere salir de la ventana actual?")) {
+                try {
+                    volverAlMenuAnterior();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        cerrarSesionButton.setOnAction(event -> {
+            mostrarAlerta("Ejemplo", "Hasta aqui todo bien");
         });
     }
 
@@ -627,8 +650,11 @@ public class VentanaEstudiantesViewController {
         actualizarListaEstudiantesRegistrados(); //Si no se actualiza la lista, no se ven reflejados los cambios
     }
 
-
     private void actualizarListaEstudiantesRegistrados() {
         estudiantesRegistradosTableView.refresh();
+    }
+
+    private void volverAlMenuAnterior() throws IOException {
+        app.abrirVentanaPrincipal();
     }
 }
