@@ -45,7 +45,7 @@ public class App extends Application {
 
     //Cambiar a la ventana de estudiantes
     public void abrirVentanaEstudiantes() throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/assets/ventanaEstudiante.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/assets/ventanaEstudiantes.fxml"));
         Scene scene = new Scene(loader.load());
         VentanaEstudiantesViewController  ventanaEstudiantesViewController = loader.getController();
         ventanaEstudiantesViewController.setApp(this);

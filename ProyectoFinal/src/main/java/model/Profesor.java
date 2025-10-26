@@ -8,10 +8,10 @@ public class Profesor extends Persona {
     private LinkedList<Curso> listaCursosAsignados;
 
     //Constructor
-    public Profesor(String nombre, String apellido, String identificacion, LinkedList<Estudiante> listaEstudiantesAsignados, LinkedList<Curso> listaCursosAsignados) {
+    public Profesor(String nombre, String apellido, String identificacion) {
         super(nombre, apellido, identificacion);
-        this.listaEstudiantesAsignados = listaEstudiantesAsignados;
-        this.listaCursosAsignados = listaCursosAsignados;
+        this.listaEstudiantesAsignados = new LinkedList<Estudiante>();
+        this.listaCursosAsignados = new LinkedList<Curso>();
     }
 
     //Getters y Setters

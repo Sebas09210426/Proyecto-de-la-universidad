@@ -43,10 +43,16 @@
                               <Insets bottom="10.0" />
                            </VBox.margin>
                         </GridPane>
-                        <VBox fx:id="opcionesDeGestionVBox" alignment="CENTER" prefHeight="200.0" prefWidth="334.0" spacing="3">
+                        <VBox fx:id="opcionesDeGestionVBox" alignment="CENTER" prefHeight="167.0" prefWidth="298.0" spacing="3">
                            <opaqueInsets>
                               <Insets />
                            </opaqueInsets></VBox>
+                         <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="30.0">
+                             <children>
+                                 <Button fx:id="volverAlMenuAnteriorButton" mnemonicParsing="false" text="Volver al menú anterior" />
+                                 <Button fx:id="cerrarSesionButton" mnemonicParsing="false" text="Cerrar sesión" />
+                             </children>
+                         </HBox>
                      </children>
                   </VBox>
                </children>
@@ -66,7 +72,7 @@
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <TableView fx:id="TableViewPropietariosRegistrados" layoutX="-1.0" layoutY="-1.0" prefHeight="366.0" prefWidth="602.0">
+                        <TableView fx:id="profesoresRegistradosTableView" layoutX="-1.0" layoutY="-1.0" prefHeight="366.0" prefWidth="602.0">
                           <columns>
                             <TableColumn fx:id="nombreProfesoresRegistradosTableColumn" prefWidth="122.19998013973236" text="Nombre" />
                             <TableColumn fx:id="apellidoProfesoresRegistradosTableColumn" prefWidth="107.00000762939453" text="Apellidos" />

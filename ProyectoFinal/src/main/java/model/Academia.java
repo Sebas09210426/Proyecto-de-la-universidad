@@ -200,6 +200,7 @@ public class Academia {
         for (Profesor p : listaProfesores) {
             if (p.getIdentificacion().equals(identificacion)){
                 listaProfesores.remove(p);
+                return true;
             }
         }
         return false;
