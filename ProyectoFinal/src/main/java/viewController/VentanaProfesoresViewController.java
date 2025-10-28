@@ -16,7 +16,6 @@ import model.*;
 import javafx.scene.control.*;
 
 import java.io.IOException;
-import java.util.LinkedList;
 
 public class VentanaProfesoresViewController {
 
@@ -79,7 +78,7 @@ public class VentanaProfesoresViewController {
         //Añadir opciones al ChoiceBox
         gestionChoiceBox.getItems().addAll("Crear profesor", "Eliminar profesor", "Modificar profesor");
 
-        //Obtener el cambio de eleccion del ChoiceBox
+        //Obtener el cambio de seleccion del ChoiceBox
         gestionChoiceBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             switch (newValue) {
                 case "Crear profesor":
