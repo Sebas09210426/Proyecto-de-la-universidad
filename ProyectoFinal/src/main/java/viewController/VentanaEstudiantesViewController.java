@@ -108,8 +108,18 @@ public class VentanaEstudiantesViewController {
             }
         });
         cerrarSesionButton.setOnAction(event -> {
-            mostrarAlerta("Ejemplo", "Hasta aqui todo bien");
+            if(mostrarConfirmacion("COnfirmación", "¿Seguro que quiere cerrar sesión?")) {
+                try {
+                    abrirVentanaPrincipal();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         });
+    }
+
+    private void abrirVentanaPrincipal() throws IOException {
+        app.abrirVentanaPrincipal();
     }
 
     private boolean consultarExistenciaEstudiante(String identificacion) {

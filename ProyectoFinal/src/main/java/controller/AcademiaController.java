@@ -44,4 +44,8 @@ public class AcademiaController {
     public LinkedList<Usuario> getListaUsuarios() {return academia.getListaUsuarios();}
 
     public void agregarUsuario(String usuario, String contrasena, String identificacion, Rol rol) {academia.agregarUsuario(usuario, contrasena, identificacion, rol);}
+
+    public boolean iniciarSesion(String usuario, String contrasena) {
+        return academia.iniciarSesion(usuario, contrasena);
+    }
 }

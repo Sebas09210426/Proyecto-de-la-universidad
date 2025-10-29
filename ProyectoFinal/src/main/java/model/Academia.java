@@ -227,4 +227,14 @@ public class Academia {
         listaUsuarios.add(new Usuario(usuario, contrasena, identificacion, rol));
     }
 
+    public boolean iniciarSesion(String usuario, String contrasena) {
+        for (Usuario u : listaUsuarios) {
+            if (u.getUsuario().equals(usuario)) {
+                if (u.getContrasena().equals(contrasena)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }

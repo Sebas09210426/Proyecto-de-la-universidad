@@ -1,16 +1,21 @@
 package viewController;
 
 import app.App;
+import controller.AcademiaController;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 
 import java.io.IOException;
 
 import static viewController.PrimaryViewController.mostrarAlerta;
+import static viewController.PrimaryViewController.mostrarMensaje;
 
 public class VentanaPrincipalViewController {
     App app;
+    AcademiaController academiaController;
 
 
     @FXML
@@ -19,6 +24,15 @@ public class VentanaPrincipalViewController {
     @FXML
     Button boton;
 
+    @FXML
+    Button iniciarSesionButton;
+
+    @FXML
+    TextField usuarioTextField;
+
+    @FXML
+    PasswordField contrasenaPasswordField;
+
     public void setApp(App app) {
         this.app = app;
     }
@@ -26,6 +40,8 @@ public class VentanaPrincipalViewController {
 
     @FXML
     public void initialize() {
+        academiaController = new AcademiaController(App.academia);
+
         //Agregar opciones al choiceBox
         choiceBox.getItems().addAll("Gestionar Estudiantes", "Gestionar Profesores", "Entrar como estudiante");
         choiceBox.setValue("Seleccione una opción");
@@ -51,6 +67,28 @@ public class VentanaPrincipalViewController {
             });
         });
 
+        iniciarSesionButton.setOnAction(event -> {
+            //Verificar que los campos esten llenos
+            if (usuarioTextField.getText().isEmpty() || contrasenaPasswordField.getText().isEmpty()) {
+                mostrarAlerta("Campo Vacío", "Por favor, diligencie los datos");
+                return;
+            }
+
+            iniciarSesion(usuarioTextField.getText(), contrasenaPasswordField.getText());
+        });
+
+    }
+
+    private void iniciarSesion(String usuario, String contrasena) {
+        if (academiaController.iniciarSesion(usuario, contrasena)) {
+            try {
+                app.abrirVentanaPersonalEstudiante();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            mostrarAlerta("Usuario o contraseña incorrectos", "Por favor, verifique los datos ingresados. Si no tiene una cuenta registrada, por favor contacte a un administrador académicao");
+        }
     }
 
     //Cambiar de ventana dependiendo de la seleccion del choiceBox
