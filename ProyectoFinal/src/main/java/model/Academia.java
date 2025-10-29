@@ -10,6 +10,7 @@ public class Academia {
     private LinkedList<Estudiante> listaEstudiantes;
     private LinkedList<Profesor> listaProfesores;
     private LinkedList<Curso> listaCursos;
+    private LinkedList<Usuario> listaUsuarios;
 
     //Constructor
 
@@ -19,6 +20,7 @@ public class Academia {
         this.listaEstudiantes = new LinkedList<>();
         this.listaProfesores = new LinkedList<>();
         this.listaCursos = new LinkedList<>();
+        this.listaUsuarios = new LinkedList<>();
     }
 
     //Getters y Setters
@@ -55,12 +57,19 @@ public class Academia {
         this.listaProfesores = listaProfesores;
     }
 
-    public LinkedList getListaCursos() {
+    public LinkedList<Curso> getListaCursos() {
         return listaCursos;
     }
 
-    public void setListaCursos(LinkedList listaCursos) {
+    public void setListaCursos(LinkedList<Curso> listaCursos) {
         this.listaCursos = listaCursos;
+    }
+
+    public LinkedList<Usuario> getListaUsuarios() {
+        return listaUsuarios;
+    }
+    public void setListaUsuarios(LinkedList<Usuario> listaUsuarios) {
+        this.listaUsuarios = listaUsuarios;
     }
 
     //CRUD
@@ -108,6 +117,7 @@ public class Academia {
         return null;
     }
 
+    /*
     public boolean modificarEstudiante(String identificacion, String modificacion, int opcion){
         Estudiante e = buscarEstudiante(identificacion);
 
@@ -186,6 +196,8 @@ public class Academia {
         }
     }
 
+     */
+
     public boolean eliminarEstudiante(String identificacion){
         for (Estudiante e : listaEstudiantes) {
             if (e.getIdentificacion().equals(identificacion)){
@@ -204,6 +216,15 @@ public class Academia {
             }
         }
         return false;
+    }
+
+    public void agregarUsuario(String usuario, String contrasena, String identificacion, Rol rol) {
+        for (Usuario u : listaUsuarios) {
+            if (u.getUsuario().equals(usuario)) {
+                return;
+            }
+        }
+        listaUsuarios.add(new Usuario(usuario, contrasena, identificacion, rol));
     }
 
 }

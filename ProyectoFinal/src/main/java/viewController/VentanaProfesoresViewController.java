@@ -215,11 +215,16 @@ public class VentanaProfesoresViewController {
 
         if (academiaController.crearProfesor(nuevoProfesor)) {
             mostrarProfesorRegistrado(nuevoProfesor);
+            crearUsuarioProfesor(identificacion, identificacion, identificacion, Rol.PROFESOR); //Por defecto, el usuario se crea con la misma identificacion, despues se puede modificar
             mostrarMensaje("Estudiante creado", "Estudiante creado exitosamente");
         } else {
             mostrarAlerta("Error al crear estudiante", "El estudiante ya existe");
         }
 
+    }
+
+    private void crearUsuarioProfesor(String usuario, String contrasena, String identificacion, Rol rol) {
+        academiaController.agregarUsuario(usuario, contrasena, identificacion, rol);
     }
 
     private void mostrarProfesorRegistrado(Profesor profesor) {

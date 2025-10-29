@@ -15,6 +15,7 @@ import model.Estudiante;
 import model.Instrumento;
 import model.NivelDeEstudio;
 import javafx.scene.control.*;
+import model.Rol;
 
 import java.io.IOException;
 
@@ -225,11 +226,16 @@ public class VentanaEstudiantesViewController {
 
         if (academiaController.crearEstudiante(nuevoEstudiante)) {
             mostrarEstudianteRegistrado(nuevoEstudiante);
+            crearUsuarioEstudiante(identificacion, identificacion, identificacion, Rol.ESTUDIANTE); //Por defecto, el usuario se crea con la misma identificacion, despues se puede modificar
             mostrarMensaje("Estudiante creado", "Estudiante creado exitosamente");
         } else {
             mostrarAlerta("Error al crear estudiante", "El estudiante ya existe");
         }
 
+    }
+
+    private void crearUsuarioEstudiante(String usuario, String contrasena, String identificacion, Rol rol) {
+        academiaController.agregarUsuario(usuario, contrasena, identificacion, rol);
     }
 
     private void mostrarEstudianteRegistrado(Estudiante estudiante) {

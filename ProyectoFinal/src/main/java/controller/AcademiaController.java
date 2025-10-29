@@ -1,8 +1,6 @@
 package controller;
 
-import model.Academia;
-import model.Estudiante;
-import model.Profesor;
+import model.*;
 
 import java.util.LinkedList;
 
@@ -42,4 +40,8 @@ public class AcademiaController {
     }
 
     public LinkedList<Estudiante> getEstudiantesRegsitrados() {return academia.getListaEstudiantes();}
+
+    public LinkedList<Usuario> getListaUsuarios() {return academia.getListaUsuarios();}
+
+    public void agregarUsuario(String usuario, String contrasena, String identificacion, Rol rol) {academia.agregarUsuario(usuario, contrasena, identificacion, rol);}
 }
