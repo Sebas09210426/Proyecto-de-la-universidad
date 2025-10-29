@@ -4,6 +4,8 @@ import model.Academia;
 import model.Estudiante;
 import model.Profesor;
 
+import java.util.LinkedList;
+
 public class AcademiaController {
     //Vincular academia con el viewController
     Academia academia;
@@ -34,4 +36,10 @@ public class AcademiaController {
     public Profesor buscarProfesor(String identificacion) {return academia.buscarProfesor(identificacion);}
 
     public boolean eliminarProfesor(String identificacion) {return academia.eliminarProfesor(identificacion);}
+
+    public LinkedList<Profesor> getProfesoresRegistrados() {
+        return academia.getListaProfesores();
+    }
+
+    public LinkedList<Estudiante> getEstudiantesRegsitrados() {return academia.getListaEstudiantes();}
 }

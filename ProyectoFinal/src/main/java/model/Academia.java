@@ -9,14 +9,14 @@ public class Academia {
     private String nit;
     private LinkedList<Estudiante> listaEstudiantes;
     private LinkedList<Profesor> listaProfesores;
-    private LinkedList listaCursos;
+    private LinkedList<Curso> listaCursos;
 
     //Constructor
 
     public Academia(String nombre, String nit) {
         this.nombre = nombre;
         this.nit = nit;
-        this. listaEstudiantes = new LinkedList<>();
+        this.listaEstudiantes = new LinkedList<>();
         this.listaProfesores = new LinkedList<>();
         this.listaCursos = new LinkedList<>();
     }

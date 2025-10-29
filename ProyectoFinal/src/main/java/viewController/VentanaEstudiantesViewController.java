@@ -75,6 +75,8 @@ public class VentanaEstudiantesViewController {
 
         //Enlazar la lista de estudiantes al TableView
         estudiantesRegistradosTableView.setItems(estudiantesAsignadosObservableList);
+        //Cargar lista de estudiantes registrados por si se cambia de pestana
+        cargarListaEstudiantesRegistrados();
 
         //Añadir opciones al ChoiceBox
         gestionChoiceBox.getItems().addAll("Crear Estudiante", "Eliminar Estudiante", "Modificar Estudiante");
@@ -656,5 +658,11 @@ public class VentanaEstudiantesViewController {
 
     private void volverAlMenuAnterior() throws IOException {
         app.abrirVentanaPrincipal();
+    }
+
+    private void cargarListaEstudiantesRegistrados() {
+        estudiantesAsignadosObservableList.clear();
+        estudiantesAsignadosObservableList.addAll(academiaController.getEstudiantesRegsitrados());
+        estudiantesRegistradosTableView.setItems(estudiantesAsignadosObservableList);
     }
 }

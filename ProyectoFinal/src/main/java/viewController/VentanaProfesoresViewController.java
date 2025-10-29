@@ -74,6 +74,8 @@ public class VentanaProfesoresViewController {
 
         //Enlazar la lista de estudiantes al TableView
         profesoresRegistradosTableView.setItems(profesoresRegistradosObservableList);
+        //Refrescar la tabla por si se cambia de pestana
+        cargarListaProfesoresRegistrados();
 
         //Añadir opciones al ChoiceBox
         gestionChoiceBox.getItems().addAll("Crear profesor", "Eliminar profesor", "Modificar profesor");
@@ -625,5 +627,11 @@ public class VentanaProfesoresViewController {
 
     private void volverAlMenuAnterior() throws IOException {
         app.abrirVentanaPrincipal();
+    }
+
+    private void cargarListaProfesoresRegistrados() {
+        profesoresRegistradosObservableList.clear();
+        profesoresRegistradosObservableList.addAll(academiaController.getProfesoresRegistrados());
+        profesoresRegistradosTableView.setItems(profesoresRegistradosObservableList);
     }
 }
