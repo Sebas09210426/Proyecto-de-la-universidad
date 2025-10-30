@@ -7,6 +7,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import model.Rol;
+import model.Usuario;
 
 import java.io.IOException;
 
@@ -23,15 +25,6 @@ public class VentanaPrincipalViewController {
 
     @FXML
     Button boton;
-
-    @FXML
-    Button iniciarSesionButton;
-
-    @FXML
-    TextField usuarioTextField;
-
-    @FXML
-    PasswordField contrasenaPasswordField;
 
     public void setApp(App app) {
         this.app = app;
@@ -66,29 +59,6 @@ public class VentanaPrincipalViewController {
                 }
             });
         });
-
-        iniciarSesionButton.setOnAction(event -> {
-            //Verificar que los campos esten llenos
-            if (usuarioTextField.getText().isEmpty() || contrasenaPasswordField.getText().isEmpty()) {
-                mostrarAlerta("Campo Vacío", "Por favor, diligencie los datos");
-                return;
-            }
-
-            iniciarSesion(usuarioTextField.getText(), contrasenaPasswordField.getText());
-        });
-
-    }
-
-    private void iniciarSesion(String usuario, String contrasena) {
-        if (academiaController.iniciarSesion(usuario, contrasena)) {
-            try {
-                app.abrirVentanaPersonalEstudiante();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        } else {
-            mostrarAlerta("Usuario o contraseña incorrectos", "Por favor, verifique los datos ingresados. Si no tiene una cuenta registrada, por favor contacte a un administrador académicao");
-        }
     }
 
     //Cambiar de ventana dependiendo de la seleccion del choiceBox

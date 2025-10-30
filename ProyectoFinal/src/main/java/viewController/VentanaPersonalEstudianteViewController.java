@@ -10,6 +10,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import model.Usuario;
 
 import java.io.IOException;
 
@@ -17,8 +18,9 @@ import static viewController.PrimaryViewController.*;
 
 public class VentanaPersonalEstudianteViewController {
 
-    App app;
-    AcademiaController academiaController;
+    private App app;
+    private AcademiaController academiaController;
+    private Usuario usuarioActual;
 
     @FXML
     private ChoiceBox<String> gestionChoiceBox;
@@ -150,5 +152,9 @@ public class VentanaPersonalEstudianteViewController {
 
     private void volverAlMenuAnterior() throws IOException {
         app.abrirVentanaPrincipal();
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuarioActual = usuario;
     }
 }

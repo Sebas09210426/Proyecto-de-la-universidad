@@ -17,7 +17,6 @@ public class Usuario {
     }
 
     //Getters y Setters
-
     public String getUsuario() {
         return usuario;
     }

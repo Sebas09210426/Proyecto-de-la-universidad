@@ -1,31 +1,84 @@
 package viewController;
 
 import app.App;
+import controller.AcademiaController;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
+import model.Rol;
+import model.Usuario;
 
 import java.io.IOException;
 import java.util.Optional;
 
 public class PrimaryViewController {
     private App app;
+    private AcademiaController academiaController;
+    private VentanaPersonalEstudianteViewController ventanaPersonalEstudianteViewController;
 
     @FXML
-    private Label mensaje;
+    private TextField usuarioTextField;
 
     @FXML
-    private Button boton;
+    private PasswordField contrasenaPasswordField;
+
+    @FXML
+    private Button iniciarSesionButton;
 
     public void setApp(App app) {
         this.app = app;
     }
 
-    public void abrirVentanaPrincipal() throws IOException {
-        app.abrirVentanaPrincipal();
+    @FXML
+    public void initialize() {
+        academiaController = new AcademiaController(App.academia);
+
+        iniciarSesionButton.setOnAction(event -> {
+            //Verificar que los campos esten llenos
+            if (usuarioTextField.getText().isEmpty() || contrasenaPasswordField.getText().isEmpty()) {
+                mostrarAlerta("Campo Vacío", "Por favor, diligencie los datos");
+                return;
+            }
+            //Cambiar de ventana si el login es exitoso
+            iniciarSesion(usuarioTextField.getText(), contrasenaPasswordField.getText());
+        });
     }
+
+    private void iniciarSesion(String usuario, String contrasena) {
+        if (academiaController.iniciarSesion(usuario, contrasena)) {
+            Usuario usuarioActual = null;
+            Rol rolUsuario = Rol.DEFAULT;
+            for (Usuario u : academiaController.getListaUsuarios()) {
+                if (u.getUsuario().equals(usuario)) {
+                    usuarioActual = u;
+                    rolUsuario = u.getRol();
+                    break;
+                }
+            }
+            switch (rolUsuario) {
+                case ADMINISTRADOR:
+                    try {
+                        app.abrirVentanaPrincipal();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case ESTUDIANTE:
+                    try {
+                        pasarUsuarioEstudiante(usuarioActual);
+                        app.abrirVentanaPersonalEstudiante();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case PROFESOR:
+                    mostrarMensaje("Todo bien", "De momento bien");
+            }
+        } else {
+            mostrarAlerta("Usuario o contraseña incorrectos", "Por favor, verifique los datos ingresados. Si no tiene una cuenta registrada, por favor contacte a un administrador académicao");
+        }
+    }
+
+
 
     public static void mostrarAlerta(String titulo, String mensaje){
         Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -50,5 +103,9 @@ public class PrimaryViewController {
         Optional<ButtonType> confirmacion = alert.showAndWait();
         //Retornar seleccion
         return confirmacion.isPresent() && confirmacion.get() == ButtonType.OK;
+    }
+
+    private void pasarUsuarioEstudiante(Usuario u) {
+        ventanaPersonalEstudianteViewController.setUsuario(u);
     }
 }

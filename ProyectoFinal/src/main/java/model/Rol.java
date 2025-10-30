@@ -1,7 +1,7 @@
 package model;
 
 public enum Rol {
-ESTUDIANTE("Estudiante"), PROFESOR("Profesor"), ADMINISTRADOR("Administrador");
+ESTUDIANTE("Estudiante"), PROFESOR("Profesor"), ADMINISTRADOR("Administrador"), DEFAULT("Default");
 
     private final String rol;
     Rol(String descripcion) {

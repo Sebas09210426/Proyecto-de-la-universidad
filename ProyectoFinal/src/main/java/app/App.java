@@ -5,6 +5,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import model.Academia;
+import model.AdministradorAcademico;
+import model.Rol;
 import viewController.*;
 
 import java.io.IOException;
@@ -12,6 +14,11 @@ import java.io.IOException;
 public class App extends Application {
     //Crear la academia de la aplicacion
     public static Academia academia = new Academia("UQ Música", "12345");
+
+    //Crear un usuario administrador de ejemplo
+    static {
+        academia.agregarUsuario("admin", "admin", "12345", Rol.ADMINISTRADOR);
+    }
 
     //Iniciar la aplicacion
     Stage stage;
