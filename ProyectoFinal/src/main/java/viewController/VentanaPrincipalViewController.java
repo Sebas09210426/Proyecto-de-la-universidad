@@ -36,7 +36,7 @@ public class VentanaPrincipalViewController {
         academiaController = new AcademiaController(App.academia);
 
         //Agregar opciones al choiceBox
-        choiceBox.getItems().addAll("Gestionar Estudiantes", "Gestionar Profesores", "Entrar como estudiante");
+        choiceBox.getItems().addAll("Gestionar Estudiantes", "Gestionar Profesores");
         choiceBox.setValue("Seleccione una opción");
 
         //Inicializar la funcion de cambiar ventanas en el boton
@@ -69,9 +69,6 @@ public class VentanaPrincipalViewController {
                 break;
             case "Gestionar Profesores":
                 app.abrirVentanaProfesores();
-                break;
-            case "Entrar como estudiante":
-                app.abrirVentanaPersonalEstudiante();
                 break;
             default:
                 mostrarAlerta("Opción no seleccionada", "Por favor, seleccione una opción");

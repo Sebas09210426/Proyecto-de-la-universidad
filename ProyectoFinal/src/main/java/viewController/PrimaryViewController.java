@@ -32,6 +32,7 @@ public class PrimaryViewController {
     public void initialize() {
         academiaController = new AcademiaController(App.academia);
 
+        //Darle las funciones al boton
         iniciarSesionButton.setOnAction(event -> {
             //Verificar que los campos esten llenos
             if (usuarioTextField.getText().isEmpty() || contrasenaPasswordField.getText().isEmpty()) {
@@ -64,14 +65,17 @@ public class PrimaryViewController {
                     break;
                 case ESTUDIANTE:
                     try {
-                        pasarUsuarioEstudiante(usuarioActual);
-                        app.abrirVentanaPersonalEstudiante();
+                        app.abrirVentanaPersonalEstudiante(usuarioActual);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                     break;
                 case PROFESOR:
-                    mostrarMensaje("Todo bien", "De momento bien");
+                    try {
+                        app.abrirVentanaPersonalProfesor(usuarioActual);
+                    }  catch (IOException e) {
+                        e.printStackTrace();
+                    }
             }
         } else {
             mostrarAlerta("Usuario o contraseña incorrectos", "Por favor, verifique los datos ingresados. Si no tiene una cuenta registrada, por favor contacte a un administrador académicao");
@@ -103,9 +107,5 @@ public class PrimaryViewController {
         Optional<ButtonType> confirmacion = alert.showAndWait();
         //Retornar seleccion
         return confirmacion.isPresent() && confirmacion.get() == ButtonType.OK;
-    }
-
-    private void pasarUsuarioEstudiante(Usuario u) {
-        ventanaPersonalEstudianteViewController.setUsuario(u);
     }
 }

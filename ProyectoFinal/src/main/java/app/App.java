@@ -7,6 +7,7 @@ import javafx.stage.Stage;
 import model.Academia;
 import model.AdministradorAcademico;
 import model.Rol;
+import model.Usuario;
 import viewController.*;
 
 import java.io.IOException;
@@ -15,9 +16,11 @@ public class App extends Application {
     //Crear la academia de la aplicacion
     public static Academia academia = new Academia("UQ Música", "12345");
 
-    //Crear un usuario administrador de ejemplo
+    //Crear usuarios de ejemplo
     static {
         academia.agregarUsuario("admin", "admin", "12345", Rol.ADMINISTRADOR);
+        academia.agregarUsuario("estudiante", "estudiante", "11111", Rol.ESTUDIANTE);
+        academia.agregarUsuario("profesor", "profesor", "00000", Rol.PROFESOR);
     }
 
     //Iniciar la aplicacion
@@ -72,13 +75,37 @@ public class App extends Application {
         stage.show();
     }
 
-    public void abrirVentanaPersonalEstudiante() throws IOException {
+    public void abrirVentanaPersonalEstudiante(Usuario usuario) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/assets/ventanaPersonalEstudiante.fxml"));
         Scene scene = new Scene(loader.load());
         VentanaPersonalEstudianteViewController ventanaPersonalEstudianteViewController = loader.getController();
         ventanaPersonalEstudianteViewController.setApp(this);
+        ventanaPersonalEstudianteViewController.setUsuario(usuario);
+        ventanaPersonalEstudianteViewController.cargarDatosUsuario();
         stage.setScene(scene);
         stage.setTitle("Gestion personal estudiante");
+        stage.show();
+    }
+
+    public void abrirVentanaPersonalProfesor(Usuario usuario) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/assets/ventanaPersonalProfesor.fxml"));
+        Scene scene = new Scene(loader.load());
+        VentanaPersonalProfesorViewController ventanaPersonalProfesorViewController = loader.getController();
+        ventanaPersonalProfesorViewController.setApp(this);
+        ventanaPersonalProfesorViewController.setUsuario(usuario);
+        ventanaPersonalProfesorViewController.cargarDatosUsuario();
+        stage.setScene(scene);
+        stage.setTitle("Gestion personal estudiante");
+        stage.show();
+    }
+
+    public void abrirPrimary() throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/assets/primary.fxml"));
+        Scene scene = new Scene(loader.load());
+        PrimaryViewController primaryViewController = loader.getController();
+        primaryViewController.setApp(this);
+        stage.setScene(scene);
+        stage.setTitle("Musical");
         stage.show();
     }
 }

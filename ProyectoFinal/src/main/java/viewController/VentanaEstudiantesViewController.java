@@ -11,21 +11,19 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import model.Estudiante;
-import model.Instrumento;
-import model.NivelDeEstudio;
+import model.*;
 import javafx.scene.control.*;
-import model.Rol;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 public class VentanaEstudiantesViewController {
-
+    //Crear variables globales
     App app;
     AcademiaController academiaController;
 
     //Adquirir los elementos del fxml
-
     @FXML
     private ChoiceBox<String> gestionChoiceBox;
 
@@ -38,6 +36,7 @@ public class VentanaEstudiantesViewController {
     @FXML
     private Button cerrarSesionButton;
 
+    //Tabla de estudiantes registrados
     @FXML
     private TableView<Estudiante> estudiantesRegistradosTableView;
 
@@ -59,6 +58,34 @@ public class VentanaEstudiantesViewController {
     private ObservableList<Estudiante> estudiantesAsignadosObservableList = FXCollections.observableArrayList();
 
 
+    //Tabla de cursos registrados
+    @FXML
+    private TableView<Curso> cursosRegistradosTableView;
+
+    @FXML
+    private TableColumn<Curso, LocalDate> fechaCursoTableColumn;
+
+    @FXML
+    private TableColumn<Curso, LocalTime> horaCursoTableColumn;
+
+    @FXML
+    private TableColumn<Curso, String> instrumentoCursoTableColumn;
+
+    @FXML
+    private TableColumn<Curso, String> nivelCursoTableColumn;
+
+    @FXML
+    private TableColumn<Curso, Integer> estudiantesCursoTableColumn;
+
+    @FXML
+    private TableColumn<Curso, Integer> cuposCursoTableColumn;
+
+    @FXML
+    private TableColumn<Curso, String> profesorCursoTableColumn;
+
+    private ObservableList<Curso> cursosAsignadosObservableList = FXCollections.observableArrayList();
+
+
     public void setApp(App app) {
         this.app = app;
     }
@@ -78,6 +105,8 @@ public class VentanaEstudiantesViewController {
         estudiantesRegistradosTableView.setItems(estudiantesAsignadosObservableList);
         //Cargar lista de estudiantes registrados por si se cambia de pestana
         cargarListaEstudiantesRegistrados();
+
+        //Preparar columnas de los cursos registrados
 
         //Añadir opciones al ChoiceBox
         gestionChoiceBox.getItems().addAll("Crear Estudiante", "Eliminar Estudiante", "Modificar Estudiante");
@@ -110,7 +139,7 @@ public class VentanaEstudiantesViewController {
         cerrarSesionButton.setOnAction(event -> {
             if(mostrarConfirmacion("COnfirmación", "¿Seguro que quiere cerrar sesión?")) {
                 try {
-                    abrirVentanaPrincipal();
+                    volverAlPrimary();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -680,5 +709,9 @@ public class VentanaEstudiantesViewController {
         estudiantesAsignadosObservableList.clear();
         estudiantesAsignadosObservableList.addAll(academiaController.getEstudiantesRegsitrados());
         estudiantesRegistradosTableView.setItems(estudiantesAsignadosObservableList);
+    }
+
+    private void volverAlPrimary() throws IOException {
+        app.abrirPrimary();
     }
 }

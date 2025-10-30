@@ -2,12 +2,10 @@ package viewController;
 
 import app.App;
 import controller.AcademiaController;
-
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.TitledPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import model.Usuario;
@@ -15,27 +13,30 @@ import model.Usuario;
 import java.io.IOException;
 
 import static viewController.PrimaryViewController.*;
+import static viewController.PrimaryViewController.mostrarAlerta;
+import static viewController.PrimaryViewController.mostrarMensaje;
 
-public class VentanaPersonalEstudianteViewController {
-
+public class VentanaPersonalProfesorViewController {
+    //Declarar variables globales
     private App app;
-    private AcademiaController academiaController;
+    private AcademiaController academiaController;;
     private Usuario usuarioActual;
 
+    //Obtener elementos del fxml
     @FXML
-    private Label bienvenidoLabel;
+    Label bienvenidoLabel;
 
     @FXML
-    private ChoiceBox<String> gestionChoiceBox;
+    Button cerrarSesionButton;
 
     @FXML
-    private VBox requisitosGestionVBox;
+    ChoiceBox<String> gestionChoiceBox;
 
     @FXML
-    private TitledPane informacionGestionEstudianteTitledPane;
+    VBox requisitosGestionVBox;
 
-    @FXML
-    private Button cerrarSesionButton;
+
+
 
     public void setApp(App app) {
         this.app = app;
@@ -45,7 +46,6 @@ public class VentanaPersonalEstudianteViewController {
         this.usuarioActual = usuario;
     }
 
-    //Mostrar los datos del usuario
     public void cargarDatosUsuario() {
         bienvenidoLabel.setText("Bienvenido " + usuarioActual.getUsuario());
     }
@@ -163,8 +163,9 @@ public class VentanaPersonalEstudianteViewController {
         requisitosGestionVBox.getChildren().addAll(label, gridPane, boton);
     }
 
+
+
     private void volverAlPrimary() throws IOException {
         app.abrirPrimary();
     }
-
 }

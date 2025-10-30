@@ -106,7 +106,13 @@ public class VentanaProfesoresViewController {
             }
         });
         cerrarSesionButton.setOnAction(event -> {
-            mostrarAlerta("Ejemplo", "Hasta aqui todo bien");
+            if(mostrarConfirmacion("COnfirmación", "¿Seguro que quiere cerrar sesión?")) {
+                try {
+                    volverAlPrimary();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         });
     }
 
@@ -638,5 +644,9 @@ public class VentanaProfesoresViewController {
         profesoresRegistradosObservableList.clear();
         profesoresRegistradosObservableList.addAll(academiaController.getProfesoresRegistrados());
         profesoresRegistradosTableView.setItems(profesoresRegistradosObservableList);
+    }
+
+    private void volverAlPrimary() throws IOException {
+        app.abrirPrimary();
     }
 }
