@@ -4,10 +4,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import model.Academia;
-import model.AdministradorAcademico;
-import model.Rol;
-import model.Usuario;
+import model.*;
 import viewController.*;
 
 import java.io.IOException;
@@ -19,7 +16,13 @@ public class App extends Application {
     //Crear usuarios de ejemplo
     static {
         academia.agregarUsuario("admin", "admin", "12345", Rol.ADMINISTRADOR);
+
+        Estudiante nuevoEstudiante = new Estudiante("estudiante", "estudiante", "11111", NivelDeEstudio.BASICO, Instrumento.CANTO);
+        academia.agregarEstudiante(nuevoEstudiante);
         academia.agregarUsuario("estudiante", "estudiante", "11111", Rol.ESTUDIANTE);
+
+        Profesor nuevoProfesor = new Profesor("profesor", "profesor", "00000");
+        academia.agregarProfesor(nuevoProfesor);
         academia.agregarUsuario("profesor", "profesor", "00000", Rol.PROFESOR);
     }
 
@@ -95,7 +98,7 @@ public class App extends Application {
         ventanaPersonalProfesorViewController.setUsuario(usuario);
         ventanaPersonalProfesorViewController.cargarDatosUsuario();
         stage.setScene(scene);
-        stage.setTitle("Gestion personal estudiante");
+        stage.setTitle("Gestion personal profesor");
         stage.show();
     }
 

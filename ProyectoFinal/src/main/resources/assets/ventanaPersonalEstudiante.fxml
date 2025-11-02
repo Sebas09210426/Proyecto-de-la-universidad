@@ -70,7 +70,42 @@
       </SplitPane>
       <TitledPane fx:id="informacionGestionEstudianteTitledPane" animated="false" layoutY="254.0" prefHeight="396.0" prefWidth="600.0" text="Información personal">
         <content>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+               <children>
+                  <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="370.0" prefWidth="600.0">
+                     <children>
+                        <VBox alignment="TOP_CENTER" prefHeight="370.0" prefWidth="191.0" spacing="10.0">
+                           <children>
+                              <Label text="Datos Personales">
+                                 <font>
+                                    <Font name="Bodoni MT" size="18.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets bottom="15.0" />
+                                 </VBox.margin></Label>
+                              <Label fx:id="nombreLabel" layoutX="40.0" layoutY="40.0" text="Nombre: ">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="apellidoLabel" layoutX="76.0" layoutY="78.0" text="Apellido:">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="identificacionLabel" layoutX="76.0" layoutY="98.0" text="Identificación:">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                           <padding>
+                              <Insets top="30.0" />
+                           </padding></VBox>
+                        <VBox prefHeight="370.0" prefWidth="211.0" />
+                        <VBox prefHeight="370.0" prefWidth="205.0" />
+                     </children></HBox>
+               </children></AnchorPane>
         </content>
       </TitledPane>
    </children>

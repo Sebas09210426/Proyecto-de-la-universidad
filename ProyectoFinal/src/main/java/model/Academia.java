@@ -4,6 +4,7 @@ package model;
 import java.util.LinkedList;
 
 public class Academia {
+    public boolean buscarCurso;
     //Atributos
     private String nombre;
     private String nit;
@@ -236,5 +237,27 @@ public class Academia {
             }
         }
         return false;
+    }
+
+    public boolean agregarCurso(Curso nuevoCurso) {
+        if (nuevoCurso == null){
+            return false;
+        }
+        for (Curso c : listaCursos) {
+            if (nuevoCurso.getCodigo().equals(c.getCodigo())) {
+                return false;
+            }
+        }
+        listaCursos.add(nuevoCurso);
+        return true;
+    }
+
+    public Curso buscarCurso(String codigo) {
+        for (Curso c : listaCursos) {
+            if (c.getCodigo().equals(codigo)){
+                return c;
+            }
+        }
+        return null;
     }
 }

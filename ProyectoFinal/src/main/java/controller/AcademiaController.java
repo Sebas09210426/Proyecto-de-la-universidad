@@ -48,4 +48,12 @@ public class AcademiaController {
     public boolean iniciarSesion(String usuario, String contrasena) {
         return academia.iniciarSesion(usuario, contrasena);
     }
+
+    public LinkedList<Curso> getCursosRegsitrados() {
+        return academia.getListaCursos();
+    }
+
+    public boolean crearCurso(Curso nuevoCurso) {return academia.agregarCurso(nuevoCurso);}
+
+    public boolean consultarExistenciaCurso(String codigo) {return academia.buscarCurso(codigo) != null;}
 }

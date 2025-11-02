@@ -1,6 +1,8 @@
 package viewController;
 
 import app.App;
+
+import static java.lang.Integer.parseInt;
 import static viewController.PrimaryViewController.mostrarAlerta;
 import static viewController.PrimaryViewController.mostrarMensaje;
 import static viewController.PrimaryViewController.mostrarConfirmacion;
@@ -17,6 +19,7 @@ import javafx.scene.control.*;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.LinkedList;
 
 public class VentanaEstudiantesViewController {
     //Crear variables globales
@@ -35,6 +38,9 @@ public class VentanaEstudiantesViewController {
 
     @FXML
     private Button cerrarSesionButton;
+
+    @FXML
+    private TabPane ventanasTabPane;
 
     //Tabla de estudiantes registrados
     @FXML
@@ -83,7 +89,7 @@ public class VentanaEstudiantesViewController {
     @FXML
     private TableColumn<Curso, String> profesorCursoTableColumn;
 
-    private ObservableList<Curso> cursosAsignadosObservableList = FXCollections.observableArrayList();
+    private ObservableList<Curso> cursosRegistradosObservableList = FXCollections.observableArrayList();
 
 
     public void setApp(App app) {
@@ -103,13 +109,28 @@ public class VentanaEstudiantesViewController {
 
         //Enlazar la lista de estudiantes al TableView
         estudiantesRegistradosTableView.setItems(estudiantesAsignadosObservableList);
+
+
         //Cargar lista de estudiantes registrados por si se cambia de pestana
         cargarListaEstudiantesRegistrados();
 
         //Preparar columnas de los cursos registrados
+        fechaCursoTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().getFecha()));
+        horaCursoTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().getHora()));
+        instrumentoCursoTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getInstrumento().toString()));
+        nivelCursoTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getNivelDeEstudio().toString()));
+        estudiantesCursoTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleIntegerProperty(cellData.getValue().getEstudiantesRegistrados().size()).asObject());
+        cuposCursoTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleIntegerProperty(cellData.getValue().getCapacidad() - cellData.getValue().getEstudiantesRegistrados().size()).asObject());
+        profesorCursoTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getProfesor() != null ? cellData.getValue().getProfesor().getNombre() + " " + cellData.getValue().getProfesor().getApellido() : "Sin asignar"));
+
+        //Enlazar la lista de cursos al TableView
+        cursosRegistradosTableView.setItems(cursosRegistradosObservableList);
+
+        //Cargar lista de estudiantes registrados por si se cambia de pestana
+        cargarListaCursosRegistrados();
 
         //Añadir opciones al ChoiceBox
-        gestionChoiceBox.getItems().addAll("Crear Estudiante", "Eliminar Estudiante", "Modificar Estudiante");
+        gestionChoiceBox.getItems().addAll("Crear Estudiante", "Eliminar Estudiante", "Modificar Estudiante", "Consultar Estudiante");
 
         //Obtener el cambio de eleccion del ChoiceBox
         gestionChoiceBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -123,8 +144,40 @@ public class VentanaEstudiantesViewController {
                 case "Modificar Estudiante":
                     mostrarRequisitosModificarEstudiante();
                     break;
+                case "Consultar Estudiante":
+                    mostrarRequisitosConsultarEstudiante();
+                    break;
+                case "Crear Curso":
+                    mostrarRequisitosCrearCurso();
+                    break;
+                case "Eliminar Curso":
+                    mostrarRequisitosEliminarCurso();
+                    break;
+                case "Consultar Curso":
+                    mostrarRequisitosConsultarCurso();
+                    break;
             }
         });
+
+        //Configurar acciones al cambiar de ventana
+        ventanasTabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newTab) -> {
+            //Cambiar opciones del ChoiceBox
+            if (newTab != null) {
+                String nuevoTab = newTab.getText();
+                System.out.println(nuevoTab);
+                switch (nuevoTab) {
+                    case "Cursos registrados":
+                        gestionChoiceBox.getItems().clear();
+                        gestionChoiceBox.getItems().addAll("Crear Curso", "Eliminar Curso", "Consultar Curso");
+                        break;
+                    case "Estudiantes Registrados":
+                        gestionChoiceBox.getItems().clear();
+                        gestionChoiceBox.getItems().addAll("Crear Estudiante", "Eliminar Estudiante", "Modificar Estudiante", "Consultar Estudiante");
+                        break;
+                }
+            }
+        });
+
 
         //Configurar botones de volver atras y cerrar sesion
         volverAlMenuAnteriorButton.setOnAction(event -> {
@@ -137,7 +190,7 @@ public class VentanaEstudiantesViewController {
             }
         });
         cerrarSesionButton.setOnAction(event -> {
-            if(mostrarConfirmacion("COnfirmación", "¿Seguro que quiere cerrar sesión?")) {
+            if(mostrarConfirmacion("Confirmación", "¿Seguro que quiere cerrar sesión?")) {
                 try {
                     volverAlPrimary();
                 } catch (IOException e) {
@@ -147,17 +200,6 @@ public class VentanaEstudiantesViewController {
         });
     }
 
-    private void abrirVentanaPrincipal() throws IOException {
-        app.abrirVentanaPrincipal();
-    }
-
-    private boolean consultarExistenciaEstudiante(String identificacion) {
-        return academiaController.consultarExistenciaEstudiante(identificacion);
-    }
-
-    private Estudiante buscarEstudiante(String identificacion) {
-        return academiaController.buscarEstudiante(identificacion);
-    }
 
     private void mostrarRequisitosCrearEstudiante() {
         //Crear elementos del vbox
@@ -697,6 +739,243 @@ public class VentanaEstudiantesViewController {
         actualizarListaEstudiantesRegistrados(); //Si no se actualiza la lista, no se ven reflejados los cambios
     }
 
+    private void mostrarRequisitosConsultarEstudiante() {
+        //Crear elementos del VBox
+        Label label = new Label("Consultar Estudiante");
+        Label identificacionEstudianteLabel = new Label("Identificación:");
+        TextField identificacionEstudianteTextField = new TextField();
+
+        //Asignar los elementos crados a un GridPane
+        GridPane gridPane = new GridPane();
+        gridPane.setHgap(10);
+        gridPane.setVgap(10);
+        gridPane.add(identificacionEstudianteLabel, 0, 0);
+        gridPane.add(identificacionEstudianteTextField, 1, 0);
+
+        Button boton = new Button("Consultar");
+
+        //Vincular la funcion al boton creado
+        boton.setOnAction(e -> {
+            //Verificar que el campo del String este diligenciado
+            if (identificacionEstudianteTextField.getText().isEmpty()) {
+                mostrarAlerta("Campo vacío", "Por favor, diligencie la identificacion del estudiante");
+                return;
+            }
+            consultarEstudiante(identificacionEstudianteTextField.getText());
+        });
+
+        //Mostrar los requisitos en el VBox
+        requisitosDeGestionDeEstudiantesVBox.getChildren().clear();
+        requisitosDeGestionDeEstudiantesVBox.getChildren().addAll(label, gridPane, boton);
+    }
+
+    private void consultarEstudiante(String identificacion) {
+        if (consultarExistenciaEstudiante(identificacion)) {
+            Estudiante nuevoEstudiante = buscarEstudiante(identificacion);
+            mostrarMensaje("Estudiante Consultado", nuevoEstudiante.toString());
+        } else {
+            mostrarAlerta("Estudiante no existe", "La identificación del estudiante no está registrada, por favor verifique la identificación diligenciada");
+        }
+
+    }
+
+    private void mostrarRequisitosCrearCurso() {
+        Label label = new Label("Crear Curso");
+
+        Label fechaLabel = new Label("Fecha:");
+        DatePicker fechaDatePicker = new DatePicker();
+
+        Label horaLabel = new Label("Hora:");
+        ChoiceBox<String> horaChoiceBox = new ChoiceBox<>();
+        horaChoiceBox.getItems().addAll("08:00", "09:00", "10:00", "11:00", "14:00", "15:00");
+
+        Label capacidadLabel = new Label("Capacidad:");
+        TextField capacidadTextField = new TextField();
+
+        Label instrumentoLabel = new Label("Instrumento:");
+        ChoiceBox<String> instrumentoChoiceBox = new ChoiceBox<>();
+        instrumentoChoiceBox.getItems().addAll("Guitarra", "Piano", "Canto", "Violín", "Flauta", "Otro");
+
+        Label nivelDeEstudioLabel = new Label("Nivel de Estudio:");
+        ChoiceBox<String> nivelDeEstudioChoiceBox = new ChoiceBox<>();
+        nivelDeEstudioChoiceBox.getItems().addAll("Básico", "Medio", "Avanzado");
+
+        GridPane gridPane = new GridPane();
+        gridPane.setHgap(10);
+        gridPane.setVgap(10);
+        gridPane.add(fechaLabel, 0, 0);
+        gridPane.add(fechaDatePicker, 1, 0);
+        gridPane.add(horaLabel, 0, 1);
+        gridPane.add(horaChoiceBox, 1, 1);
+        gridPane.add(capacidadLabel, 0, 2);
+        gridPane.add(capacidadTextField, 1, 2);
+        gridPane.add(instrumentoLabel, 0, 3);
+        gridPane.add(instrumentoChoiceBox, 1, 3);
+        gridPane.add(nivelDeEstudioLabel, 0, 4);
+        gridPane.add(nivelDeEstudioChoiceBox, 1, 4);
+
+        Button boton = new Button("Crear Curso");
+
+        boton.setOnAction(event -> {
+            // Validar y obtener los datos
+            if (fechaDatePicker.getValue() == null ||
+                    capacidadTextField.getText().isEmpty() ||
+                    horaChoiceBox.getValue() == null) {
+                mostrarAlerta("Campo vacío", "Por favor, diligencie todos los campos");
+                return;
+            }
+
+            //Convertir el String seleccionado a la clase Instrumento
+            Instrumento instrumento = Instrumento.DEFAULT;
+            switch (instrumentoChoiceBox.getSelectionModel().getSelectedItem()) {
+                case "Guitarra":
+                    instrumento = Instrumento.GUITARRA;
+                    break;
+                case "Piano":
+                    instrumento = Instrumento.PIANO;
+                    break;
+                case "Canto":
+                    instrumento = Instrumento.CANTO;
+                    break;
+                case "Flauta":
+                    instrumento = Instrumento.FLAUTA;
+                    break;
+                case "Otro":
+                    instrumento = Instrumento.OTRO;
+                    break;
+                case "Violín":
+                    instrumento = Instrumento.VIOLIN;
+                    break;
+                case null:
+                    mostrarAlerta("Instrumento no seleccionado", "Por favor, elija un instrumento");
+                    return;
+                default:
+                    break;
+            }
+
+            //Convertir el String seleccionado a la clase NivelDeEstudio
+            NivelDeEstudio nivelDeEstudio = NivelDeEstudio.DEFAULT;
+            switch (nivelDeEstudioChoiceBox.getSelectionModel().getSelectedItem()) {
+                case "Avanzado":
+                    nivelDeEstudio = NivelDeEstudio.AVANZADO;
+                    break;
+                case "Básico":
+                    nivelDeEstudio = NivelDeEstudio.BASICO;
+                    break;
+                case "Medio":
+                    nivelDeEstudio = NivelDeEstudio.MEDIO;
+                    break;
+                case null:
+                    mostrarAlerta("Nivel de estudio no seleccionado", "Por favor, elija un nivel de estudio");
+                    return;
+                default:
+                    break;
+            }
+
+            //Crear el Curso
+            int capacidad = Integer.parseInt(capacidadTextField.getText());
+            LocalDate fecha = fechaDatePicker.getValue();
+            LocalTime hora = LocalTime.parse(horaChoiceBox.getValue());
+            String codigo = crearCodigoCurso(fecha);
+            crearCurso(capacidad, new LinkedList<>(), fecha, hora, instrumento, nivelDeEstudio, codigo);
+        });
+
+        requisitosDeGestionDeEstudiantesVBox.getChildren().clear();
+        requisitosDeGestionDeEstudiantesVBox.getChildren().addAll(label, gridPane, boton);
+    }
+
+    private void crearCurso(int capacidad, LinkedList<Estudiante> estudiantes, LocalDate fecha, LocalTime hora, Instrumento instrumento, NivelDeEstudio nivelDeEstudio, String codigo) {
+        Curso nuevoCurso = new Curso(capacidad, estudiantes, fecha, hora, instrumento, nivelDeEstudio,null, codigo);
+
+        if (academiaController.crearCurso(nuevoCurso)) {
+            mostrarCursoRegistrado(nuevoCurso);
+            mostrarMensaje("Curso creado", "Curso creado exitosamente");
+        } else {
+            mostrarAlerta("Error al crear Curso", "El curso ya existe");
+        }
+    }
+
+    private void mostrarCursoRegistrado(Curso curso) {
+        cursosRegistradosObservableList.add(curso);
+    }
+
+    private String crearCodigoCurso(LocalDate fecha) {
+        int finalCodigo = 1;
+        String codigo = fecha.toString() + finalCodigo;
+        for(Curso curso : academiaController.getCursosRegsitrados()) {
+            if (curso.getCodigo().equals(codigo)) {
+                finalCodigo ++;
+                codigo = fecha.toString() + finalCodigo;
+            }
+        }
+        return codigo;
+    }
+
+    private void mostrarRequisitosEliminarCurso() {
+        Label label = new Label("Eliminar Curso");
+    }
+
+    private void mostrarRequisitosConsultarCurso() {
+        //Crear elementos del VBox
+        Label label = new Label("Consultar Curso");
+        Label codigoCursoLabel = new Label("Código:");
+        TextField codigoCursoTextField = new TextField();
+
+        //Asignar los elementos crados a un GridPane
+        GridPane gridPane = new GridPane();
+        gridPane.setHgap(10);
+        gridPane.setVgap(10);
+        gridPane.add(codigoCursoLabel, 0, 0);
+        gridPane.add(codigoCursoTextField, 1, 0);
+
+        Button boton = new Button("Consultar");
+
+        //Vincular la funcion al boton creado
+        boton.setOnAction(e -> {
+            //Verificar que el campo del String este diligenciado
+            if (codigoCursoTextField.getText().isEmpty()) {
+                mostrarAlerta("Campo vacío", "Por favor, diligencie el codigo del curso");
+                return;
+            }
+            consultarCurso(codigoCursoTextField.getText());
+        });
+
+        //Mostrar los requisitos en el VBox
+        requisitosDeGestionDeEstudiantesVBox.getChildren().clear();
+        requisitosDeGestionDeEstudiantesVBox.getChildren().addAll(label, gridPane, boton);
+    }
+
+    private void consultarCurso(String codigo) {
+        if (consultarExistenciaCurso(codigo)) {
+            Curso nuevoCurso = buscarCurso(codigo);
+            mostrarMensaje("Curso Consultado", nuevoCurso.toString());
+        } else {
+            mostrarAlerta("Curso no existe", "El código del curso no está registrada, por favor verifique el código diligenciada");
+        }
+    }
+
+
+
+
+    private boolean consultarExistenciaCurso(String codigo) {
+        return academiaController.consultarExistenciaCurso(codigo);
+    }
+    private Estudiante buscarEstudiante(String identificacion) {
+        return academiaController.buscarEstudiante(identificacion);
+    }
+
+    private boolean consultarExistenciaEstudiante(String identificacion) {
+        return academiaController.consultarExistenciaEstudiante(identificacion);
+    }
+
+    private Curso buscarCurso(String codigo) {
+        for(Curso curso : academiaController.getCursosRegsitrados()) {
+            if (curso.getCodigo().equals(codigo)) {
+            return curso;}
+        }
+        return null;
+    }
+
     private void actualizarListaEstudiantesRegistrados() {
         estudiantesRegistradosTableView.refresh();
     }
@@ -709,6 +988,12 @@ public class VentanaEstudiantesViewController {
         estudiantesAsignadosObservableList.clear();
         estudiantesAsignadosObservableList.addAll(academiaController.getEstudiantesRegsitrados());
         estudiantesRegistradosTableView.setItems(estudiantesAsignadosObservableList);
+    }
+
+    private void cargarListaCursosRegistrados() {
+        cursosRegistradosObservableList.clear();
+        cursosRegistradosObservableList.addAll(academiaController.getCursosRegsitrados());
+        cursosRegistradosTableView.setItems(cursosRegistradosObservableList);
     }
 
     private void volverAlPrimary() throws IOException {

@@ -4,12 +4,10 @@ import app.App;
 import controller.AcademiaController;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TitledPane;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import model.Estudiante;
 import model.Usuario;
 
 import java.io.IOException;
@@ -21,6 +19,7 @@ public class VentanaPersonalEstudianteViewController {
     private App app;
     private AcademiaController academiaController;
     private Usuario usuarioActual;
+    private Estudiante estudianteActual;
 
     @FXML
     private Label bienvenidoLabel;
@@ -37,6 +36,15 @@ public class VentanaPersonalEstudianteViewController {
     @FXML
     private Button cerrarSesionButton;
 
+    @FXML
+    private Label nombreLabel;
+
+    @FXML
+    private Label apellidoLabel;
+
+    @FXML
+    private Label identificacionLabel;
+
     public void setApp(App app) {
         this.app = app;
     }
@@ -47,11 +55,20 @@ public class VentanaPersonalEstudianteViewController {
 
     //Mostrar los datos del usuario
     public void cargarDatosUsuario() {
-        bienvenidoLabel.setText("Bienvenido " + usuarioActual.getUsuario());
+        //Obtener estudiante del usuario
+        estudianteActual = academiaController.buscarEstudiante(usuarioActual.getIdentificacion());
+
+        //Actualizar los datos
+        bienvenidoLabel.setText("Bienvenido " + estudianteActual.getNombre());
+        nombreLabel.setText("Nombre: " + estudianteActual.getNombre());
+        apellidoLabel.setText("Apellido: " + estudianteActual.getApellido());
+        identificacionLabel.setText("Identificacion: " + estudianteActual.getIdentificacion());
     }
 
     @FXML
     private void initialize() {
+        academiaController = new AcademiaController(App.academia);
+
         //Darle una funcion al boton de cerrar sesion
         cerrarSesionButton.setOnAction(event -> {
             if(mostrarConfirmacion("Confirmación", "¿Seguro que quiere salir de la ventana actual?")) {
@@ -131,7 +148,7 @@ public class VentanaPersonalEstudianteViewController {
 
         Label consultaLabel = new Label("Seleccione su consulta:");
         ChoiceBox<String> consultaChoiceBox = new ChoiceBox<>();
-        consultaChoiceBox.getItems().addAll("Actualizar nombre", "Actualizar apellido", "Actualizar identificación");
+        consultaChoiceBox.getItems().addAll("Actualizar nombre", "Actualizar apellido");
         consultaChoiceBox.setValue("Seleccione una opción");
 
         GridPane gridPane = new GridPane();
@@ -140,19 +157,21 @@ public class VentanaPersonalEstudianteViewController {
         gridPane.add(consultaLabel, 0, 0);
         gridPane.add(consultaChoiceBox, 1, 0);
 
-        Button boton = new Button("Consultar");
+        Button boton = new Button("Confirmar");
         boton.setOnAction(event -> {
             //Decidir que mostrar dependiendo de la seleccion
             switch(consultaChoiceBox.getValue()) {
                 case "Actualizar nombre":
-                    mostrarMensaje("Actualizar nombre", "Hasta aqui todo bien");
+                    mostrarRequisitosActualizarNombre();
                     break;
                 case "Actualizar apellido":
-                    mostrarMensaje("Actualizar apellido", "Hasta aqui bien");
+                    mostrarRequisitosActualizarApellido();
                     break;
+                /* Esta funcion deberia pertenecer a un admin
                 case "Actualizar identificación":
-                    mostrarMensaje("Consultar identificacion", "Hasta aqui bien");
+                    mostrarRequisitosActualzarIdentificacion();
                     break;
+                 */
                 default:
                     mostrarAlerta("Opción no seleccionada", "Por favor, seleccione su actualización");
                     break;
@@ -161,6 +180,144 @@ public class VentanaPersonalEstudianteViewController {
 
         requisitosGestionVBox.getChildren().clear();
         requisitosGestionVBox.getChildren().addAll(label, gridPane, boton);
+    }
+
+    private void mostrarRequisitosActualizarNombre() {
+        //Crear elementos del Vbox
+        Label label = new Label("Actualizar nombre");
+        Label nombreEstudianteLabel = new Label("Nuevo nombre:");
+        TextField nombreEstudianteTextField = new TextField();
+
+        //Asignar elementos creados a un GridPane
+        GridPane gridPane = new GridPane();
+        gridPane.setHgap(10);
+        gridPane.setVgap(10);
+        gridPane.add(nombreEstudianteLabel, 0, 0);
+        gridPane.add(nombreEstudianteTextField, 1, 0);
+
+        //Crear boton del VBox
+        Button boton = new Button("Actualizar");
+
+        //Asginar funciones al boton creado
+        boton.setOnAction(e -> {
+            //Verificar que los campos esten diligenciados
+            if (nombreEstudianteTextField.getText().isEmpty()) {
+                mostrarAlerta("Nombre vacío", "Por favor, diligencie el nuevo nombre");
+                return;
+            }
+            actualizarNombre(usuarioActual.getIdentificacion(), nombreEstudianteTextField.getText());
+            cargarDatosUsuario();
+            mostrarMensaje("Nombre actualizado", "Nombre actualizado correctamente");
+        });
+
+        //VBox adicional para la gestion deseada
+        VBox actualizacionVBox = new VBox();
+        actualizacionVBox.setSpacing(10);
+
+        //Mostrar los requisitos en el VBox
+        requisitosGestionVBox.getChildren().clear();
+        requisitosGestionVBox.getChildren().addAll(label, gridPane, boton, actualizacionVBox);
+    }
+
+    private void actualizarNombre(String identificacion, String nuevoNombre) {
+        Estudiante estudiante = buscarEstudiante(identificacion);
+        estudiante.setNombre(nuevoNombre);
+    }
+
+    private void mostrarRequisitosActualizarApellido() {
+        //Crear elementos del Vbox
+        Label label = new Label("Actualizar apellido");
+        Label apellidoEstudianteLabel = new Label("Nuevo apellido:");
+        TextField apeliidoEstudianteTextField = new TextField();
+
+        //Asignar elementos creados a un GridPane
+        GridPane gridPane = new GridPane();
+        gridPane.setHgap(10);
+        gridPane.setVgap(10);
+        gridPane.add(apellidoEstudianteLabel, 0, 0);
+        gridPane.add(apeliidoEstudianteTextField, 1, 0);
+
+        //Crear boton del VBox
+        Button boton = new Button("Actualizar");
+
+        //Asginar funciones al boton creado
+        boton.setOnAction(e -> {
+            //Verificar que los campos esten diligenciados
+            if (apeliidoEstudianteTextField.getText().isEmpty()) {
+                mostrarAlerta("Apellido vacío", "Por favor, diligencie el nuevo apellido");
+                return;
+            }
+            actualizarApellido(usuarioActual.getIdentificacion(), apeliidoEstudianteTextField.getText());
+            cargarDatosUsuario();
+            mostrarMensaje("Apellido actualizado", "Apellido actualizado correctamente");
+        });
+
+        //VBox adicional para la gestion deseada
+        VBox actualizacionVBox = new VBox();
+        actualizacionVBox.setSpacing(10);
+
+        //Mostrar los requisitos en el VBox
+        requisitosGestionVBox.getChildren().clear();
+        requisitosGestionVBox.getChildren().addAll(label, gridPane, boton, actualizacionVBox);
+    }
+
+    private void actualizarApellido(String identificacion, String nuevoApellido) {
+        Estudiante estudiante = buscarEstudiante(identificacion);
+        estudiante.setApellido(nuevoApellido);
+    }
+
+    /*
+    Esta funcion pertenece mayormente a un admin, por lo que solo vamos a dejarla comentada
+    private void mostrarRequisitosActualizarIdentificacion() {
+        //Crear elementos del Vbox
+        Label label = new Label("Actualizar identificación");
+        Label identificacionEstudianteLabel = new Label("Nueva identificación:");
+        TextField identicacionEstudianteTextField = new TextField();
+
+        //Asignar elementos creados a un GridPane
+        GridPane gridPane = new GridPane();
+        gridPane.setHgap(10);
+        gridPane.setVgap(10);
+        gridPane.add(identificacionEstudianteLabel, 0, 0);
+        gridPane.add(identicacionEstudianteTextField, 1, 0);
+
+        //Crear boton del VBox
+        Button boton = new Button("Actualizar");
+
+        //Asginar funciones al boton creado
+        boton.setOnAction(e -> {
+            //Verificar que los campos esten diligenciados
+            if (identicacionEstudianteTextField.getText().isEmpty()) {
+                mostrarAlerta("Identificación vacía", "Por favor, diligencie la nueva identificación");
+                return;
+            }
+            actualizarApellido(usuarioActual.getIdentificacion(), identicacionEstudianteTextField.getText());
+            cargarDatosUsuario();
+            mostrarMensaje("Identificación actualizada", "Identificacion actualizada correctamente");
+        });
+
+        //VBox adicional para la gestion deseada
+        VBox actualizacionVBox = new VBox();
+        actualizacionVBox.setSpacing(10);
+
+        //Mostrar los requisitos en el VBox
+        requisitosGestionVBox.getChildren().clear();
+        requisitosGestionVBox.getChildren().addAll(label, gridPane, boton, actualizacionVBox);
+    }
+
+    private void actualizarIdentificacion(String identificacion, String nuevaIdentificacion) {
+        Estudiante estudiante = buscarEstudiante(identificacion);
+        estudiante.setIdentificacion(nuevaIdentificacion);
+    }
+     */
+
+
+
+
+
+
+    private Estudiante buscarEstudiante(String identificacion) {
+        return academiaController.buscarEstudiante(identificacion);
     }
 
     private void volverAlPrimary() throws IOException {

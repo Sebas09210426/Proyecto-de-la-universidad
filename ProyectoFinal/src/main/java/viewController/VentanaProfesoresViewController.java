@@ -65,14 +65,14 @@ public class VentanaProfesoresViewController {
     private void initialize() {
         academiaController = new AcademiaController(App.academia);
 
-        //Preparar columnas de los estudiantes registrados
+        //Preparar columnas de los profesores registrados
         nombreProfesoresRegistradosTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getNombre()));
         apellidoProfesoresRegistradosTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getApellido()));
         identificacionProfesoresRegistradosTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getIdentificacion()));
         estudiantesAsignadosTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleIntegerProperty((cellData.getValue().getListaEstudiantesAsignados().size())).asObject());
         cursosAsignadosProfesoresRegistradosTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleIntegerProperty(cellData.getValue().getListaCursosAsignados().size()).asObject());
 
-        //Enlazar la lista de estudiantes al TableView
+        //Enlazar la lista de profesores al TableView
         profesoresRegistradosTableView.setItems(profesoresRegistradosObservableList);
         //Refrescar la tabla por si se cambia de pestana
         cargarListaProfesoresRegistrados();
@@ -146,7 +146,7 @@ public class VentanaProfesoresViewController {
         gridPane.add(identificacionProfesorLabel, 0, 2);
         gridPane.add(identificacionProfesorTextField, 1, 2);
 
-        //Crear el boton para crear estudiante
+        //Crear el boton para crear profesor
         Button boton = new Button("Crear Profesor");
 
         //Vincular la funcion al boton creado
@@ -222,9 +222,9 @@ public class VentanaProfesoresViewController {
         if (academiaController.crearProfesor(nuevoProfesor)) {
             mostrarProfesorRegistrado(nuevoProfesor);
             crearUsuarioProfesor(identificacion, identificacion, identificacion, Rol.PROFESOR); //Por defecto, el usuario se crea con la misma identificacion, despues se puede modificar
-            mostrarMensaje("Estudiante creado", "Estudiante creado exitosamente");
+            mostrarMensaje("Profesor creado", "Profesor creado exitosamente");
         } else {
-            mostrarAlerta("Error al crear estudiante", "El estudiante ya existe");
+            mostrarAlerta("Error al crear profesor", "El profesor ya existe");
         }
 
     }
@@ -256,7 +256,7 @@ public class VentanaProfesoresViewController {
         boton.setOnAction(e -> {
             //Verificar que el campo del String este diligenciado
             if (identificacionProfesorTextField.getText().isEmpty()) {
-                mostrarAlerta("Campo vacío", "Por favor, diligencie la identificacion del estudiante");
+                mostrarAlerta("Campo vacío", "Por favor, diligencie la identificacion del profesor");
                 return;
             }
             eliminarProfesor(identificacionProfesorTextField.getText());
@@ -334,7 +334,7 @@ public class VentanaProfesoresViewController {
                         gestionActual = "Cambiar nombre";
                         break;
                     } else {
-                        mostrarAlerta("Estudiante no encontrado", "La identificacion del profesor no esta registrada");
+                        mostrarAlerta("Profesor no encontrado", "La identificacion del profesor no esta registrada");
                         break;
                     }
                 case "Cambiar apellido":
@@ -346,7 +346,7 @@ public class VentanaProfesoresViewController {
                         gestionActual = "Cambiar apellido";
                         break;
                     } else {
-                        mostrarAlerta("Estudiante no encontrado", "La identificacion del profesor no esta registrada");
+                        mostrarAlerta("Profesor no encontrado", "La identificacion del profesor no esta registrada");
                         break;
                     }
                 case "Cambiar identificación":
@@ -358,7 +358,7 @@ public class VentanaProfesoresViewController {
                         gestionActual = "Cambiar identificacion";
                         break;
                     } else {
-                        mostrarAlerta("Estudiante no encontrado", "La identificacion del profesor no esta registrada");
+                        mostrarAlerta("Profesor no encontrado", "La identificacion del profesor no esta registrada");
                         break;
                     }
             }
