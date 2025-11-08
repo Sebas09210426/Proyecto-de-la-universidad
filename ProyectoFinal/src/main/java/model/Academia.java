@@ -260,4 +260,14 @@ public class Academia {
         }
         return null;
     }
+
+    public boolean eliminarCurso(String codigo) {
+        for (Curso c : listaCursos) {
+            if (c.getCodigo().equals(codigo)){
+                listaCursos.remove(c);
+                return true;
+            }
+        }
+        return false;
+    }
 }

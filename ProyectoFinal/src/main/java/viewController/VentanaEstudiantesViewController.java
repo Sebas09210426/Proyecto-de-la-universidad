@@ -156,6 +156,9 @@ public class VentanaEstudiantesViewController {
                 case "Consultar Curso":
                     mostrarRequisitosConsultarCurso();
                     break;
+                case "Modificar Curso":
+                    mostrarRequisitosModificarCurso();
+                    break;
             }
         });
 
@@ -164,11 +167,10 @@ public class VentanaEstudiantesViewController {
             //Cambiar opciones del ChoiceBox
             if (newTab != null) {
                 String nuevoTab = newTab.getText();
-                System.out.println(nuevoTab);
                 switch (nuevoTab) {
                     case "Cursos registrados":
                         gestionChoiceBox.getItems().clear();
-                        gestionChoiceBox.getItems().addAll("Crear Curso", "Eliminar Curso", "Consultar Curso");
+                        gestionChoiceBox.getItems().addAll("Crear Curso", "Eliminar Curso", "Consultar Curso", "Modificar Curso");
                         break;
                     case "Estudiantes Registrados":
                         gestionChoiceBox.getItems().clear();
@@ -787,7 +789,7 @@ public class VentanaEstudiantesViewController {
 
         Label horaLabel = new Label("Hora:");
         ChoiceBox<String> horaChoiceBox = new ChoiceBox<>();
-        horaChoiceBox.getItems().addAll("08:00", "09:00", "10:00", "11:00", "14:00", "15:00");
+        horaChoiceBox.getItems().addAll("08:00", "09:00", "10:00", "11:00", "12:00", "14:00", "15:00", "16:00");
 
         Label capacidadLabel = new Label("Capacidad:");
         TextField capacidadTextField = new TextField();
@@ -912,7 +914,55 @@ public class VentanaEstudiantesViewController {
     }
 
     private void mostrarRequisitosEliminarCurso() {
+        //Crear elementos del VBox
         Label label = new Label("Eliminar Curso");
+        Label codigoCursoLabel = new Label("Código:");
+        TextField codigoCursoTextField = new TextField();
+
+        //Asignar los elementos crados a un GridPane
+        GridPane gridPane = new GridPane();
+        gridPane.setHgap(10);
+        gridPane.setVgap(10);
+        gridPane.add(codigoCursoLabel, 0, 0);
+        gridPane.add(codigoCursoTextField, 1, 0);
+
+        Button boton = new Button("Eliminar");
+
+        //Vincular la funcion al boton creado
+        boton.setOnAction(e -> {
+            //Verificar que el campo del String este diligenciado
+            if (codigoCursoTextField.getText().isEmpty()) {
+                mostrarAlerta("Campo vacío", "Por favor, diligencie el codigo del curso");
+                return;
+            }
+            eliminarCurso(codigoCursoTextField.getText());
+        });
+
+        //Mostrar los requisitos en el VBox
+        requisitosDeGestionDeEstudiantesVBox.getChildren().clear();
+        requisitosDeGestionDeEstudiantesVBox.getChildren().addAll(label, gridPane, boton);
+    }
+
+    private void eliminarCurso(String codigo) {
+        if (academiaController.eliminarCurso(codigo)) {
+            quitarCursoEliminado(codigo);
+            mostrarMensaje("Curso eliminado", "Curso eliminado exitosamente");
+        } else {
+            mostrarAlerta("Curso no existe", "El código del curso no está registrada, por favor verifique el código diligenciada");
+        }
+    }
+
+    private void quitarCursoEliminado(String codigo) {
+        Curso curso = null;
+
+        for (Curso c : cursosRegistradosObservableList) {
+            if (c.getCodigo().equals(codigo)) {
+                curso = c;
+                break;
+            }
+        }
+
+        cursosRegistradosObservableList.remove(curso);
     }
 
     private void mostrarRequisitosConsultarCurso() {
@@ -954,7 +1004,179 @@ public class VentanaEstudiantesViewController {
         }
     }
 
+    private void mostrarRequisitosModificarCurso() {
+        //Crear elementos del Vbox
+        Label label = new Label("Modificar Curso");
+        Label codigoCuroLabel = new Label("Código:");
+        TextField codigoCursoTextField = new TextField();
+        Label modificacionCursoLabel = new Label("Modificación:");
+        ChoiceBox<String> modificacionCursoChoiceBox = new ChoiceBox<>();
+        //Añadir opciones al ChoiceBox
+        modificacionCursoChoiceBox.getItems().addAll("Cambiar fecha", "Cambiar hora", "Cambiar capacidad", "Cambiar profesor", "Asignar estudiante", "Quitar estudiante");
 
+        //Asignar elementos creados a un GridPane
+        GridPane gridPane = new GridPane();
+        gridPane.setHgap(10);
+        gridPane.setVgap(10);
+        gridPane.add(codigoCuroLabel, 0, 0);
+        gridPane.add(codigoCursoTextField, 1, 0);
+        gridPane.add(modificacionCursoLabel, 0, 1);
+        gridPane.add(modificacionCursoChoiceBox, 1, 1);
+
+        //Crear boton del VBox
+        Button boton = new Button("Modificar");
+
+        //Asginar funciones al boton creado
+        boton.setOnAction(e -> {
+            //Verificar que los campos esten diligenciados
+            if (codigoCursoTextField.getText().isEmpty()) {
+                mostrarAlerta("Campo vacío", "Por favor, diligencie el código del curso");
+                return;
+            } else if (modificacionCursoChoiceBox.getSelectionModel().isEmpty()) {
+                mostrarAlerta("Campo vacío", "Por favor, seleccione una opción de modificación");
+                return;
+            }
+
+            //Mostrar los requisitos de la gestion seleccionada
+            String gestionActual = "Defecto";
+            switch (modificacionCursoChoiceBox.getSelectionModel().getSelectedItem()) {
+                case "Cambiar fecha":
+                    //Verificar que exista el curso con ese codigo
+                    if (consultarExistenciaCurso(codigoCursoTextField.getText())) {
+                        mostrarRequisitosModificarFechaCurso(codigoCursoTextField.getText());
+                        boton.setVisible(false); //Ocultar boton para evitar que el usuario pueda volver a crear la misma interfaz
+                        boton.setDisable(true); //Desactivar el boton para evitar que el usuario pueda volver a crear la misma interfaz
+                        gestionActual = "Cambiar fecha";
+                        break;
+                    } else {
+                        mostrarAlerta("Curso no encontrado", "El código del curso no esta registrado");
+                        break;
+                    }
+                case "Cambiar hora":
+                    //Verificar que exista el curso con ese codigo
+                    if (consultarExistenciaCurso(codigoCursoTextField.getText())) {
+                        mostrarMensaje("Cabiar hora", "Bien");
+                        boton.setVisible(false); //Ocultar boton para evitar que el usuario pueda volver a crear la misma interfaz
+                        boton.setDisable(true); //Desactivar el boton para evitar que el usuario pueda volver a crear la misma interfaz
+                        gestionActual = "Cambiar hora";
+                        break;
+                    } else {
+                        mostrarAlerta("Curso no encontrado", "El código del curso no esta registrado");
+                        break;
+                    }
+                case "Cambiar capacidad":
+                    //Verificar que exista el curso con ese codigo
+                    if (consultarExistenciaCurso(codigoCursoTextField.getText())) {
+                        mostrarMensaje("Cabiar capacidad", "Bien");
+                        boton.setVisible(false); //Ocultar boton para evitar que el usuario pueda volver a crear la misma interfaz
+                        boton.setDisable(true); //Desactivar el boton para evitar que el usuario pueda volver a crear la misma interfaz
+                        gestionActual = "Cambiar capacidad";
+                        break;
+                    } else {
+                        mostrarAlerta("Curso no encontrado", "El código del curso no esta registrado");
+                        break;
+                    }
+                case "Cambiar profesor":
+                    //Verificar que exista el curso con ese codigo
+                    if (consultarExistenciaCurso(codigoCursoTextField.getText())) {
+                        mostrarMensaje("Cabiar capacidad", "Bien");
+                        boton.setVisible(false); //Ocultar boton para evitar que el usuario pueda volver a crear la misma interfaz
+                        boton.setDisable(true); //Desactivar el boton para evitar que el usuario pueda volver a crear la misma interfaz
+                        gestionActual = "Cambiar profesor";
+                        break;
+                    } else {
+                        mostrarAlerta("Curso no encontrado", "El código del curso no esta registrado");
+                        break;
+                    }
+                case "Asignar estudiante":
+                    //Verificar que exista el curso con ese codigo
+                    if (consultarExistenciaCurso(codigoCursoTextField.getText())) {
+                        mostrarMensaje("Asignar estudiante", "Bien");
+                        boton.setVisible(false); //Ocultar boton para evitar que el usuario pueda volver a crear la misma interfaz
+                        boton.setDisable(true);
+                        gestionActual = "Asignar estudiante";
+                        break;
+                    } else {
+                        mostrarAlerta("Curso no encontrado", "El código del curso no esta registrado");
+                        break;
+                    }
+                case "Quitar estudiante":
+                    //Verificar que exista el curso con ese codigo
+                    if (consultarExistenciaCurso(codigoCursoTextField.getText())) {
+                        mostrarMensaje("Quitar estudiante", "Bien");
+                        boton.setVisible(false); //Ocultar boton para evitar que el usuario pueda volver a crear la misma interfaz
+                        boton.setDisable(true);
+                        gestionActual = "Asignar estudiante";
+                        break;
+                    } else {
+                        mostrarAlerta("Curso no encontrado", "El código del curso no esta registrado");
+                        break;
+                    }
+            }
+
+            //Obtener el cambio de eleccion del ChoiceBox
+            String finalGestionActual = gestionActual;
+            modificacionCursoChoiceBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+                //Habilitar boton nuevamente
+                if(!newValue.equals(oldValue) && !newValue.equals(finalGestionActual)) {
+                    boton.setVisible(true); // Volver a hacer visible el boton para cambiar de interfaz
+                    boton.setDisable(false); // Volver a activar la funcion del boton para cambiar de interfaz
+                } else  {
+                    boton.setVisible(false);
+                    boton.setDisable(true);
+                }
+            });
+
+        });
+
+        //VBox adicional para la gestion deseada
+        VBox gestionElegidaVBox = new VBox();
+        gestionElegidaVBox.setSpacing(10);
+
+        //Mostrar los requisitos en el VBox
+        requisitosDeGestionDeEstudiantesVBox.getChildren().clear();
+        requisitosDeGestionDeEstudiantesVBox.getChildren().addAll(label, gridPane, boton, gestionElegidaVBox);
+    }
+
+    private void mostrarRequisitosModificarFechaCurso(String codigo) {
+        //Crear elementos adicionales para el VBox
+        Label label = new Label("Nueva fecha:");
+        DatePicker nuevaFechaCursoDatePicker = new DatePicker();
+
+        //Agregar los elementos creados a un GridPane
+        GridPane gridPane = new GridPane();
+        gridPane.setMaxSize(300, 300);
+        gridPane.setHgap(10);
+        gridPane.setVgap(10);
+        gridPane.add(label, 0, 0);
+        gridPane.add(nuevaFechaCursoDatePicker, 1, 0);
+
+        //Crear boton adicional
+        Button boton = new Button("Confirmar");
+        //Agregar funcion al boton creado
+        boton.setOnAction(e -> {
+            //Verificar que el campo no este vacio
+            if (nuevaFechaCursoDatePicker.getValue() == null) {
+                mostrarAlerta("Campo vacío", "Por favor, diligencie la nueva fecha del curso");
+                return;
+            }
+            modificarFechaCurso(codigo, nuevaFechaCursoDatePicker.getValue());
+            mostrarMensaje("Curso actualizado", "Curso actualizado exitosamente");
+        });
+
+        VBox adicionalVBox = new VBox();
+        adicionalVBox.getChildren().addAll(gridPane, boton);
+
+        //Agregar los nuevos elementos al VBox
+        requisitosDeGestionDeEstudiantesVBox.getChildren().removeLast();
+        requisitosDeGestionDeEstudiantesVBox.getChildren().addAll(adicionalVBox);
+    }
+
+    private void modificarFechaCurso(String codigo, LocalDate fecha) {
+        Curso curso = buscarCurso(codigo);
+        curso.setFecha(fecha);
+        actualizarListaCursosRegistrados(); //Si no se actualiza la lista, no se ven reflejados los cambios
+    }
 
 
     private boolean consultarExistenciaCurso(String codigo) {
@@ -978,6 +1200,10 @@ public class VentanaEstudiantesViewController {
 
     private void actualizarListaEstudiantesRegistrados() {
         estudiantesRegistradosTableView.refresh();
+    }
+
+    private void actualizarListaCursosRegistrados() {
+        cursosRegistradosTableView.refresh();
     }
 
     private void volverAlMenuAnterior() throws IOException {
