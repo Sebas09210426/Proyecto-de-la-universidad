@@ -75,6 +75,9 @@ public class VentanaEstudiantesViewController {
     private TableColumn<Curso, LocalTime> horaCursoTableColumn;
 
     @FXML
+    private TableColumn<Curso, String> aulaCursoTableColumn;
+
+    @FXML
     private TableColumn<Curso, String> instrumentoCursoTableColumn;
 
     @FXML
@@ -117,6 +120,7 @@ public class VentanaEstudiantesViewController {
         //Preparar columnas de los cursos registrados
         fechaCursoTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().getFecha()));
         horaCursoTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().getHora()));
+        aulaCursoTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getAulaAsignada() != null ? cellData.getValue().getAulaAsignada().getId() : "Sin asignar"));
         instrumentoCursoTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getInstrumento().toString()));
         nivelCursoTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getNivelDeEstudio().toString()));
         estudiantesCursoTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleIntegerProperty(cellData.getValue().getEstudiantesRegistrados().size()).asObject());
@@ -600,6 +604,9 @@ public class VentanaEstudiantesViewController {
             if (nuevaIdentificacionEstudianteTextField.getText().isEmpty()) {
                 mostrarAlerta("Campo vacío", "Por favor, diligencie la nueva identificación del estudiante");
                 return;
+            } else if (academiaController.consultarExistenciaIdentificacion(nuevaIdentificacionEstudianteTextField.getText())) {
+                mostrarAlerta("Identificación existente", "Por favor, ingrese una identificación no esitente");
+                return;
             }
             modificarIdentificacionEstudiante(identificacion,  nuevaIdentificacionEstudianteTextField.getText());
             mostrarMensaje("Estudiante actualizado", "Estudiante actualizado exitosamente");
@@ -789,7 +796,7 @@ public class VentanaEstudiantesViewController {
 
         Label horaLabel = new Label("Hora:");
         ChoiceBox<String> horaChoiceBox = new ChoiceBox<>();
-        horaChoiceBox.getItems().addAll("08:00", "09:00", "10:00", "11:00", "12:00", "14:00", "15:00", "16:00");
+        horaChoiceBox.getItems().addAll("08:00", "10:00", "12:00", "14:00", "16:00", "18:00");
 
         Label capacidadLabel = new Label("Capacidad:");
         TextField capacidadTextField = new TextField();
@@ -802,6 +809,10 @@ public class VentanaEstudiantesViewController {
         ChoiceBox<String> nivelDeEstudioChoiceBox = new ChoiceBox<>();
         nivelDeEstudioChoiceBox.getItems().addAll("Básico", "Medio", "Avanzado");
 
+        Label aulaLabel = new Label("Aula:");
+        ChoiceBox<String> aulaChoiceBox = new ChoiceBox<>();
+        aulaChoiceBox.getItems().addAll("Aula 1", "Aula 2", "Aula 2", "Aula 3", "Aula 4", "Aula 5");
+
         GridPane gridPane = new GridPane();
         gridPane.setHgap(10);
         gridPane.setVgap(10);
@@ -809,12 +820,14 @@ public class VentanaEstudiantesViewController {
         gridPane.add(fechaDatePicker, 1, 0);
         gridPane.add(horaLabel, 0, 1);
         gridPane.add(horaChoiceBox, 1, 1);
-        gridPane.add(capacidadLabel, 0, 2);
-        gridPane.add(capacidadTextField, 1, 2);
-        gridPane.add(instrumentoLabel, 0, 3);
-        gridPane.add(instrumentoChoiceBox, 1, 3);
-        gridPane.add(nivelDeEstudioLabel, 0, 4);
-        gridPane.add(nivelDeEstudioChoiceBox, 1, 4);
+        gridPane.add(aulaLabel, 0, 2);
+        gridPane.add(aulaChoiceBox, 1, 2);
+        gridPane.add(capacidadLabel, 0, 3);
+        gridPane.add(capacidadTextField, 1, 3);
+        gridPane.add(instrumentoLabel, 0, 4);
+        gridPane.add(instrumentoChoiceBox, 1, 4);
+        gridPane.add(nivelDeEstudioLabel, 0, 5);
+        gridPane.add(nivelDeEstudioChoiceBox, 1, 5);
 
         Button boton = new Button("Crear Curso");
 
@@ -822,7 +835,7 @@ public class VentanaEstudiantesViewController {
             // Validar y obtener los datos
             if (fechaDatePicker.getValue() == null ||
                     capacidadTextField.getText().isEmpty() ||
-                    horaChoiceBox.getValue() == null) {
+                    horaChoiceBox.getValue() == null || aulaChoiceBox.getValue() == null) {
                 mostrarAlerta("Campo vacío", "Por favor, diligencie todos los campos");
                 return;
             }
@@ -874,20 +887,62 @@ public class VentanaEstudiantesViewController {
                     break;
             }
 
+            //Consultar la disponibildad del aula seleccionada
+            String idAula = "000";
+            switch(aulaChoiceBox.getSelectionModel().getSelectedItem()) {
+                case "Aula 1":
+                    if (!consultarDisponibildadAula("001", fechaDatePicker.getValue(), LocalTime.parse(horaChoiceBox.getValue()))) {
+                        mostrarAlerta("Aula no disponible", "Por favor, elija un horario diferente");
+                        return;
+                    }
+                    idAula = "001";
+                    break;
+                case "Aula 2":
+                    if (!consultarDisponibildadAula("002", fechaDatePicker.getValue(), LocalTime.parse(horaChoiceBox.getValue()))) {
+                        mostrarAlerta("Aula no disponible", "Por favor, elija un horario diferente");
+                        return;
+                    }
+                    idAula = "002";
+                    break;
+                case "Aula 3":
+                    if (!consultarDisponibildadAula("003", fechaDatePicker.getValue(), LocalTime.parse(horaChoiceBox.getValue()))) {
+                        mostrarAlerta("Aula no disponible", "Por favor, elija un horario diferente");
+                        return;
+                    }
+                    idAula = "003";
+                    break;
+                case "Aula 4":
+                    if (!consultarDisponibildadAula("004", fechaDatePicker.getValue(), LocalTime.parse(horaChoiceBox.getValue()))) {
+                        mostrarAlerta("Aula no disponible", "Por favor, elija un horario diferente");
+                        return;
+                    }
+                    idAula = "004";
+                    break;
+                case "Aula 5":
+                    if (!consultarDisponibildadAula("005", fechaDatePicker.getValue(), LocalTime.parse(horaChoiceBox.getValue()))) {
+                        mostrarAlerta("Aula no disponible", "Por favor, elija un horario diferente");
+                        return;
+                    }
+                    idAula = "005";
+                    break;
+            }
+
             //Crear el Curso
             int capacidad = Integer.parseInt(capacidadTextField.getText());
             LocalDate fecha = fechaDatePicker.getValue();
             LocalTime hora = LocalTime.parse(horaChoiceBox.getValue());
             String codigo = crearCodigoCurso(fecha);
-            crearCurso(capacidad, new LinkedList<>(), fecha, hora, instrumento, nivelDeEstudio, codigo);
+            crearCurso(capacidad, new LinkedList<>(), fecha, hora, instrumento, nivelDeEstudio, codigo, idAula);
         });
 
         requisitosDeGestionDeEstudiantesVBox.getChildren().clear();
         requisitosDeGestionDeEstudiantesVBox.getChildren().addAll(label, gridPane, boton);
     }
 
-    private void crearCurso(int capacidad, LinkedList<Estudiante> estudiantes, LocalDate fecha, LocalTime hora, Instrumento instrumento, NivelDeEstudio nivelDeEstudio, String codigo) {
-        Curso nuevoCurso = new Curso(capacidad, estudiantes, fecha, hora, instrumento, nivelDeEstudio,null, codigo);
+    private void crearCurso(int capacidad, LinkedList<Estudiante> estudiantes, LocalDate fecha, LocalTime hora, Instrumento instrumento, NivelDeEstudio nivelDeEstudio, String codigo, String idAula) {
+        Aula aula = buscarAula(idAula);
+
+        Curso nuevoCurso = new Curso(capacidad, estudiantes, fecha, hora, instrumento, nivelDeEstudio,null, codigo, aula);
 
         if (academiaController.crearCurso(nuevoCurso)) {
             mostrarCursoRegistrado(nuevoCurso);
@@ -904,7 +959,7 @@ public class VentanaEstudiantesViewController {
     private String crearCodigoCurso(LocalDate fecha) {
         int finalCodigo = 1;
         String codigo = fecha.toString() + finalCodigo;
-        for(Curso curso : academiaController.getCursosRegsitrados()) {
+        for(Curso curso : academiaController.getCursosRegistrados()) {
             if (curso.getCodigo().equals(codigo)) {
                 finalCodigo ++;
                 codigo = fecha.toString() + finalCodigo;
@@ -1182,6 +1237,7 @@ public class VentanaEstudiantesViewController {
     private boolean consultarExistenciaCurso(String codigo) {
         return academiaController.consultarExistenciaCurso(codigo);
     }
+
     private Estudiante buscarEstudiante(String identificacion) {
         return academiaController.buscarEstudiante(identificacion);
     }
@@ -1191,11 +1247,24 @@ public class VentanaEstudiantesViewController {
     }
 
     private Curso buscarCurso(String codigo) {
-        for(Curso curso : academiaController.getCursosRegsitrados()) {
+        for(Curso curso : academiaController.getCursosRegistrados()) {
             if (curso.getCodigo().equals(codigo)) {
             return curso;}
         }
         return null;
+    }
+
+    private Aula buscarAula(String id) {
+        for (Aula aula : academiaController.getListaAulas()) {
+            if (aula.getId().equals(id)) {
+                return  aula;
+            }
+        }
+        return null;
+    }
+
+    private boolean consultarDisponibildadAula(String id, LocalDate fecha, LocalTime hora) {
+        return academiaController.consultarDisponibilidadAula(id, fecha, hora);
     }
 
     private void actualizarListaEstudiantesRegistrados() {
@@ -1218,7 +1287,7 @@ public class VentanaEstudiantesViewController {
 
     private void cargarListaCursosRegistrados() {
         cursosRegistradosObservableList.clear();
-        cursosRegistradosObservableList.addAll(academiaController.getCursosRegsitrados());
+        cursosRegistradosObservableList.addAll(academiaController.getCursosRegistrados());
         cursosRegistradosTableView.setItems(cursosRegistradosObservableList);
     }
 

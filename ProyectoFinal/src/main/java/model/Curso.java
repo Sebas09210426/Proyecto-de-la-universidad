@@ -14,9 +14,10 @@ public class Curso {
     private NivelDeEstudio nivelDeEstudio;
     private Profesor profesor;
     private String codigo;
+    private Aula aulaAsignada;
 
     //Constructor
-    public Curso(int capacidad, LinkedList<Estudiante> estudiantesRegistrados, LocalDate fecha, LocalTime hora, Instrumento intrumento, NivelDeEstudio nivelDeEstudio, Profesor profesor, String codigo) {
+    public Curso(int capacidad, LinkedList<Estudiante> estudiantesRegistrados, LocalDate fecha, LocalTime hora, Instrumento intrumento, NivelDeEstudio nivelDeEstudio, Profesor profesor, String codigo, Aula aulaAsignada) {
         this.capacidad = capacidad;
         this.estudiantesRegistrados = estudiantesRegistrados;
         this.fecha = fecha;
@@ -25,6 +26,7 @@ public class Curso {
         this.nivelDeEstudio = nivelDeEstudio;
         this.profesor = profesor;
         this.codigo = codigo;
+        this.aulaAsignada = aulaAsignada;
     }
 
     //Getters y Setters
@@ -92,11 +94,20 @@ public class Curso {
         this.profesor = profesor;
     }
 
+    public Aula getAulaAsignada() {
+        return aulaAsignada;
+    }
+
+    public void setAulaAsignada(Aula aulaAsignada) {
+        this.aulaAsignada = aulaAsignada;
+    }
+
     @Override
     public String toString() {
         return "Curso {" + "\n" +
                 "Fecha: " + fecha.toString() + "\n" +
                 "Hora: " + hora.toString() + "\n" +
+                "Aula asignada: " + (aulaAsignada != null ? aulaAsignada.getId() : "Sin asignar") + "\n" +
                 "Capacidad: " + capacidad + "\n" +
                 "Estudiantes registrados: " + estudiantesRegistrados.size() + "\n" +
                 "Cupos disponibles: " + (capacidad - estudiantesRegistrados.size()) + "\n" +

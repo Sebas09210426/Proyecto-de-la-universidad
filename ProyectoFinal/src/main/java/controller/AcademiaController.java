@@ -2,6 +2,8 @@ package controller;
 
 import model.*;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.LinkedList;
 
 public class AcademiaController {
@@ -28,6 +30,8 @@ public class AcademiaController {
     public Estudiante buscarEstudiante(String identificacion) {
         return academia.buscarEstudiante(identificacion);
     }
+
+    public boolean consultarExistenciaIdentificacion(String identificacion) {return academia.consultarExistenciaIdentificacion(identificacion);}
 
     public boolean crearProfesor(Profesor profesor) {
         return academia.agregarProfesor(profesor);
@@ -65,7 +69,7 @@ public class AcademiaController {
         return academia.iniciarSesion(usuario, contrasena);
     }
 
-    public LinkedList<Curso> getCursosRegsitrados() {
+    public LinkedList<Curso> getCursosRegistrados() {
         return academia.getListaCursos();
     }
 
@@ -80,4 +84,8 @@ public class AcademiaController {
     public boolean eliminarCurso(String codigo) {
         return academia.eliminarCurso(codigo);
     }
+
+    public LinkedList<Aula> getListaAulas() {return academia.getListaAulas();}
+
+    public boolean consultarDisponibilidadAula(String id, LocalDate fecha, LocalTime hora) {return academia.consultarDisponibilidadAula(id, fecha, hora);}
 }

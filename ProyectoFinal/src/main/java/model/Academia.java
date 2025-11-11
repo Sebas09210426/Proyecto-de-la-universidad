@@ -1,6 +1,8 @@
 package model;
 
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.LinkedList;
 
 public class Academia {
@@ -12,6 +14,7 @@ public class Academia {
     private LinkedList<Profesor> listaProfesores;
     private LinkedList<Curso> listaCursos;
     private LinkedList<Usuario> listaUsuarios;
+    private LinkedList<Aula> listaAulas;
 
     //Constructor
 
@@ -22,6 +25,7 @@ public class Academia {
         this.listaProfesores = new LinkedList<>();
         this.listaCursos = new LinkedList<>();
         this.listaUsuarios = new LinkedList<>();
+        this.listaAulas = new LinkedList<>();
     }
 
     //Getters y Setters
@@ -71,6 +75,14 @@ public class Academia {
     }
     public void setListaUsuarios(LinkedList<Usuario> listaUsuarios) {
         this.listaUsuarios = listaUsuarios;
+    }
+
+    public LinkedList<Aula> getListaAulas() {
+        return listaAulas;
+    }
+
+    public void setListaAulas(LinkedList<Aula> listaAulas) {
+        this.listaAulas = listaAulas;
     }
 
     //CRUD
@@ -269,5 +281,43 @@ public class Academia {
             }
         }
         return false;
+    }
+
+    public boolean agregarAula(Aula aula) {
+        for (Aula a : listaAulas) {
+            if (aula.getId().equals(a.getId())) {
+                return false;
+            }
+        }
+        listaAulas.add(aula);
+        return true;
+    }
+
+    public boolean consultarExistenciaIdentificacion(String identificacion) {
+        for (Estudiante e : listaEstudiantes) {
+            if (e.getIdentificacion().equals(identificacion)){
+                return true;
+            }
+        }
+        for (Profesor p : listaProfesores) {
+            if (p.getIdentificacion().equals(identificacion)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean consultarDisponibilidadAula(String id, LocalDate fecha, LocalTime hora) {
+        for (Aula a : listaAulas) {
+            if (a.getId().equals(id)){
+                LinkedList<ClaseAsignada> clasesAsignadas = a.getClasesAsignadas();
+                for (ClaseAsignada c : clasesAsignadas){
+                    if (c.getFecha().equals(fecha) && c.getHora().equals(hora)){
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 }

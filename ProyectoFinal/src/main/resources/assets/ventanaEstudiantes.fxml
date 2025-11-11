@@ -93,13 +93,14 @@
                      <children>
                         <TableView fx:id="cursosRegistradosTableView" layoutX="1.0" layoutY="-1.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="369.0" prefWidth="600.0">
                           <columns>
-                            <TableColumn fx:id="fechaCursoTableColumn" prefWidth="84.1999785900116" text="Fecha" />
+                            <TableColumn fx:id="fechaCursoTableColumn" prefWidth="71.0" text="Fecha" />
                               <TableColumn fx:id="horaCursoTableColumn" prefWidth="75.0" text="Hora" />
-                            <TableColumn fx:id="instrumentoCursoTableColumn" prefWidth="77.60000610351562" text="Instrumento" />
-                              <TableColumn fx:id="nivelCursoTableColumn" prefWidth="106.00001525878906" text="Nivel" />
-                              <TableColumn fx:id="estudiantesCursoTableColumn" prefWidth="70.39996337890625" text="Estudiantes" />
-                              <TableColumn fx:id="cuposCursoTableColumn" prefWidth="74.4000244140625" text="Cupos" />
-                              <TableColumn fx:id="profesorCursoTableColumn" prefWidth="112.79998779296875" text="Profesor" />
+                              <TableColumn fx:id="aulaCursoTableColumn" prefWidth="53.20001220703125" text="Aula" />
+                            <TableColumn fx:id="instrumentoCursoTableColumn" prefWidth="89.40000915527344" text="Instrumento" />
+                              <TableColumn fx:id="nivelCursoTableColumn" prefWidth="87.5999755859375" text="Nivel" />
+                              <TableColumn fx:id="estudiantesCursoTableColumn" prefWidth="73.5999755859375" text="Estudiantes" />
+                              <TableColumn fx:id="cuposCursoTableColumn" prefWidth="43.20001220703125" text="Cupos" />
+                              <TableColumn fx:id="profesorCursoTableColumn" prefWidth="109.5999755859375" text="Profesor" />
                           </columns>
                         </TableView>
                      </children></AnchorPane>
