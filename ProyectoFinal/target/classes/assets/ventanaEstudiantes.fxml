@@ -94,13 +94,14 @@
                         <TableView fx:id="cursosRegistradosTableView" layoutX="1.0" layoutY="-1.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="369.0" prefWidth="600.0">
                           <columns>
                             <TableColumn fx:id="fechaCursoTableColumn" prefWidth="71.0" text="Fecha" />
-                              <TableColumn fx:id="horaCursoTableColumn" prefWidth="75.0" text="Hora" />
-                              <TableColumn fx:id="aulaCursoTableColumn" prefWidth="75.0" text="Aula" />
-                            <TableColumn fx:id="instrumentoCursoTableColumn" prefWidth="92.0" text="Instrumento" />
-                              <TableColumn fx:id="nivelCursoTableColumn" prefWidth="84.0" text="Nivel" />
-                              <TableColumn fx:id="estudiantesCursoTableColumn" prefWidth="71.0" text="Estudiantes" />
-                              <TableColumn fx:id="cuposCursoTableColumn" prefWidth="42.0" text="Cupos" />
-                              <TableColumn fx:id="profesorCursoTableColumn" prefWidth="89.0" text="Profesor" />
+                              <TableColumn fx:id="horaCursoTableColumn" prefWidth="42.199981689453125" text="Hora" />
+                              <TableColumn fx:id="aulaCursoTableColumn" prefWidth="38.20000457763672" text="Aula" />
+                            <TableColumn fx:id="instrumentoCursoTableColumn" prefWidth="89.79998779296875" text="Instrumento" />
+                              <TableColumn fx:id="nivelCursoTableColumn" prefWidth="66.4000244140625" text="Nivel" />
+                              <TableColumn fx:id="estudiantesCursoTableColumn" prefWidth="70.39996337890625" text="Estudiantes" />
+                              <TableColumn fx:id="cuposCursoTableColumn" prefWidth="43.20001220703125" text="Cupos" />
+                              <TableColumn fx:id="profesorCursoTableColumn" prefWidth="89.00003051757812" text="Profesor" />
+                              <TableColumn fx:id="codigoCursoTableColumn" prefWidth="87.79998779296875" text="Código" />
                           </columns>
                         </TableView>
                      </children></AnchorPane>

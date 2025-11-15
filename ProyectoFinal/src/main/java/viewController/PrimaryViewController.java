@@ -78,7 +78,7 @@ public class PrimaryViewController {
                     }
             }
         } else {
-            mostrarAlerta("Usuario o contraseña incorrectos", "Por favor, verifique los datos ingresados. Si no tiene una cuenta registrada, por favor contacte a un administrador académicao");
+            mostrarAlerta("Usuario o contraseña incorrectos", "Por favor, verifique los datos ingresados. Si no tiene una cuenta registrada, por favor contacte a un administrador académico");
         }
     }
 

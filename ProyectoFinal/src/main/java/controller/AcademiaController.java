@@ -87,5 +87,9 @@ public class AcademiaController {
 
     public LinkedList<Aula> getListaAulas() {return academia.getListaAulas();}
 
+    public boolean asignarClase(ClaseAsignada claseAsignada, Aula aula) {
+        return academia.asignarClase(claseAsignada, aula);
+    }
+
     public boolean consultarDisponibilidadAula(String id, LocalDate fecha, LocalTime hora) {return academia.consultarDisponibilidadAula(id, fecha, hora);}
 }

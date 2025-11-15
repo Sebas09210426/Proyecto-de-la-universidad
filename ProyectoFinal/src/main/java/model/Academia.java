@@ -293,6 +293,18 @@ public class Academia {
         return true;
     }
 
+    public boolean asignarClase(ClaseAsignada claseAsignada, Aula aula) {
+        for (Aula a : listaAulas) {
+            if (a.getId().equals(aula.getId())) {
+                a.getClasesAsignadas().add(claseAsignada);
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+
     public boolean consultarExistenciaIdentificacion(String identificacion) {
         for (Estudiante e : listaEstudiantes) {
             if (e.getIdentificacion().equals(identificacion)){
