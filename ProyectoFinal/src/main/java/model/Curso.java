@@ -113,7 +113,7 @@ public class Curso {
                 "Cupos disponibles: " + (capacidad - estudiantesRegistrados.size()) + "\n" +
                 "Instrumento: " + instrumento.toString() + "\n" +
                 "Nivel de estudio: " + nivelDeEstudio.toString() + "\n" +
-                "Profesor: " + (profesor != null ? profesor.toString() : "Sin asignar") + "\n" +
+                "Profesor: " + (profesor != null ? profesor.getNombre() + profesor.getApellido() : "Sin asignar") + "\n" +
                 "Codigo: " + codigo + "\n" +
                 '}';
     }

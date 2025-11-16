@@ -38,8 +38,8 @@ public class Profesor extends Persona {
                 "Nombre: " + getNombre() + "\n" +
                 "Apellido: " + getApellido() + "\n" +
                 "Identificacion: " + getIdentificacion() + "\n" +
-                "Estudiantes Asignados=" + listaEstudiantesAsignados + "\n" +
-                "Cursos Asignados=" + listaCursosAsignados + "\n" +
+                "Estudiantes Asignados=" + listaEstudiantesAsignados.size() + "\n" +
+                "Cursos Asignados=" + listaCursosAsignados.size() + "\n" +
                 '}';
     }
 }

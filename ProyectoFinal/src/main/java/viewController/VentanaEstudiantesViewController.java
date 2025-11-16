@@ -1096,7 +1096,7 @@ public class VentanaEstudiantesViewController {
         Label modificacionCursoLabel = new Label("Modificación:");
         ChoiceBox<String> modificacionCursoChoiceBox = new ChoiceBox<>();
         //Añadir opciones al ChoiceBox
-        modificacionCursoChoiceBox.getItems().addAll("Cambiar fecha", "Cambiar hora", "Cambiar capacidad", "Cambiar profesor", "Asignar estudiante", "Quitar estudiante");
+        modificacionCursoChoiceBox.getItems().addAll("Cambiar fecha", "Cambiar hora", "Cambiar capacidad", "Asignar estudiante", "Quitar estudiante");
 
         //Asignar elementos creados a un GridPane
         GridPane gridPane = new GridPane();
@@ -1155,18 +1155,6 @@ public class VentanaEstudiantesViewController {
                         boton.setVisible(false); //Ocultar boton para evitar que el usuario pueda volver a crear la misma interfaz
                         boton.setDisable(true); //Desactivar el boton para evitar que el usuario pueda volver a crear la misma interfaz
                         gestionActual = "Cambiar capacidad";
-                        break;
-                    } else {
-                        mostrarAlerta("Curso no encontrado", "El código del curso no esta registrado");
-                        break;
-                    }
-                case "Cambiar profesor":
-                    //Verificar que exista el curso con ese codigo
-                    if (consultarExistenciaCurso(codigoCursoTextField.getText())) {
-                        mostrarMensaje("Cambiar profesor", "Bien");
-                        boton.setVisible(false); //Ocultar boton para evitar que el usuario pueda volver a crear la misma interfaz
-                        boton.setDisable(true); //Desactivar el boton para evitar que el usuario pueda volver a crear la misma interfaz
-                        gestionActual = "Cambiar profesor";
                         break;
                     } else {
                         mostrarAlerta("Curso no encontrado", "El código del curso no esta registrado");

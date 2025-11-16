@@ -100,8 +100,8 @@
                               <TableColumn fx:id="nivelCursoTableColumn" prefWidth="66.4000244140625" text="Nivel" />
                               <TableColumn fx:id="estudiantesCursoTableColumn" prefWidth="70.39996337890625" text="Estudiantes" />
                               <TableColumn fx:id="cuposCursoTableColumn" prefWidth="43.20001220703125" text="Cupos" />
-                              <TableColumn fx:id="profesorCursoTableColumn" prefWidth="89.00003051757812" text="Profesor" />
-                              <TableColumn fx:id="codigoCursoTableColumn" prefWidth="87.79998779296875" text="Código" />
+                              <TableColumn fx:id="profesorCursoTableColumn" prefWidth="93.60000610351562" text="Profesor" />
+                              <TableColumn fx:id="codigoCursoTableColumn" prefWidth="84.0" text="Código" />
                           </columns>
                         </TableView>
                      </children></AnchorPane>

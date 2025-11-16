@@ -11,11 +11,15 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import model.*;
 import javafx.scene.control.*;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.LinkedList;
 
 public class VentanaProfesoresViewController {
 
@@ -28,7 +32,7 @@ public class VentanaProfesoresViewController {
     private ChoiceBox<String> gestionChoiceBox;
 
     @FXML
-    private VBox VBoxRequisitosDeGestion;
+    private VBox requisitosDeGestionDeProfesoresVBox;
 
     @FXML
     private Button volverAlMenuAnteriorButton;
@@ -36,6 +40,10 @@ public class VentanaProfesoresViewController {
     @FXML
     private Button cerrarSesionButton;
 
+    @FXML
+    private TabPane ventanasTabPane;
+
+    //Tabla de profesores registrados
     @FXML
     private TableView<Profesor> profesoresRegistradosTableView;
 
@@ -55,6 +63,40 @@ public class VentanaProfesoresViewController {
     private TableColumn<Profesor, Integer> cursosAsignadosProfesoresRegistradosTableColumn;
 
     private ObservableList<Profesor> profesoresRegistradosObservableList = FXCollections.observableArrayList();
+
+    //Tabla de cursos registrados
+    @FXML
+    private TableView<Curso> cursosRegistradosTableView;
+
+    @FXML
+    private TableColumn<Curso, LocalDate> fechaCursoTableColumn;
+
+    @FXML
+    private TableColumn<Curso, LocalTime> horaCursoTableColumn;
+
+    @FXML
+    private TableColumn<Curso, String> aulaCursoTableColumn;
+
+    @FXML
+    private TableColumn<Curso, String> instrumentoCursoTableColumn;
+
+    @FXML
+    private TableColumn<Curso, String> nivelCursoTableColumn;
+
+    @FXML
+    private TableColumn<Curso, Integer> estudiantesCursoTableColumn;
+
+    @FXML
+    private TableColumn<Curso, Integer> cuposCursoTableColumn;
+
+    @FXML
+    private TableColumn<Curso, String> profesorCursoTableColumn;
+
+    @FXML
+    private TableColumn<Curso, String> codigoCursoTableColumn;
+
+    private ObservableList<Curso> cursosRegistradosObservableList = FXCollections.observableArrayList();
+
 
 
     public void setApp(App app) {
@@ -77,8 +119,25 @@ public class VentanaProfesoresViewController {
         //Refrescar la tabla por si se cambia de pestana
         cargarListaProfesoresRegistrados();
 
+        //Preparar columnas de los cursos registrados
+        fechaCursoTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().getFecha()));
+        horaCursoTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().getHora()));
+        aulaCursoTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getAulaAsignada() != null ? cellData.getValue().getAulaAsignada().getId() : "Sin asignar"));
+        instrumentoCursoTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getInstrumento().toString()));
+        nivelCursoTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getNivelDeEstudio().toString()));
+        estudiantesCursoTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleIntegerProperty(cellData.getValue().getEstudiantesRegistrados().size()).asObject());
+        cuposCursoTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleIntegerProperty(cellData.getValue().getCapacidad() - cellData.getValue().getEstudiantesRegistrados().size()).asObject());
+        profesorCursoTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getProfesor() != null ? cellData.getValue().getProfesor().getNombre() + " " + cellData.getValue().getProfesor().getApellido() : "Sin asignar"));
+        codigoCursoTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getCodigo()));
+
+        //Enlazar la lista de cursos al TableView
+        cursosRegistradosTableView.setItems(cursosRegistradosObservableList);
+
+        //Cargar lista de estudiantes registrados por si se cambia de pestana
+        cargarListaCursosRegistrados();
+
         //Añadir opciones al ChoiceBox
-        gestionChoiceBox.getItems().addAll("Crear profesor", "Eliminar profesor", "Modificar profesor");
+        gestionChoiceBox.getItems().addAll("Crear profesor", "Eliminar profesor", "Modificar profesor", "Consultar profesor");
 
         //Obtener el cambio de seleccion del ChoiceBox
         gestionChoiceBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -92,6 +151,39 @@ public class VentanaProfesoresViewController {
                 case "Modificar profesor":
                     mostrarRequisitosModificarProfesor();
                     break;
+                case "Consultar profesor":
+                    mostrarRequisitosConsultarProfesor();
+                    break;
+                case "Crear Curso":
+                    mostrarRequisitosCrearCurso();
+                    break;
+                case "Eliminar Curso":
+                    mostrarRequisitosEliminarCurso();
+                    break;
+                case "Consultar Curso":
+                    mostrarRequisitosConsultarCurso();
+                    break;
+                case "Modificar Curso":
+                    mostrarRequisitosModificarCurso();
+                    break;
+            }
+        });
+
+        //Configurar acciones al cambiar de ventana
+        ventanasTabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newTab) -> {
+            //Cambiar opciones del ChoiceBox
+            if (newTab != null) {
+                String nuevoTab = newTab.getText();
+                switch (nuevoTab) {
+                    case "Cursos Registrados":
+                        gestionChoiceBox.getItems().clear();
+                        gestionChoiceBox.getItems().addAll("Crear Curso", "Eliminar Curso", "Consultar Curso", "Modificar Curso");
+                        break;
+                    case "Profesores Registrados":
+                        gestionChoiceBox.getItems().clear();
+                        gestionChoiceBox.getItems().addAll("Crear profesor", "Eliminar profesor", "Modificar profesor", "Consultar Estudiante");
+                        break;
+                }
             }
         });
 
@@ -106,7 +198,7 @@ public class VentanaProfesoresViewController {
             }
         });
         cerrarSesionButton.setOnAction(event -> {
-            if(mostrarConfirmacion("COnfirmación", "¿Seguro que quiere cerrar sesión?")) {
+            if(mostrarConfirmacion("Confirmación", "¿Seguro que quiere cerrar sesión?")) {
                 try {
                     volverAlPrimary();
                 } catch (IOException e) {
@@ -114,14 +206,6 @@ public class VentanaProfesoresViewController {
                 }
             }
         });
-    }
-
-    private boolean consultarExistenciaProfesor(String identificacion) {
-        return academiaController.consultarExistenciaProfesor(identificacion);
-    }
-
-    private Profesor buscarProfesor(String identificacion) {
-        return academiaController.buscarProfesor(identificacion);
     }
 
     private void mostrarRequisitosCrearProfesor() {
@@ -212,8 +296,8 @@ public class VentanaProfesoresViewController {
         });
 
         //Mostrar los requisitos en el VBox
-        VBoxRequisitosDeGestion.getChildren().clear();
-        VBoxRequisitosDeGestion.getChildren().addAll(label, gridPane, boton);
+        requisitosDeGestionDeProfesoresVBox.getChildren().clear();
+        requisitosDeGestionDeProfesoresVBox.getChildren().addAll(label, gridPane, boton);
     }
 
     private void crearProfesor(String nombre, String apellido, String identificacion) {
@@ -263,8 +347,8 @@ public class VentanaProfesoresViewController {
         });
 
         //Mostrar los requisitos en el VBox
-        VBoxRequisitosDeGestion.getChildren().clear();
-        VBoxRequisitosDeGestion.getChildren().addAll(label, gridPane, boton);
+        requisitosDeGestionDeProfesoresVBox.getChildren().clear();
+        requisitosDeGestionDeProfesoresVBox.getChildren().addAll(label, gridPane, boton);
     }
 
     private void eliminarProfesor(String identificacion) {
@@ -383,8 +467,8 @@ public class VentanaProfesoresViewController {
         gestionElegidaVBox.setSpacing(10);
 
         //Mostrar los requisitos en el VBox
-        VBoxRequisitosDeGestion.getChildren().clear();
-        VBoxRequisitosDeGestion.getChildren().addAll(label, gridPane, boton, gestionElegidaVBox);
+        requisitosDeGestionDeProfesoresVBox.getChildren().clear();
+        requisitosDeGestionDeProfesoresVBox.getChildren().addAll(label, gridPane, boton, gestionElegidaVBox);
     }
 
     private void mostrarRequisitosModificarNombreProfesor(String identificacion) {
@@ -417,8 +501,8 @@ public class VentanaProfesoresViewController {
         adicionalVBox.getChildren().addAll(gridPane, boton);
 
         //Agregar los nuevos elementos al VBox
-        VBoxRequisitosDeGestion.getChildren().removeLast();
-        VBoxRequisitosDeGestion.getChildren().addAll(adicionalVBox);
+        requisitosDeGestionDeProfesoresVBox.getChildren().removeLast();
+        requisitosDeGestionDeProfesoresVBox.getChildren().addAll(adicionalVBox);
     }
 
     private void modificarNombreProfesor(String identificacion, String nuevoNombre) {
@@ -457,8 +541,8 @@ public class VentanaProfesoresViewController {
         adicionalVBox.getChildren().addAll(gridPane, boton);
 
         //Agregar los nuevos elementos al VBox
-        VBoxRequisitosDeGestion.getChildren().removeLast();
-        VBoxRequisitosDeGestion.getChildren().addAll(adicionalVBox);
+        requisitosDeGestionDeProfesoresVBox.getChildren().removeLast();
+        requisitosDeGestionDeProfesoresVBox.getChildren().addAll(adicionalVBox);
     }
 
     private void modificarApellidoProfesor(String identificacion, String nuevoApellido) {
@@ -497,8 +581,8 @@ public class VentanaProfesoresViewController {
         adicionalVBox.getChildren().addAll(gridPane, boton);
 
         //Agregar los nuevos elementos al VBox
-        VBoxRequisitosDeGestion.getChildren().removeLast();
-        VBoxRequisitosDeGestion.getChildren().addAll(adicionalVBox);
+        requisitosDeGestionDeProfesoresVBox.getChildren().removeLast();
+        requisitosDeGestionDeProfesoresVBox.getChildren().addAll(adicionalVBox);
     }
 
     private void modificarIdentificacionProfesor(String identificacion, String nuevaIdentificacion) {
@@ -507,79 +591,479 @@ public class VentanaProfesoresViewController {
         actualizarListaProfesoresRegistrados(); //Si no se actualiza la lista, no se ven reflejados los cambios
     }
 
-    /* De momento no usaremos esta parte
-    private void mostrarRequisitosModificarInstrumentoEstudiante(String identificacion) {
-        //Crear elementos adicionales para el VBox
-        Label label = new Label("Nuevo intrumento:");
-        ChoiceBox<String> instrumentoEstudianteChoiceBox = new ChoiceBox<>();
+    private void mostrarRequisitosConsultarProfesor() {
+        //Crear elementos del VBox
+        Label label = new Label("Consultar Profesor");
+        Label identificacionProfesorLabel = new Label("Identificación:");
+        TextField identificacionProfesorTextField = new TextField();
 
-        //Añadir opciones al ChoiceBox
-        instrumentoEstudianteChoiceBox.getItems().addAll("Guitarra", "Canto", "Piano", "Violín", "Flauta", "Otro");
-
-        //Agregar los elementos creados a un GridPane
+        //Asignar los elementos crados a un GridPane
         GridPane gridPane = new GridPane();
-        gridPane.setMaxSize(300, 300);
         gridPane.setHgap(10);
         gridPane.setVgap(10);
-        gridPane.add(label, 0, 0);
-        gridPane.add(instrumentoEstudianteChoiceBox, 1, 0);
+        gridPane.add(identificacionProfesorLabel, 0, 0);
+        gridPane.add(identificacionProfesorTextField, 1, 0);
 
-        //Crear boton adicional
-        Button boton = new Button("Confirmar");
-        //Agregar funcion al boton creado
+        Button boton = new Button("Consultar");
+
+        //Vincular la funcion al boton creado
         boton.setOnAction(e -> {
-            //Verificar que el campo no este vacio
-            if (instrumentoEstudianteChoiceBox.getSelectionModel().getSelectedItem().isEmpty()) {
-                mostrarAlerta("Campo vacío", "Por favor, seleccione el nuevo instrumento del estudiante");
+            //Verificar que el campo del String este diligenciado
+            if (identificacionProfesorTextField.getText().isEmpty()) {
+                mostrarAlerta("Campo vacío", "Por favor, diligencie la identificación del profesor");
+                return;
+            }
+            consultarProfesor(identificacionProfesorTextField.getText());
+        });
+
+        //Mostrar los requisitos en el VBox
+        requisitosDeGestionDeProfesoresVBox.getChildren().clear();
+        requisitosDeGestionDeProfesoresVBox.getChildren().addAll(label, gridPane, boton);
+    }
+
+    private void consultarProfesor(String identificacion) {
+        if (consultarExistenciaProfesor(identificacion)) {
+            Profesor nuevoProfesor = buscarProfesor(identificacion);
+            mostrarMensaje("Profesor Consultado", nuevoProfesor.toString());
+        } else {
+            mostrarAlerta("Profesor no existe", "La identificación del profesor no está registrada, por favor verifique la identificación diligenciada");
+        }
+
+    }
+
+    private void mostrarRequisitosCrearCurso() {
+        Label label = new Label("Crear Curso");
+
+        Label fechaLabel = new Label("Fecha:");
+        DatePicker fechaDatePicker = new DatePicker();
+
+        Label horaLabel = new Label("Hora:");
+        ChoiceBox<String> horaChoiceBox = new ChoiceBox<>();
+        horaChoiceBox.getItems().addAll("08:00", "10:00", "12:00", "14:00", "16:00", "18:00");
+
+        Label capacidadLabel = new Label("Capacidad:");
+        TextField capacidadTextField = new TextField();
+
+        Label instrumentoLabel = new Label("Instrumento:");
+        ChoiceBox<String> instrumentoChoiceBox = new ChoiceBox<>();
+        instrumentoChoiceBox.getItems().addAll("Guitarra", "Piano", "Canto", "Violín", "Flauta", "Otro");
+
+        Label nivelDeEstudioLabel = new Label("Nivel de Estudio:");
+        ChoiceBox<String> nivelDeEstudioChoiceBox = new ChoiceBox<>();
+        nivelDeEstudioChoiceBox.getItems().addAll("Básico", "Medio", "Avanzado");
+
+        Label aulaLabel = new Label("Aula:");
+        ChoiceBox<String> aulaChoiceBox = new ChoiceBox<>();
+        aulaChoiceBox.getItems().addAll("Aula 1", "Aula 2", "Aula 2", "Aula 3", "Aula 4", "Aula 5");
+        Button boton = new Button("Crear Curso");
+        HBox hBox = new HBox();
+        hBox.setSpacing(10);
+        hBox.getChildren().addAll(nivelDeEstudioChoiceBox, boton);
+
+        GridPane gridPane = new GridPane();
+        gridPane.setHgap(10);
+        gridPane.setVgap(10);
+        gridPane.add(fechaLabel, 0, 0);
+        gridPane.add(fechaDatePicker, 1, 0);
+        gridPane.add(horaLabel, 0, 1);
+        gridPane.add(horaChoiceBox, 1, 1);
+        gridPane.add(aulaLabel, 0, 2);
+        gridPane.add(aulaChoiceBox, 1, 2);
+        gridPane.add(capacidadLabel, 0, 3);
+        gridPane.add(capacidadTextField, 1, 3);
+        gridPane.add(instrumentoLabel, 0, 4);
+        gridPane.add(instrumentoChoiceBox, 1, 4);
+        gridPane.add(nivelDeEstudioLabel, 0, 5);
+        gridPane.add(hBox, 1, 5);
+
+
+        boton.setOnAction(event -> {
+            // Validar y obtener los datos
+            if (fechaDatePicker.getValue() == null ||
+                    capacidadTextField.getText().isEmpty() ||
+                    horaChoiceBox.getValue() == null || aulaChoiceBox.getValue() == null) {
+                mostrarAlerta("Campo vacío", "Por favor, diligencie todos los campos");
                 return;
             }
 
-            //Convertir la seleccion del ChoiceBox a la clase Instrumento
-            Instrumento nuevoInstrumento = Instrumento.DEFAULT;
-            switch (instrumentoEstudianteChoiceBox.getSelectionModel().getSelectedItem()) {
+            //Verificar que la fecha y la hora no sean pasadas
+            if (fechaDatePicker.getValue().isBefore(LocalDate.now())) {
+                mostrarAlerta("Fecha no válida", "Por favor, seleccione una fecha a partir de hoy");
+                return;
+            } else if (fechaDatePicker.getValue().isEqual(LocalDate.now()) && LocalTime.parse(horaChoiceBox.getSelectionModel().getSelectedItem()).isBefore(LocalTime.now())) {
+                mostrarAlerta("Hora inválida", "Por favor, seleccione una hora a partir de ahora");
+                return;
+            }
+
+            //Convertir el String seleccionado a la clase Instrumento
+            Instrumento instrumento = Instrumento.DEFAULT;
+            switch (instrumentoChoiceBox.getSelectionModel().getSelectedItem()) {
                 case "Guitarra":
-                    nuevoInstrumento = Instrumento.GUITARRA;
-                    break;
-                case "Canto":
-                    nuevoInstrumento = Instrumento.CANTO;
+                    instrumento = Instrumento.GUITARRA;
                     break;
                 case "Piano":
-                    nuevoInstrumento = Instrumento.PIANO;
+                    instrumento = Instrumento.PIANO;
+                    break;
+                case "Canto":
+                    instrumento = Instrumento.CANTO;
                     break;
                 case "Flauta":
-                    nuevoInstrumento = Instrumento.FLAUTA;
-                    break;
-                case "Violín":
-                    nuevoInstrumento = Instrumento.VIOLIN;
+                    instrumento = Instrumento.FLAUTA;
                     break;
                 case "Otro":
-                    nuevoInstrumento = Instrumento.OTRO;
+                    instrumento = Instrumento.OTRO;
+                    break;
+                case "Violín":
+                    instrumento = Instrumento.VIOLIN;
+                    break;
+                case null:
+                    mostrarAlerta("Instrumento no seleccionado", "Por favor, elija un instrumento");
+                    return;
+                default:
+                    break;
             }
-            modificarInstrumentoEstudiante(identificacion, nuevoInstrumento);
-            mostrarMensaje("Estudiante actualizado", "Estudiante actualizado exitosamente");
+
+            //Convertir el String seleccionado a la clase NivelDeEstudio
+            NivelDeEstudio nivelDeEstudio = NivelDeEstudio.DEFAULT;
+            switch (nivelDeEstudioChoiceBox.getSelectionModel().getSelectedItem()) {
+                case "Avanzado":
+                    nivelDeEstudio = NivelDeEstudio.AVANZADO;
+                    break;
+                case "Básico":
+                    nivelDeEstudio = NivelDeEstudio.BASICO;
+                    break;
+                case "Medio":
+                    nivelDeEstudio = NivelDeEstudio.MEDIO;
+                    break;
+                case null:
+                    mostrarAlerta("Nivel de estudio no seleccionado", "Por favor, elija un nivel de estudio");
+                    return;
+                default:
+                    break;
+            }
+
+            //Consultar la disponibildad del aula seleccionada
+            String idAula = "000";
+            switch(aulaChoiceBox.getSelectionModel().getSelectedItem()) {
+                case "Aula 1":
+                    if (!consultarDisponibildadAula("001", fechaDatePicker.getValue(), LocalTime.parse(horaChoiceBox.getValue()))) {
+                        mostrarAlerta("Aula no disponible", "Por favor, elija un horario diferente");
+                        return;
+                    }
+                    idAula = "001";
+                    break;
+                case "Aula 2":
+                    if (!consultarDisponibildadAula("002", fechaDatePicker.getValue(), LocalTime.parse(horaChoiceBox.getValue()))) {
+                        mostrarAlerta("Aula no disponible", "Por favor, elija un horario diferente");
+                        return;
+                    }
+                    idAula = "002";
+                    break;
+                case "Aula 3":
+                    if (!consultarDisponibildadAula("003", fechaDatePicker.getValue(), LocalTime.parse(horaChoiceBox.getValue()))) {
+                        mostrarAlerta("Aula no disponible", "Por favor, elija un horario diferente");
+                        return;
+                    }
+                    idAula = "003";
+                    break;
+                case "Aula 4":
+                    if (!consultarDisponibildadAula("004", fechaDatePicker.getValue(), LocalTime.parse(horaChoiceBox.getValue()))) {
+                        mostrarAlerta("Aula no disponible", "Por favor, elija un horario diferente");
+                        return;
+                    }
+                    idAula = "004";
+                    break;
+                case "Aula 5":
+                    if (!consultarDisponibildadAula("005", fechaDatePicker.getValue(), LocalTime.parse(horaChoiceBox.getValue()))) {
+                        mostrarAlerta("Aula no disponible", "Por favor, elija un horario diferente");
+                        return;
+                    }
+                    idAula = "005";
+                    break;
+            }
+
+            //Crear el Curso
+            int capacidad = Integer.parseInt(capacidadTextField.getText());
+            LocalDate fecha = fechaDatePicker.getValue();
+            LocalTime hora = LocalTime.parse(horaChoiceBox.getValue());
+            String codigo = crearCodigoCurso(fecha);
+            crearCurso(capacidad, new LinkedList<>(), fecha, hora, instrumento, nivelDeEstudio, codigo, idAula);
         });
 
-        VBox adicionalVBox = new VBox();
-        adicionalVBox.getChildren().addAll(gridPane, boton);
-
-        //Agregar los nuevos elementos al VBox
-        VBoxRequisitosDeGestion.getChildren().removeLast();
-        VBoxRequisitosDeGestion.getChildren().addAll(adicionalVBox);
+        requisitosDeGestionDeProfesoresVBox.getChildren().clear();
+        requisitosDeGestionDeProfesoresVBox.getChildren().addAll(label, gridPane);
     }
 
-    private void modificarInstrumentoEstudiante(String identificacion, Instrumento instrumento) {
-        Estudiante estudiante = buscarProfesor(identificacion);
-        estudiante.setInstrumento(instrumento);
-        actualizarListaEstudiantesRegistrados(); //Si no se actualiza la lista, no se ven reflejados los cambios
+    private void crearCurso(int capacidad, LinkedList<Estudiante> estudiantes, LocalDate fecha, LocalTime hora, Instrumento instrumento, NivelDeEstudio nivelDeEstudio, String codigo, String idAula) {
+        Aula aula = buscarAula(idAula);
+
+        if (aula != null && aula.getCapacidad() < capacidad) {
+            mostrarAlerta("Excede la capacidad del aula", "La cantidad de estudiantes del curso excede la capacidad del aula, por favor, elija otro aula");
+            return;
+        }
+
+        Curso nuevoCurso = new Curso(capacidad, estudiantes, fecha, hora, instrumento, nivelDeEstudio,null, codigo, aula);
+
+        if (academiaController.crearCurso(nuevoCurso)) {
+            ClaseAsignada claseAsignada = new ClaseAsignada(nuevoCurso, null, nuevoCurso.getAulaAsignada(), nuevoCurso.getFecha(), nuevoCurso.getHora());
+            if (!academiaController.asignarClase(claseAsignada, nuevoCurso.getAulaAsignada())) {
+                mostrarAlerta("Error al asignar la clase al aula", "Por favor, verifique los datos registrados");
+                return;
+            }
+            mostrarCursoRegistrado(nuevoCurso);
+            mostrarMensaje("Curso creado", "Curso creado exitosamente");
+        } else {
+            mostrarAlerta("Error al crear Curso", "El curso ya existe");
+        }
     }
 
-    private void mostrarRequisitosModificarNivelDeEstudioEstudiante(String identificacion) {
-        //Crear elementos adicionales para el VBox
-        Label label = new Label("Nuevo nivel de estudio:");
-        ChoiceBox<String> nivelDeEstudioEstudianteChoiceBox = new ChoiceBox<>();
+    private void mostrarCursoRegistrado(Curso curso) {
+        cursosRegistradosObservableList.add(curso);
+    }
 
+    private String crearCodigoCurso(LocalDate fecha) {
+        int finalCodigo = 1;
+        String codigo = fecha.toString() + finalCodigo;
+        for(Curso curso : academiaController.getCursosRegistrados()) {
+            if (curso.getCodigo().equals(codigo)) {
+                finalCodigo ++;
+                codigo = fecha.toString() + finalCodigo;
+            }
+        }
+        return codigo;
+    }
+
+    private void mostrarRequisitosEliminarCurso() {
+        //Crear elementos del VBox
+        Label label = new Label("Eliminar Curso");
+        Label codigoCursoLabel = new Label("Código:");
+        TextField codigoCursoTextField = new TextField();
+
+        //Asignar los elementos crados a un GridPane
+        GridPane gridPane = new GridPane();
+        gridPane.setHgap(10);
+        gridPane.setVgap(10);
+        gridPane.add(codigoCursoLabel, 0, 0);
+        gridPane.add(codigoCursoTextField, 1, 0);
+
+        Button boton = new Button("Eliminar");
+
+        //Vincular la funcion al boton creado
+        boton.setOnAction(e -> {
+            //Verificar que el campo del String este diligenciado
+            if (codigoCursoTextField.getText().isEmpty()) {
+                mostrarAlerta("Campo vacío", "Por favor, diligencie el codigo del curso");
+                return;
+            }
+            if(mostrarConfirmacion("Confirmar borrar curso", "¿Está seguro de que quiere borrar el curso?")) {
+                eliminarCurso(codigoCursoTextField.getText());
+            }
+        });
+
+        //Mostrar los requisitos en el VBox
+        requisitosDeGestionDeProfesoresVBox.getChildren().clear();
+        requisitosDeGestionDeProfesoresVBox.getChildren().addAll(label, gridPane, boton);
+    }
+
+    private void eliminarCurso(String codigo) {
+        if (academiaController.eliminarCurso(codigo)) {
+            quitarCursoEliminado(codigo);
+            mostrarMensaje("Curso eliminado", "Curso eliminado exitosamente");
+        } else {
+            mostrarAlerta("Curso no existe", "El código del curso no está registrada, por favor verifique el código diligenciada");
+        }
+    }
+
+    private void quitarCursoEliminado(String codigo) {
+        Curso curso = null;
+
+        for (Curso c : cursosRegistradosObservableList) {
+            if (c.getCodigo().equals(codigo)) {
+                curso = c;
+                break;
+            }
+        }
+
+        cursosRegistradosObservableList.remove(curso);
+    }
+
+    private void mostrarRequisitosConsultarCurso() {
+        //Crear elementos del VBox
+        Label label = new Label("Consultar Curso");
+        Label codigoCursoLabel = new Label("Código:");
+        TextField codigoCursoTextField = new TextField();
+
+        //Asignar los elementos crados a un GridPane
+        GridPane gridPane = new GridPane();
+        gridPane.setHgap(10);
+        gridPane.setVgap(10);
+        gridPane.add(codigoCursoLabel, 0, 0);
+        gridPane.add(codigoCursoTextField, 1, 0);
+
+        Button boton = new Button("Consultar");
+
+        //Vincular la funcion al boton creado
+        boton.setOnAction(e -> {
+            //Verificar que el campo del String este diligenciado
+            if (codigoCursoTextField.getText().isEmpty()) {
+                mostrarAlerta("Campo vacío", "Por favor, diligencie el codigo del curso");
+                return;
+            }
+            consultarCurso(codigoCursoTextField.getText());
+        });
+
+        //Mostrar los requisitos en el VBox
+        requisitosDeGestionDeProfesoresVBox.getChildren().clear();
+        requisitosDeGestionDeProfesoresVBox.getChildren().addAll(label, gridPane, boton);
+    }
+
+    private void consultarCurso(String codigo) {
+        if (consultarExistenciaCurso(codigo)) {
+            Curso nuevoCurso = buscarCurso(codigo);
+            mostrarMensaje("Curso Consultado", nuevoCurso.toString());
+        } else {
+            mostrarAlerta("Curso no existe", "El código del curso no está registrada, por favor verifique el código diligenciada");
+        }
+    }
+
+    private void mostrarRequisitosModificarCurso() {
+        //Crear elementos del Vbox
+        Label label = new Label("Modificar Curso");
+        Label codigoCuroLabel = new Label("Código:");
+        TextField codigoCursoTextField = new TextField();
+        Label modificacionCursoLabel = new Label("Modificación:");
+        ChoiceBox<String> modificacionCursoChoiceBox = new ChoiceBox<>();
         //Añadir opciones al ChoiceBox
-        nivelDeEstudioEstudianteChoiceBox.getItems().addAll("Básico", "Medio", "Avanzado");
+        modificacionCursoChoiceBox.getItems().addAll("Cambiar fecha", "Cambiar hora", "Cambiar capacidad", "Cambiar profesor", "Asignar profesor", "Quitar profesor");
+
+        //Asignar elementos creados a un GridPane
+        GridPane gridPane = new GridPane();
+        gridPane.setHgap(10);
+        gridPane.setVgap(10);
+        gridPane.add(codigoCuroLabel, 0, 0);
+        gridPane.add(codigoCursoTextField, 1, 0);
+        gridPane.add(modificacionCursoLabel, 0, 1);
+        gridPane.add(modificacionCursoChoiceBox, 1, 1);
+
+        //Crear boton del VBox
+        Button boton = new Button("Modificar");
+
+        //Asginar funciones al boton creado
+        boton.setOnAction(e -> {
+            //Verificar que los campos esten diligenciados
+            if (codigoCursoTextField.getText().isEmpty()) {
+                mostrarAlerta("Campo vacío", "Por favor, diligencie el código del curso");
+                return;
+            } else if (modificacionCursoChoiceBox.getSelectionModel().isEmpty()) {
+                mostrarAlerta("Campo vacío", "Por favor, seleccione una opción de modificación");
+                return;
+            }
+
+            //Mostrar los requisitos de la gestion seleccionada
+            String gestionActual = "Defecto";
+            switch (modificacionCursoChoiceBox.getSelectionModel().getSelectedItem()) {
+                case "Cambiar fecha":
+                    //Verificar que exista el curso con ese codigo
+                    if (consultarExistenciaCurso(codigoCursoTextField.getText())) {
+                        mostrarRequisitosModificarFechaCurso(codigoCursoTextField.getText());
+                        boton.setVisible(false); //Ocultar boton para evitar que el usuario pueda volver a crear la misma interfaz
+                        boton.setDisable(true); //Desactivar el boton para evitar que el usuario pueda volver a crear la misma interfaz
+                        gestionActual = "Cambiar fecha";
+                        break;
+                    } else {
+                        mostrarAlerta("Curso no encontrado", "El código del curso no esta registrado");
+                        break;
+                    }
+                case "Cambiar hora":
+                    //Verificar que exista el curso con ese codigo
+                    if (consultarExistenciaCurso(codigoCursoTextField.getText())) {
+                        mostrarRequisitosModificarHoraCurso(codigoCursoTextField.getText());
+                        boton.setVisible(false); //Ocultar boton para evitar que el usuario pueda volver a crear la misma interfaz
+                        boton.setDisable(true); //Desactivar el boton para evitar que el usuario pueda volver a crear la misma interfaz
+                        gestionActual = "Cambiar hora";
+                        break;
+                    } else {
+                        mostrarAlerta("Curso no encontrado", "El código del curso no esta registrado");
+                        break;
+                    }
+                case "Cambiar capacidad":
+                    //Verificar que exista el curso con ese codigo
+                    if (consultarExistenciaCurso(codigoCursoTextField.getText())) {
+                        mostrarRequisitosModificarCapacidadCurso(codigoCursoTextField.getText());
+                        boton.setVisible(false); //Ocultar boton para evitar que el usuario pueda volver a crear la misma interfaz
+                        boton.setDisable(true); //Desactivar el boton para evitar que el usuario pueda volver a crear la misma interfaz
+                        gestionActual = "Cambiar capacidad";
+                        break;
+                    } else {
+                        mostrarAlerta("Curso no encontrado", "El código del curso no esta registrado");
+                        break;
+                    }
+                case "Cambiar profesor":
+                    //Verificar que exista el curso con ese codigo
+                    if (consultarExistenciaCurso(codigoCursoTextField.getText())) {
+                        mostrarMensaje("Cambiar profesor", "Bien");
+                        boton.setVisible(false); //Ocultar boton para evitar que el usuario pueda volver a crear la misma interfaz
+                        boton.setDisable(true); //Desactivar el boton para evitar que el usuario pueda volver a crear la misma interfaz
+                        gestionActual = "Cambiar profesor";
+                        break;
+                    } else {
+                        mostrarAlerta("Curso no encontrado", "El código del curso no esta registrado");
+                        break;
+                    }
+                case "Asignar profesor":
+                    //Verificar que exista el curso con ese codigo
+                    if (consultarExistenciaCurso(codigoCursoTextField.getText())) {
+                        mostrarRequisitosAsignarProfesorCurso(codigoCursoTextField.getText());
+                        boton.setVisible(false); //Ocultar boton para evitar que el usuario pueda volver a crear la misma interfaz
+                        boton.setDisable(true);
+                        gestionActual = "Asignar profesor";
+                        break;
+                    } else {
+                        mostrarAlerta("Curso no encontrado", "El código del curso no esta registrado");
+                        break;
+                    }
+                case "Quitar profesor":
+                    //Verificar que exista el curso con ese codigo
+                    if (consultarExistenciaCurso(codigoCursoTextField.getText())) {
+                        mostrarRequisitosQuitarProfesorCurso(codigoCursoTextField.getText());
+                        boton.setVisible(false); //Ocultar boton para evitar que el usuario pueda volver a crear la misma interfaz
+                        boton.setDisable(true);
+                        gestionActual = "Quitar profesor";
+                        break;
+                    } else {
+                        mostrarAlerta("Curso no encontrado", "El código del curso no esta registrado");
+                        break;
+                    }
+            }
+
+            //Obtener el cambio de eleccion del ChoiceBox
+            String finalGestionActual = gestionActual;
+            modificacionCursoChoiceBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+                //Habilitar boton nuevamente
+                if(!newValue.equals(oldValue) && !newValue.equals(finalGestionActual)) {
+                    boton.setVisible(true); // Volver a hacer visible el boton para cambiar de interfaz
+                    boton.setDisable(false); // Volver a activar la funcion del boton para cambiar de interfaz
+                } else  {
+                    boton.setVisible(false);
+                    boton.setDisable(true);
+                }
+            });
+
+        });
+
+        //VBox adicional para la gestion deseada
+        VBox gestionElegidaVBox = new VBox();
+        gestionElegidaVBox.setSpacing(10);
+
+        //Mostrar los requisitos en el VBox
+        requisitosDeGestionDeProfesoresVBox.getChildren().clear();
+        requisitosDeGestionDeProfesoresVBox.getChildren().addAll(label, gridPane, boton, gestionElegidaVBox);
+    }
+
+    private void mostrarRequisitosModificarFechaCurso(String codigo) {
+        //Crear elementos adicionales para el VBox
+        Label label = new Label("Nueva fecha:");
+        DatePicker nuevaFechaCursoDatePicker = new DatePicker();
 
         //Agregar los elementos creados a un GridPane
         GridPane gridPane = new GridPane();
@@ -587,50 +1071,255 @@ public class VentanaProfesoresViewController {
         gridPane.setHgap(10);
         gridPane.setVgap(10);
         gridPane.add(label, 0, 0);
-        gridPane.add(nivelDeEstudioEstudianteChoiceBox, 1, 0);
+        gridPane.add(nuevaFechaCursoDatePicker, 1, 0);
 
         //Crear boton adicional
         Button boton = new Button("Confirmar");
         //Agregar funcion al boton creado
         boton.setOnAction(e -> {
             //Verificar que el campo no este vacio
-            if (nivelDeEstudioEstudianteChoiceBox.getSelectionModel().getSelectedItem().isEmpty()) {
-                mostrarAlerta("Campo vacío", "Por favor, seleccione el nuevo nivel de estudio del estudiante");
+            if (nuevaFechaCursoDatePicker.getValue() == null) {
+                mostrarAlerta("Campo vacío", "Por favor, diligencie la nueva fecha del curso");
                 return;
             }
-
-            //Convertir la seleccion del ChoiceBox a la clase Instrumento
-            NivelDeEstudio nuevoNivelDeEstudio = NivelDeEstudio.DEFAULT;
-            switch (nivelDeEstudioEstudianteChoiceBox.getSelectionModel().getSelectedItem()) {
-                case "Básico":
-                    nuevoNivelDeEstudio = NivelDeEstudio.BASICO;
-                    break;
-                case "Medio":
-                    nuevoNivelDeEstudio = NivelDeEstudio.MEDIO;
-                    break;
-                case "Avanzado":
-                    nuevoNivelDeEstudio = NivelDeEstudio.AVANZADO;
-                    break;
-            }
-            modificarNivelDeEstudioEstudiante(identificacion, nuevoNivelDeEstudio);
-            mostrarMensaje("Estudiante actualizado", "Estudiante actualizado exitosamente");
+            modificarFechaCurso(codigo, nuevaFechaCursoDatePicker.getValue());
+            mostrarMensaje("Curso actualizado", "Curso actualizado exitosamente");
         });
 
         VBox adicionalVBox = new VBox();
         adicionalVBox.getChildren().addAll(gridPane, boton);
 
         //Agregar los nuevos elementos al VBox
-        VBoxRequisitosDeGestion.getChildren().removeLast();
-        VBoxRequisitosDeGestion.getChildren().addAll(adicionalVBox);
+        requisitosDeGestionDeProfesoresVBox.getChildren().removeLast();
+        requisitosDeGestionDeProfesoresVBox.getChildren().addAll(adicionalVBox);
     }
 
-    private void modificarNivelDeEstudioEstudiante(String identificacion, NivelDeEstudio nivelDeEstudio) {
-        Estudiante estudiante = buscarProfesor(identificacion);
-        estudiante.setNivelDeEstudio(nivelDeEstudio);
-        actualizarListaEstudiantesRegistrados(); //Si no se actualiza la lista, no se ven reflejados los cambios
+    private void modificarFechaCurso(String codigo, LocalDate fecha) {
+        Curso curso = buscarCurso(codigo);
+        curso.setFecha(fecha);
+        String nuevoCodigo = crearCodigoCurso(fecha);
+        curso.setCodigo(nuevoCodigo);
+        actualizarListaCursosRegistrados(); //Si no se actualiza la lista, no se ven reflejados los cambios
     }
 
-     */
+    private void mostrarRequisitosModificarHoraCurso(String codigo) {
+        //Crear elementos adicionales para el VBox
+        Label label = new Label("Nueva hora:");
+        ChoiceBox<String> nuevaHoraChoiceBox = new ChoiceBox<>();
+        nuevaHoraChoiceBox.getItems().addAll("08:00", "10:00", "12:00", "14:00", "16:00", "18:00");
+
+        //Agregar los elementos creados a un GridPane
+        GridPane gridPane = new GridPane();
+        gridPane.setMaxSize(300, 300);
+        gridPane.setHgap(10);
+        gridPane.setVgap(10);
+        gridPane.add(label, 0, 0);
+        gridPane.add(nuevaHoraChoiceBox, 1, 0);
+
+        //Crear boton adicional
+        Button boton = new Button("Confirmar");
+        //Agregar funcion al boton creado
+        boton.setOnAction(e -> {
+            //Verificar que el campo no este vacio
+            if (nuevaHoraChoiceBox.getValue() == null) {
+                mostrarAlerta("Campo vacío", "Por favor, diligencie la nueva hora del curso");
+                return;
+            }
+            modificarHoraCurso(codigo, LocalTime.parse(nuevaHoraChoiceBox.getSelectionModel().getSelectedItem()));
+            mostrarMensaje("Curso actualizado", "Curso actualizado exitosamente");
+        });
+
+        VBox adicionalVBox = new VBox();
+        adicionalVBox.getChildren().addAll(gridPane, boton);
+
+        //Agregar los nuevos elementos al VBox
+        requisitosDeGestionDeProfesoresVBox.getChildren().removeLast();
+        requisitosDeGestionDeProfesoresVBox.getChildren().addAll(adicionalVBox);
+    }
+
+    private void modificarHoraCurso(String codigo, LocalTime hora) {
+        Curso curso = buscarCurso(codigo);
+        curso.setHora(hora);
+        actualizarListaCursosRegistrados(); //Si no se actualiza la lista, no se ven reflejados los cambios
+    }
+
+    private void mostrarRequisitosModificarCapacidadCurso(String codigo) {
+        //Crear elementos adicionales para el VBox
+        Label label = new Label("Nueva capacidad:");
+        TextField nuevaCapacidadTextField = new TextField();
+
+        //Agregar los elementos creados a un GridPane
+        GridPane gridPane = new GridPane();
+        gridPane.setMaxSize(300, 300);
+        gridPane.setHgap(10);
+        gridPane.setVgap(10);
+        gridPane.add(label, 0, 0);
+        gridPane.add(nuevaCapacidadTextField, 1, 0);
+
+        //Crear boton adicional
+        Button boton = new Button("Confirmar");
+        //Agregar funcion al boton creado
+        boton.setOnAction(e -> {
+            //Verificar que el campo no este vacio
+            if (nuevaCapacidadTextField.getText() == null) {
+                mostrarAlerta("Campo vacío", "Por favor, diligencie la nueva capacidad del curso");
+                return;
+            }
+            //Verificar que la nueva capacidad no sea mayor que la capacidad del aula
+            if (buscarCurso(codigo).getAulaAsignada().getCapacidad() < Integer.parseInt(nuevaCapacidadTextField.getText()) ) {
+                mostrarAlerta("Capacidad excedida", "La capacidad del curso excede la capacidad del aula, por favor, diligencie una capacidad menor");
+                return;
+            }
+            modificarCapacidadCurso(codigo, Integer.parseInt(nuevaCapacidadTextField.getText()));
+            mostrarMensaje("Curso actualizado", "Curso actualizado exitosamente");
+        });
+
+        VBox adicionalVBox = new VBox();
+        adicionalVBox.getChildren().addAll(gridPane, boton);
+
+        //Agregar los nuevos elementos al VBox
+        requisitosDeGestionDeProfesoresVBox.getChildren().removeLast();
+        requisitosDeGestionDeProfesoresVBox.getChildren().addAll(adicionalVBox);
+    }
+
+    private void modificarCapacidadCurso(String codigo, int capacidad) {
+        Curso curso = buscarCurso(codigo);
+        curso.setCapacidad(capacidad);
+        actualizarListaCursosRegistrados(); //Si no se actualiza la lista, no se ven reflejados los cambios
+    }
+
+    private void mostrarRequisitosAsignarProfesorCurso(String codigo) {
+        //Crear elementos adicionales para el VBox
+        Label label = new Label("Identificación del profesor:");
+        TextField identificacionProfesorLabel = new TextField();
+
+        //Agregar los elementos creados a un GridPane
+        GridPane gridPane = new GridPane();
+        gridPane.setMaxSize(300, 300);
+        gridPane.setHgap(10);
+        gridPane.setVgap(10);
+        gridPane.add(label, 0, 0);
+        gridPane.add(identificacionProfesorLabel, 1, 0);
+
+        //Crear boton adicional
+        Button boton = new Button("Confirmar");
+        //Agregar funcion al boton creado
+        boton.setOnAction(e -> {
+            //Verificar que el campo no este vacio
+            if (identificacionProfesorLabel.getText() == null) {
+                mostrarAlerta("Campo vacío", "Por favor, diligencie la identificación del profesor");
+                return;
+            }
+            //Verificar que exista un profesor con esa identificacion
+            if (!consultarExistenciaProfesor(identificacionProfesorLabel.getText())) {
+                mostrarAlerta("Profesor inexistente", "No se encontró un profesor registrado con la identificación suministrada");
+                return;
+            }
+            asignarProfesorCurso(codigo, identificacionProfesorLabel.getText());
+            mostrarMensaje("Curso actualizado", "Curso actualizado exitosamente");
+        });
+
+        VBox adicionalVBox = new VBox();
+        adicionalVBox.getChildren().addAll(gridPane, boton);
+
+        //Agregar los nuevos elementos al VBox
+        requisitosDeGestionDeProfesoresVBox.getChildren().removeLast();
+        requisitosDeGestionDeProfesoresVBox.getChildren().addAll(adicionalVBox);
+    }
+
+    private void asignarProfesorCurso(String codigo, String identificacion) {
+        Curso curso = buscarCurso(codigo);
+        Profesor profesor = buscarProfesor(identificacion);
+        curso.setProfesor(profesor);
+        actualizarListaCursosRegistrados(); //Si no se actualiza la lista, no se ven reflejados los cambios
+    }
+
+    private void mostrarRequisitosQuitarProfesorCurso(String codigo) {
+        //Crear elementos adicionales para el VBox
+        Label label = new Label("Identificación del profesor:");
+        TextField identificacionProfesorLabel = new TextField();
+
+        //Agregar los elementos creados a un GridPane
+        GridPane gridPane = new GridPane();
+        gridPane.setMaxSize(300, 300);
+        gridPane.setHgap(10);
+        gridPane.setVgap(10);
+        gridPane.add(label, 0, 0);
+        gridPane.add(identificacionProfesorLabel, 1, 0);
+
+        //Crear boton adicional
+        Button boton = new Button("Confirmar");
+        //Agregar funcion al boton creado
+        boton.setOnAction(e -> {
+            //Verificar que el campo no este vacio
+            if (identificacionProfesorLabel.getText() == null) {
+                mostrarAlerta("Campo vacío", "Por favor, diligencie la identificación del profesor");
+                return;
+            }
+            //Verificar que exista un estudiante con esa identificacion
+            if (!consultarExistenciaProfesor(identificacionProfesorLabel.getText())) {
+                mostrarAlerta("Profesor inexistente", "No se encontró un profesor registrado con la identificación suministrada");
+                return;
+            }
+            //Verificar si el profesor esta registrado en ese curso
+            Curso curso = buscarCurso(codigo);
+            Profesor profesor = buscarProfesor(identificacionProfesorLabel.getText());
+            if (curso.getProfesor() != profesor) {
+                mostrarAlerta("Profesor no asignado", "El profesor con la identificación suministrada no está asignado al curso");
+                return;
+            }
+            quitarProfesorCurso(codigo);
+            mostrarMensaje("Curso actualizado", "Curso actualizado exitosamente");
+        });
+
+        VBox adicionalVBox = new VBox();
+        adicionalVBox.getChildren().addAll(gridPane, boton);
+
+        //Agregar los nuevos elementos al VBox
+        requisitosDeGestionDeProfesoresVBox.getChildren().removeLast();
+        requisitosDeGestionDeProfesoresVBox.getChildren().addAll(adicionalVBox);
+    }
+
+    private void quitarProfesorCurso(String codigo) {
+        Curso curso = buscarCurso(codigo);
+        curso.setProfesor(null);
+        actualizarListaCursosRegistrados(); //Si no se actualiza la lista, no se ven reflejados los cambios
+    }
+
+
+
+    private boolean consultarExistenciaCurso(String codigo) {
+        return academiaController.consultarExistenciaCurso(codigo);
+    }
+
+    private Curso buscarCurso(String codigo) {
+        for(Curso curso : academiaController.getCursosRegistrados()) {
+            if (curso.getCodigo().equals(codigo)) {
+                return curso;}
+        }
+        return null;
+    }
+
+    private Aula buscarAula(String id) {
+        for (Aula aula : academiaController.getListaAulas()) {
+            if (aula.getId().equals(id)) {
+                return  aula;
+            }
+        }
+        return null;
+    }
+
+    private boolean consultarExistenciaProfesor(String identificacion) {
+        return academiaController.consultarExistenciaProfesor(identificacion);
+    }
+
+    private Profesor buscarProfesor(String identificacion) {
+        return academiaController.buscarProfesor(identificacion);
+    }
+
+    private boolean consultarDisponibildadAula(String id, LocalDate fecha, LocalTime hora) {
+        return academiaController.consultarDisponibilidadAula(id, fecha, hora);
+    }
 
     private void actualizarListaProfesoresRegistrados() {
         profesoresRegistradosTableView.refresh();
@@ -640,10 +1329,20 @@ public class VentanaProfesoresViewController {
         app.abrirVentanaPrincipal();
     }
 
+    private void actualizarListaCursosRegistrados() {
+        cursosRegistradosTableView.refresh();
+    }
+
     private void cargarListaProfesoresRegistrados() {
         profesoresRegistradosObservableList.clear();
         profesoresRegistradosObservableList.addAll(academiaController.getProfesoresRegistrados());
         profesoresRegistradosTableView.setItems(profesoresRegistradosObservableList);
+    }
+
+    private void cargarListaCursosRegistrados() {
+        cursosRegistradosObservableList.clear();
+        cursosRegistradosObservableList.addAll(academiaController.getCursosRegistrados());
+        cursosRegistradosTableView.setItems(cursosRegistradosObservableList);
     }
 
     private void volverAlPrimary() throws IOException {
