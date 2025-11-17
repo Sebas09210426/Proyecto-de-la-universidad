@@ -1096,7 +1096,7 @@ public class VentanaEstudiantesViewController {
         Label modificacionCursoLabel = new Label("Modificación:");
         ChoiceBox<String> modificacionCursoChoiceBox = new ChoiceBox<>();
         //Añadir opciones al ChoiceBox
-        modificacionCursoChoiceBox.getItems().addAll("Cambiar fecha", "Cambiar hora", "Cambiar capacidad", "Asignar estudiante", "Quitar estudiante");
+        modificacionCursoChoiceBox.getItems().addAll("Cambiar horario", "Cambiar fecha", "Cambiar hora", "Cambiar capacidad", "Asignar estudiante", "Quitar estudiante");
 
         //Asignar elementos creados a un GridPane
         GridPane gridPane = new GridPane();
@@ -1124,25 +1124,13 @@ public class VentanaEstudiantesViewController {
             //Mostrar los requisitos de la gestion seleccionada
             String gestionActual = "Defecto";
             switch (modificacionCursoChoiceBox.getSelectionModel().getSelectedItem()) {
-                case "Cambiar fecha":
+                case "Cambiar horario":
                     //Verificar que exista el curso con ese codigo
                     if (consultarExistenciaCurso(codigoCursoTextField.getText())) {
-                        mostrarRequisitosModificarFechaCurso(codigoCursoTextField.getText());
+                        mostrarRequisitosModificarHorarioCurso(codigoCursoTextField.getText());
                         boton.setVisible(false); //Ocultar boton para evitar que el usuario pueda volver a crear la misma interfaz
                         boton.setDisable(true); //Desactivar el boton para evitar que el usuario pueda volver a crear la misma interfaz
-                        gestionActual = "Cambiar fecha";
-                        break;
-                    } else {
-                        mostrarAlerta("Curso no encontrado", "El código del curso no esta registrado");
-                        break;
-                    }
-                case "Cambiar hora":
-                    //Verificar que exista el curso con ese codigo
-                    if (consultarExistenciaCurso(codigoCursoTextField.getText())) {
-                        mostrarRequisitosModificarHoraCurso(codigoCursoTextField.getText());
-                        boton.setVisible(false); //Ocultar boton para evitar que el usuario pueda volver a crear la misma interfaz
-                        boton.setDisable(true); //Desactivar el boton para evitar que el usuario pueda volver a crear la misma interfaz
-                        gestionActual = "Cambiar hora";
+                        gestionActual = "Cambiar horario";
                         break;
                     } else {
                         mostrarAlerta("Curso no encontrado", "El código del curso no esta registrado");
@@ -1210,29 +1198,92 @@ public class VentanaEstudiantesViewController {
         requisitosDeGestionDeEstudiantesVBox.getChildren().addAll(label, gridPane, boton, gestionElegidaVBox);
     }
 
-    private void mostrarRequisitosModificarFechaCurso(String codigo) {
+    private void mostrarRequisitosModificarHorarioCurso(String codigo) {
         //Crear elementos adicionales para el VBox
-        Label label = new Label("Nueva fecha:");
+        Label aulaLabel = new Label("Nueva aula:");
+        ChoiceBox<String> aulaChoiceBox = new ChoiceBox<>();
+        aulaChoiceBox.getItems().addAll("Aula 1", "Aula 2", "Aula 3", "Aula 4", "Aula 5");
+        Label fechaLabel = new Label("Nueva fecha:");
         DatePicker nuevaFechaCursoDatePicker = new DatePicker();
+        Label horaLabel = new Label("Nueva hora:");
+        ChoiceBox<String> horaChoiceBox = new ChoiceBox<>();
+        horaChoiceBox.getItems().addAll("08:00", "10:00", "12:00", "14:00", "16:00", "18:00");
 
         //Agregar los elementos creados a un GridPane
         GridPane gridPane = new GridPane();
         gridPane.setMaxSize(300, 300);
         gridPane.setHgap(10);
         gridPane.setVgap(10);
-        gridPane.add(label, 0, 0);
-        gridPane.add(nuevaFechaCursoDatePicker, 1, 0);
+        gridPane.add(aulaLabel, 0, 0);
+        gridPane.add(aulaChoiceBox, 1, 0);
+        gridPane.add(fechaLabel, 0, 1);
+        gridPane.add(nuevaFechaCursoDatePicker, 1, 1);
+        gridPane.add(horaLabel, 0, 2);
+        gridPane.add(horaChoiceBox, 1, 2);
 
         //Crear boton adicional
         Button boton = new Button("Confirmar");
         //Agregar funcion al boton creado
         boton.setOnAction(e -> {
             //Verificar que el campo no este vacio
-            if (nuevaFechaCursoDatePicker.getValue() == null) {
-                mostrarAlerta("Campo vacío", "Por favor, diligencie la nueva fecha del curso");
+            if (nuevaFechaCursoDatePicker.getValue() == null || aulaChoiceBox.getValue() == null || horaChoiceBox.getValue() == null) {
+                mostrarAlerta("Campo vacío", "Por favor, diligencie todos los requisitos");
                 return;
             }
-            modificarFechaCurso(codigo, nuevaFechaCursoDatePicker.getValue());
+
+            //Verificar que la fecha y la hora no sean pasadas
+            if (nuevaFechaCursoDatePicker.getValue().isBefore(LocalDate.now())) {
+                mostrarAlerta("Fecha no válida", "Por favor, seleccione una fecha a partir de hoy");
+                return;
+            } else if (nuevaFechaCursoDatePicker.getValue().isEqual(LocalDate.now()) && LocalTime.parse(horaChoiceBox.getSelectionModel().getSelectedItem()).isBefore(LocalTime.now())) {
+                mostrarAlerta("Hora inválida", "Por favor, seleccione una hora a partir de ahora");
+                return;
+            }
+
+            //Consultar la disponibildad del aula seleccionada
+            String idAula = "000";
+            switch(aulaChoiceBox.getSelectionModel().getSelectedItem()) {
+                case "Aula 1":
+                    if (!consultarDisponibildadAula("001", nuevaFechaCursoDatePicker.getValue(), LocalTime.parse(horaChoiceBox.getValue()))) {
+                        mostrarAlerta("Aula no disponible", "Por favor, elija un horario diferente");
+                        return;
+                    }
+                    idAula = "001";
+                    break;
+                case "Aula 2":
+                    if (!consultarDisponibildadAula("002", nuevaFechaCursoDatePicker.getValue(), LocalTime.parse(horaChoiceBox.getValue()))) {
+                        mostrarAlerta("Aula no disponible", "Por favor, elija un horario diferente");
+                        return;
+                    }
+                    idAula = "002";
+                    break;
+                case "Aula 3":
+                    if (!consultarDisponibildadAula("003", nuevaFechaCursoDatePicker.getValue(), LocalTime.parse(horaChoiceBox.getValue()))) {
+                        mostrarAlerta("Aula no disponible", "Por favor, elija un horario diferente");
+                        return;
+                    }
+                    idAula = "003";
+                    break;
+                case "Aula 4":
+                    if (!consultarDisponibildadAula("004", nuevaFechaCursoDatePicker.getValue(), LocalTime.parse(horaChoiceBox.getValue()))) {
+                        mostrarAlerta("Aula no disponible", "Por favor, elija un horario diferente");
+                        return;
+                    }
+                    idAula = "004";
+                    break;
+                case "Aula 5":
+                    if (!consultarDisponibildadAula("005", nuevaFechaCursoDatePicker.getValue(), LocalTime.parse(horaChoiceBox.getValue()))) {
+                        mostrarAlerta("Aula no disponible", "Por favor, elija un horario diferente");
+                        return;
+                    }
+                    idAula = "005";
+                    break;
+            }
+
+            LocalDate fecha = nuevaFechaCursoDatePicker.getValue();
+            LocalTime hora = LocalTime.parse(horaChoiceBox.getValue());
+
+            modificarHorarioCurso(codigo, fecha, hora, idAula);
             mostrarMensaje("Curso actualizado", "Curso actualizado exitosamente");
         });
 
@@ -1244,54 +1295,99 @@ public class VentanaEstudiantesViewController {
         requisitosDeGestionDeEstudiantesVBox.getChildren().addAll(adicionalVBox);
     }
 
-    private void modificarFechaCurso(String codigo, LocalDate fecha) {
+    private void modificarHorarioCurso(String codigo, LocalDate fecha, LocalTime hora, String idAula) {
         Curso curso = buscarCurso(codigo);
+        Aula aula = buscarAula(idAula);
         curso.setFecha(fecha);
+        curso.setHora(hora);
+        curso.setAulaAsignada(aula);
         String nuevoCodigo = crearCodigoCurso(fecha);
         curso.setCodigo(nuevoCodigo);
         actualizarListaCursosRegistrados(); //Si no se actualiza la lista, no se ven reflejados los cambios
     }
 
-    private void mostrarRequisitosModificarHoraCurso(String codigo) {
-        //Crear elementos adicionales para el VBox
-        Label label = new Label("Nueva hora:");
-        ChoiceBox<String> nuevaHoraChoiceBox = new ChoiceBox<>();
-        nuevaHoraChoiceBox.getItems().addAll("08:00", "10:00", "12:00", "14:00", "16:00", "18:00");
-
-        //Agregar los elementos creados a un GridPane
-        GridPane gridPane = new GridPane();
-        gridPane.setMaxSize(300, 300);
-        gridPane.setHgap(10);
-        gridPane.setVgap(10);
-        gridPane.add(label, 0, 0);
-        gridPane.add(nuevaHoraChoiceBox, 1, 0);
-
-        //Crear boton adicional
-        Button boton = new Button("Confirmar");
-        //Agregar funcion al boton creado
-        boton.setOnAction(e -> {
-            //Verificar que el campo no este vacio
-            if (nuevaHoraChoiceBox.getValue() == null) {
-                mostrarAlerta("Campo vacío", "Por favor, diligencie la nueva hora del curso");
-                return;
-            }
-            modificarHoraCurso(codigo, LocalTime.parse(nuevaHoraChoiceBox.getSelectionModel().getSelectedItem()));
-            mostrarMensaje("Curso actualizado", "Curso actualizado exitosamente");
-        });
-
-        VBox adicionalVBox = new VBox();
-        adicionalVBox.getChildren().addAll(gridPane, boton);
-
-        //Agregar los nuevos elementos al VBox
-        requisitosDeGestionDeEstudiantesVBox.getChildren().removeLast();
-        requisitosDeGestionDeEstudiantesVBox.getChildren().addAll(adicionalVBox);
-    }
-
-    private void modificarHoraCurso(String codigo, LocalTime hora) {
-        Curso curso = buscarCurso(codigo);
-        curso.setHora(hora);
-        actualizarListaCursosRegistrados(); //Si no se actualiza la lista, no se ven reflejados los cambios
-    }
+//    private void mostrarRequisitosModificarFechaCurso(String codigo) {
+//        //Crear elementos adicionales para el VBox
+//        Label label = new Label("Nueva fecha:");
+//        DatePicker nuevaFechaCursoDatePicker = new DatePicker();
+//
+//        //Agregar los elementos creados a un GridPane
+//        GridPane gridPane = new GridPane();
+//        gridPane.setMaxSize(300, 300);
+//        gridPane.setHgap(10);
+//        gridPane.setVgap(10);
+//        gridPane.add(label, 0, 0);
+//        gridPane.add(nuevaFechaCursoDatePicker, 1, 0);
+//
+//        //Crear boton adicional
+//        Button boton = new Button("Confirmar");
+//        //Agregar funcion al boton creado
+//        boton.setOnAction(e -> {
+//            //Verificar que el campo no este vacio
+//            if (nuevaFechaCursoDatePicker.getValue() == null) {
+//                mostrarAlerta("Campo vacío", "Por favor, diligencie la nueva fecha del curso");
+//                return;
+//            }
+//            modificarFechaCurso(codigo, nuevaFechaCursoDatePicker.getValue());
+//            mostrarMensaje("Curso actualizado", "Curso actualizado exitosamente");
+//        });
+//
+//        VBox adicionalVBox = new VBox();
+//        adicionalVBox.getChildren().addAll(gridPane, boton);
+//
+//        //Agregar los nuevos elementos al VBox
+//        requisitosDeGestionDeEstudiantesVBox.getChildren().removeLast();
+//        requisitosDeGestionDeEstudiantesVBox.getChildren().addAll(adicionalVBox);
+//    }
+//
+//    private void modificarFechaCurso(String codigo, LocalDate fecha) {
+//        Curso curso = buscarCurso(codigo);
+//        curso.setFecha(fecha);
+//        String nuevoCodigo = crearCodigoCurso(fecha);
+//        curso.setCodigo(nuevoCodigo);
+//        actualizarListaCursosRegistrados(); //Si no se actualiza la lista, no se ven reflejados los cambios
+//    }
+//
+//    private void mostrarRequisitosModificarHoraCurso(String codigo) {
+//        //Crear elementos adicionales para el VBox
+//        Label label = new Label("Nueva hora:");
+//        ChoiceBox<String> nuevaHoraChoiceBox = new ChoiceBox<>();
+//        nuevaHoraChoiceBox.getItems().addAll("08:00", "10:00", "12:00", "14:00", "16:00", "18:00");
+//
+//        //Agregar los elementos creados a un GridPane
+//        GridPane gridPane = new GridPane();
+//        gridPane.setMaxSize(300, 300);
+//        gridPane.setHgap(10);
+//        gridPane.setVgap(10);
+//        gridPane.add(label, 0, 0);
+//        gridPane.add(nuevaHoraChoiceBox, 1, 0);
+//
+//        //Crear boton adicional
+//        Button boton = new Button("Confirmar");
+//        //Agregar funcion al boton creado
+//        boton.setOnAction(e -> {
+//            //Verificar que el campo no este vacio
+//            if (nuevaHoraChoiceBox.getValue() == null) {
+//                mostrarAlerta("Campo vacío", "Por favor, diligencie la nueva hora del curso");
+//                return;
+//            }
+//            modificarHoraCurso(codigo, LocalTime.parse(nuevaHoraChoiceBox.getSelectionModel().getSelectedItem()));
+//            mostrarMensaje("Curso actualizado", "Curso actualizado exitosamente");
+//        });
+//
+//        VBox adicionalVBox = new VBox();
+//        adicionalVBox.getChildren().addAll(gridPane, boton);
+//
+//        //Agregar los nuevos elementos al VBox
+//        requisitosDeGestionDeEstudiantesVBox.getChildren().removeLast();
+//        requisitosDeGestionDeEstudiantesVBox.getChildren().addAll(adicionalVBox);
+//    }
+//
+//    private void modificarHoraCurso(String codigo, LocalTime hora) {
+//        Curso curso = buscarCurso(codigo);
+//        curso.setHora(hora);
+//        actualizarListaCursosRegistrados(); //Si no se actualiza la lista, no se ven reflejados los cambios
+//    }
 
     private void mostrarRequisitosModificarCapacidadCurso(String codigo) {
         //Crear elementos adicionales para el VBox
