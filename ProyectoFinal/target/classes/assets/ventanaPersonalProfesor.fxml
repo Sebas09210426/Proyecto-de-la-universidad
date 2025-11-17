@@ -63,15 +63,96 @@
                         <Insets left="3.0" />
                      </opaqueInsets>
                      <padding>
-                        <Insets left="20.0" top="30.0" />
-                     </padding></VBox>
+                        <Insets left="20.0" top="15.0" />
+                     </padding>
+                     <children>
+                        <VBox prefHeight="35.0" prefWidth="276.0" />
+                     </children></VBox>
                </children></AnchorPane>
         </items>
       </SplitPane>
-      <TitledPane fx:id="informacionGestionEstudianteTitledPane" animated="false" layoutY="254.0" prefHeight="396.0" prefWidth="600.0" text="Información personal">
-        <content>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-        </content>
-      </TitledPane>
+       <TabPane fx:id="ventanasTabPane" layoutY="258.0" prefHeight="393.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE">
+       <tabs>
+           <Tab text="Datos personales">
+               <content>
+                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                       <children>
+                           <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="370.0" prefWidth="600.0">
+                               <children>
+                                   <VBox alignment="TOP_CENTER" prefHeight="370.0" prefWidth="191.0" spacing="10.0">
+                                       <children>
+                                           <Label text="Datos Personales">
+                                               <font>
+                                                   <Font name="Bodoni MT" size="18.0" />
+                                               </font>
+                                               <VBox.margin>
+                                                   <Insets bottom="15.0" />
+                                               </VBox.margin></Label>
+                                           <Label fx:id="nombreLabel" layoutX="40.0" layoutY="40.0" text="Nombre: ">
+                                               <font>
+                                                   <Font size="14.0" />
+                                               </font>
+                                           </Label>
+                                           <Label fx:id="apellidoLabel" layoutX="76.0" layoutY="78.0" text="Apellido:">
+                                               <font>
+                                                   <Font size="14.0" />
+                                               </font>
+                                           </Label>
+                                           <Label fx:id="identificacionLabel" layoutX="76.0" layoutY="98.0" text="Identificación:">
+                                               <font>
+                                                   <Font size="14.0" />
+                                               </font>
+                                           </Label>
+                                       </children>
+                                       <padding>
+                                           <Insets top="30.0" />
+                                       </padding></VBox>
+                                   <VBox prefHeight="370.0" prefWidth="211.0" />
+                                   <VBox prefHeight="370.0" prefWidth="205.0" />
+                               </children></HBox>
+                       </children>
+                   </AnchorPane>
+               </content>
+           </Tab>
+           <Tab text="Cursos registrados">
+               <content>
+                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                       <children>
+                           <TableView fx:id="cursosRegistradosTableView" layoutX="1.0" layoutY="-1.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="369.0" prefWidth="600.0">
+                               <columns>
+                                   <TableColumn fx:id="fechaCursoTableColumn" prefWidth="71.0" text="Fecha" />
+                                   <TableColumn fx:id="horaCursoTableColumn" prefWidth="42.199981689453125" text="Hora" />
+                                   <TableColumn fx:id="aulaCursoTableColumn" prefWidth="38.20000457763672" text="Aula" />
+                                   <TableColumn fx:id="instrumentoCursoTableColumn" prefWidth="89.79998779296875" text="Instrumento" />
+                                   <TableColumn fx:id="nivelCursoTableColumn" prefWidth="66.4000244140625" text="Nivel" />
+                                   <TableColumn fx:id="estudiantesCursoTableColumn" prefWidth="70.39996337890625" text="Estudiantes" />
+                                   <TableColumn fx:id="cuposCursoTableColumn" prefWidth="43.20001220703125" text="Cupos" />
+                                   <TableColumn fx:id="profesorCursoTableColumn" prefWidth="93.60000610351562" text="Profesor" />
+                                   <TableColumn fx:id="codigoCursoTableColumn" prefWidth="84.0" text="Código" />
+                               </columns>
+                           </TableView>
+                       </children></AnchorPane>
+               </content>
+           </Tab>
+           <Tab text="Clases individuales">
+               <content>
+                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                       <children>
+                           <TableView fx:id="clasesIndividualesTableView" layoutX="1.0" layoutY="-1.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="369.0" prefWidth="600.0">
+                               <columns>
+                                   <TableColumn fx:id="fechaClaseIndividualTableColumn" prefWidth="81.20001375675201" text="Fecha" />
+                                   <TableColumn fx:id="horaClaseIndividualTableColumn" prefWidth="53.79998016357422" text="Hora" />
+                                   <TableColumn fx:id="aulaClaseIndividualTableColumn" prefWidth="49.600006103515625" text="Aula" />
+                                   <TableColumn fx:id="instrumentoClaseIndividualTableColumn" prefWidth="88.4000244140625" text="Instrumento" />
+                                   <TableColumn fx:id="estudianteClaseIndividualTableColumn" prefWidth="152.800048828125" text="Estudiante" />
+                                   <TableColumn fx:id="estadoClaseIndividualTableColumn" prefWidth="68.79998779296875" text="Estado" />
+                                   <TableColumn fx:id="codigoClaseIndividualTableColumn" prefWidth="102.39999389648438" text="Código" />
+                               </columns>
+                           </TableView>
+                       </children></AnchorPane>
+               </content>
+           </Tab>
+       </tabs>
+       </TabPane>
    </children>
 </AnchorPane>

@@ -6,6 +6,7 @@ public class Usuario {
     private String contrasena;
     private String identificacion;
     private Rol rol;
+    private boolean primerInicio;
 
     //Constructor
 
@@ -14,6 +15,7 @@ public class Usuario {
         this.contrasena = contrasena;
         this.identificacion = identificacion;
         this.rol = rol;
+        this.primerInicio = true;
     }
 
     //Getters y Setters
@@ -45,6 +47,14 @@ public class Usuario {
     }
     public void setRol(Rol rol) {
         this.rol = rol;
+    }
+
+    public boolean getPrimerInicio() {
+        return primerInicio;
+    }
+
+    public void setPrimerInicio(boolean primerInicio) {
+        this.primerInicio = primerInicio;
     }
 
     @Override

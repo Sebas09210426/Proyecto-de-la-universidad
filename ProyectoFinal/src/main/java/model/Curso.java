@@ -15,9 +15,10 @@ public class Curso {
     private Profesor profesor;
     private String codigo;
     private Aula aulaAsignada;
+    private String estado;
 
     //Constructor
-    public Curso(int capacidad, LinkedList<Estudiante> estudiantesRegistrados, LocalDate fecha, LocalTime hora, Instrumento intrumento, NivelDeEstudio nivelDeEstudio, Profesor profesor, String codigo, Aula aulaAsignada) {
+    public Curso(int capacidad, LinkedList<Estudiante> estudiantesRegistrados, LocalDate fecha, LocalTime hora, Instrumento intrumento, NivelDeEstudio nivelDeEstudio, Profesor profesor, String codigo, Aula aulaAsignada, String estado) {
         this.capacidad = capacidad;
         this.estudiantesRegistrados = estudiantesRegistrados;
         this.fecha = fecha;
@@ -100,6 +101,14 @@ public class Curso {
 
     public void setAulaAsignada(Aula aulaAsignada) {
         this.aulaAsignada = aulaAsignada;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
     }
 
     @Override

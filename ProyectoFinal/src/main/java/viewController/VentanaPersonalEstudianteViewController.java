@@ -7,14 +7,15 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import model.Estudiante;
-import model.Usuario;
+import javafx.util.StringConverter;
+import model.*;
 
 import java.io.IOException;
+import java.util.LinkedList;
 
 import static viewController.PrimaryViewController.*;
 
-public class VentanaPersonalEstudianteViewController {
+public class VentanaPersonalEstudianteViewController implements Actualizable {
 
     private App app;
     private AcademiaController academiaController;
@@ -63,6 +64,16 @@ public class VentanaPersonalEstudianteViewController {
         nombreLabel.setText("Nombre: " + estudianteActual.getNombre());
         apellidoLabel.setText("Apellido: " + estudianteActual.getApellido());
         identificacionLabel.setText("Identificacion: " + estudianteActual.getIdentificacion());
+
+        //Verificar si es la primera vez que inicia sesion
+        if (usuarioActual.getPrimerInicio()) {
+            mostrarMensaje("Cambiar contraseña", "Por favor, cambie el usuario y contraseña");
+            try {
+                actualizarCredenciales();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     @FXML
@@ -82,7 +93,7 @@ public class VentanaPersonalEstudianteViewController {
         });
 
         //Añadir opciones al ChoiceBox
-        gestionChoiceBox.getItems().addAll("Consultar", "Actualizar");
+        gestionChoiceBox.getItems().addAll("Consultar", "Actualizar", "Solicitar clase individual");
         gestionChoiceBox.setValue("Seleccione una opción");
 
         //Obtener el cambio de seleccion del ChoiceBox
@@ -94,8 +105,16 @@ public class VentanaPersonalEstudianteViewController {
                 case "Actualizar":
                     mostrarRequisitosActualizar();
                     break;
+                case "Solicitar clase individual":
+                    mostrarRequisitosSolicitarClaseIndividual();
+                    break;
             }
         });
+    }
+
+    @Override
+    public void actualizarCredenciales() throws IOException {
+        app.abrirActualizarCredenciales(usuarioActual);
     }
 
     private void mostrarRequisitosConsultar() {
@@ -104,7 +123,7 @@ public class VentanaPersonalEstudianteViewController {
 
         Label consultaLabel = new Label("Seleccione su consulta:");
         ChoiceBox<String> consultaChoiceBox = new ChoiceBox<>();
-        consultaChoiceBox.getItems().addAll("Consultar horario", "Consultar cursos", "Consultar notas", "Consultar asistencia", "Consultar comentarios");
+        consultaChoiceBox.getItems().addAll("Consultar horario", "Consultar notas", "Consultar asistencias");
         consultaChoiceBox.setValue("Seleccione una opción");
 
         GridPane gridPane = new GridPane();
@@ -118,19 +137,13 @@ public class VentanaPersonalEstudianteViewController {
             //Decidir que mostrar dependiendo de la seleccion
             switch(consultaChoiceBox.getValue()) {
                 case "Consultar horario":
-                    mostrarMensaje("Consultar horario", "Hasta aqui todo bien");
-                    break;
-                case "Consultar cursos":
-                    mostrarMensaje("Consultar cursos", "Hasta aqui bien");
+                    consultarHorario();
                     break;
                 case "Consultar notas":
-                    mostrarMensaje("Consultar notas", "Hasta aqui bien");
+                    consultarNotas();
                     break;
-                case "Consultar asistencia":
-                    mostrarMensaje("Consultar asistencia", "Hasta aqui bien");
-                    break;
-                case "Consultar comentarios":
-                    mostrarMensaje("Consultar comentarios", "Hasta bien");
+                case "Consultar asistencias":
+                    consultarAsistencias();
                     break;
                 default:
                     mostrarAlerta("Consulta no seleccionada", "Por favor, seleccione su consulta");
@@ -311,8 +324,104 @@ public class VentanaPersonalEstudianteViewController {
     }
      */
 
+    private void consultarHorario() {
+        String horario = "";
+        if (estudianteActual.getCursosAsignados().isEmpty()) {
+            horario = "Sin clases";
+        } else {
+            for (Curso c :estudianteActual.getCursosAsignados()) {
+                horario += "{"
+                        + "Fecha: " + (c.getFecha() != null ? c.getFecha().toString() : "Sin asignar") + "\n"
+                        + "Hora: " + (c.getHora() != null ? c.getHora().toString() : "Sin asignar") + "\n"
+                        + "Aula: " + (c.getAulaAsignada() != null ? c.getAulaAsignada().getId() : "Sin asignar") + "\n"
+                        + "Profesor: " + (c.getProfesor() != null ? c.getProfesor().getNombre() + " " + c.getProfesor().getApellido() : "Sin asignar") + "\n"
+                        + "}";
+            }
+        }
+        mostrarMensaje("Horario asignado", horario);
+    }
 
+    private void consultarNotas() {
+        String notas = "";
+        if (estudianteActual.getNotasRegistradas().isEmpty()) {
+            notas = "Sin notas registradas";
+        } else {
+            for (Nota nota :  estudianteActual.getNotasRegistradas()) {
+                notas += "{" + "\n" +
+                        nota + nota.nota() + " / Comentario: " +  nota.comentario() + "\n" +
+                        "}";
+            }
+        }
+        mostrarMensaje("Notas registradas", notas);
+    }
 
+    private void consultarAsistencias() {
+        String mensaje = "";
+        mensaje += "Asistencias: " + estudianteActual.getAsistencias() + " / Inasistencias: " + estudianteActual.getInasitencias();
+        mostrarMensaje("Asistencias", mensaje);
+    }
+
+    private void mostrarRequisitosSolicitarClaseIndividual() {
+        //Crear elementos del VBox
+        Label label = new Label("Solicitar clase individual");
+        Label profesorLabel = new Label("Seleccione un profesor:");
+        ChoiceBox<Profesor> profesoresChoiceBox = new ChoiceBox();
+        //Anadir los profesores al choiceBox
+        LinkedList<Profesor> profesores = academiaController.getProfesoresRegistrados();
+        for (Profesor profesor : profesores) {
+            profesoresChoiceBox.getItems().add(profesor);
+        }
+        //Convertir lo que muestra el choicebox
+        profesoresChoiceBox.setConverter(new StringConverter<Profesor>() {
+            @Override
+            public String toString(Profesor object) {
+                if (object == null) {
+                    return "Seleccione un profesor";
+                }
+                return object.getNombre() + " " + object.getApellido();
+            }
+            //Ni idea que hace esto, pero lo exije poner
+            @Override
+            public Profesor fromString(String string) {
+                return null;
+            }
+        });
+
+        //Asignar los elementos crados a un GridPane
+        GridPane gridPane = new GridPane();
+        gridPane.setHgap(10);
+        gridPane.setVgap(10);
+        gridPane.add(profesorLabel, 0, 0);
+        gridPane.add(profesoresChoiceBox, 1, 0);
+
+        Button boton = new Button("Confirmar");
+
+        //Vincular la funcion al boton creado
+        boton.setOnAction(e -> {
+            //Verificar que el campo del String este diligenciado
+            if (profesoresChoiceBox.getValue() == null) {
+                mostrarAlerta("Campo vacío", "Por favor, seleccione un profesor");
+                return;
+            }
+            solicitarClaseIndividual(profesoresChoiceBox.getValue().getIdentificacion());
+        });
+
+        requisitosGestionVBox.getChildren().add(new VBox());
+        requisitosGestionVBox.getChildren().removeLast();
+        //Mostrar los requisitos en el VBox
+        requisitosGestionVBox.getChildren().clear();
+        requisitosGestionVBox.getChildren().addAll(label, gridPane, boton);
+    }
+
+    private void solicitarClaseIndividual(String identificacion) {
+        LinkedList<Estudiante> estudiante = new LinkedList<>();
+        estudiante.add(estudianteActual);
+        Profesor profesor = academiaController.buscarProfesor(identificacion);
+        Curso nuevoCurso = new Curso(1, estudiante, null, null, estudianteActual.getInstrumento(), estudianteActual.getNivelDeEstudio(), profesor, null, null, "Pendiente");
+        profesor.getListaClasesIndividuales().add(nuevoCurso);
+        estudianteActual.getCursosAsignados().add(nuevoCurso);
+        mostrarMensaje("Clase individual solicitada", "La clase individual ha sido solicitada, por favor, espere la respuesta del docente");
+    }
 
 
 

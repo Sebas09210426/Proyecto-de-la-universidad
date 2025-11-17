@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="viewController.ActualizarCredencialesViewController">
+   <children>
+      <VBox alignment="TOP_CENTER" layoutY="1.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="400.0" prefWidth="600.0" spacing="30.0">
+         <children>
+            <Label text="Actualizar Credenciales">
+               <font>
+                  <Font name="Bell MT" size="20.0" />
+               </font>
+            </Label>
+            <GridPane alignment="CENTER" hgap="10.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="135.0" prefWidth="273.0" vgap="10.0">
+              <columnConstraints>
+                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="194.0" minWidth="10.0" prefWidth="118.0" />
+                <ColumnConstraints hgrow="ALWAYS" maxWidth="166.0" minWidth="10.0" prefWidth="145.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <Label text="Nuevo usuario:" textAlignment="CENTER" />
+                  <Label prefHeight="17.0" prefWidth="115.0" text="Nueva contraseña:" textAlignment="CENTER" GridPane.rowIndex="2" />
+                  <TextField fx:id="usuarioTextField" GridPane.columnIndex="1" />
+                  <PasswordField fx:id="contrasenaPasswordField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <Label text="Confirmar usuario:" GridPane.rowIndex="1" />
+                  <Label prefHeight="27.0" prefWidth="169.0" text="Confirmar contraseña:" GridPane.rowIndex="3" />
+                  <TextField fx:id="confirmarUsuarioTextField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <PasswordField fx:id="confirmarContrasenaPasswordField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+               </children>
+            </GridPane>
+            <Button fx:id="actualizarButton" mnemonicParsing="false" prefHeight="26.0" prefWidth="125.0" text="Actualizar" />
+         </children>
+         <padding>
+            <Insets top="100.0" />
+         </padding></VBox>
+   </children>
+</AnchorPane>

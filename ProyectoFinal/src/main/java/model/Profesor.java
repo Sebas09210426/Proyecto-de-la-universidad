@@ -6,12 +6,14 @@ public class Profesor extends Persona {
     //Atributos
     private LinkedList<Estudiante> listaEstudiantesAsignados;
     private LinkedList<Curso> listaCursosAsignados;
+    private LinkedList<Curso> listaClasesIndividuales;
 
     //Constructor
     public Profesor(String nombre, String apellido, String identificacion) {
         super(nombre, apellido, identificacion);
         this.listaEstudiantesAsignados = new LinkedList<Estudiante>();
         this.listaCursosAsignados = new LinkedList<Curso>();
+        this.listaClasesIndividuales = new LinkedList<>();
     }
 
     //Getters y Setters
@@ -30,6 +32,14 @@ public class Profesor extends Persona {
 
     public void setListaCursosAsignados(LinkedList<Curso> listaCursosAsignados) {
         this.listaCursosAsignados = listaCursosAsignados;
+    }
+
+    public LinkedList<Curso> getListaClasesIndividuales() {
+        return listaClasesIndividuales;
+    }
+
+    public void setListaClasesIndividuales(LinkedList<Curso> listaClasesIndividuales) {
+        this.listaClasesIndividuales = listaClasesIndividuales;
     }
 
     @Override

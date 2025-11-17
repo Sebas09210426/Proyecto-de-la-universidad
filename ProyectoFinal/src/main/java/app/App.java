@@ -2,6 +2,7 @@ package app;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import model.*;
@@ -12,7 +13,6 @@ import java.util.LinkedList;
 
 public class App extends Application {
     //Crear la academia de la aplicacion
-    private static LinkedList<Aula> listaAulas = new LinkedList<>();
     public static Academia academia = new Academia("UQ Música", "12345");
 
     //Crear usuarios de ejemplo y aulas de ejemplo
@@ -102,10 +102,10 @@ public class App extends Application {
         VentanaPersonalEstudianteViewController ventanaPersonalEstudianteViewController = loader.getController();
         ventanaPersonalEstudianteViewController.setApp(this);
         ventanaPersonalEstudianteViewController.setUsuario(usuario);
-        ventanaPersonalEstudianteViewController.cargarDatosUsuario();
         stage.setScene(scene);
         stage.setTitle("Gestion personal estudiante");
         stage.show();
+        ventanaPersonalEstudianteViewController.cargarDatosUsuario();
     }
 
     public void abrirVentanaPersonalProfesor(Usuario usuario) throws IOException {
@@ -114,10 +114,10 @@ public class App extends Application {
         VentanaPersonalProfesorViewController ventanaPersonalProfesorViewController = loader.getController();
         ventanaPersonalProfesorViewController.setApp(this);
         ventanaPersonalProfesorViewController.setUsuario(usuario);
-        ventanaPersonalProfesorViewController.cargarDatosUsuario();
         stage.setScene(scene);
         stage.setTitle("Gestion personal profesor");
         stage.show();
+        ventanaPersonalProfesorViewController.cargarDatosUsuario();
     }
 
     public void abrirPrimary() throws IOException {
@@ -127,6 +127,17 @@ public class App extends Application {
         primaryViewController.setApp(this);
         stage.setScene(scene);
         stage.setTitle("Musical");
+        stage.show();
+    }
+
+    public void abrirActualizarCredenciales(Usuario usuario) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/assets/actualizarCredenciales.fxml"));
+        Scene scene = new Scene(loader.load());
+        ActualizarCredencialesViewController actualizarCredencialesViewController = loader.getController();
+        actualizarCredencialesViewController.setApp(this);
+        actualizarCredencialesViewController.setUsuario(usuario);
+        stage.setScene(scene);
+        stage.setTitle("Actualizar credenciales");
         stage.show();
     }
 }

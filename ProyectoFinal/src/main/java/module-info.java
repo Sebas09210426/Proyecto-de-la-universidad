@@ -12,6 +12,7 @@ module java {
     requires com.almasb.fxgl.all;
     requires java.desktop;
     requires javafx.graphics;
+    requires javafx.base;
 
     opens app to javafx.fxml;
     exports app;
