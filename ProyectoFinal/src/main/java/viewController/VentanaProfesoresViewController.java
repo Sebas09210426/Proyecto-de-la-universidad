@@ -185,7 +185,7 @@ public class VentanaProfesoresViewController {
                         break;
                     case "Profesores Registrados":
                         gestionChoiceBox.getItems().clear();
-                        gestionChoiceBox.getItems().addAll("Crear profesor", "Eliminar profesor", "Modificar profesor", "Consultar Estudiante");
+                        gestionChoiceBox.getItems().addAll("Crear profesor", "Eliminar profesor", "Modificar profesor", "Consultar profesor");
                         break;
                 }
             }
@@ -338,6 +338,14 @@ public class VentanaProfesoresViewController {
         gridPane.add(identificacionProfesorLabel, 0, 0);
         gridPane.add(identificacionProfesorTextField, 1, 0);
 
+        //obtener seleccion de la tabla de profesores registrados
+        profesoresRegistradosTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                //Poner automaticamente el codigo del profesor seleccionado
+                identificacionProfesorTextField.setText(newSelection.getIdentificacion());
+            }
+        });
+
         Button boton = new Button("Eliminar");
 
         //Vincular la funcion al boton creado
@@ -395,6 +403,14 @@ public class VentanaProfesoresViewController {
         gridPane.add(identificacionProfesorTextField, 1, 0);
         gridPane.add(modificacionProfesorLabel, 0, 1);
         gridPane.add(modificacionProfesorChoiceBox, 1, 1);
+
+        //obtener seleccion de la tabla de profesores registrados
+        profesoresRegistradosTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                //Poner automaticamente el codigo del profesor seleccionado
+                identificacionProfesorTextField.setText(newSelection.getIdentificacion());
+            }
+        });
 
         //Crear boton del VBox
         Button boton = new Button("Modificar");
@@ -607,6 +623,14 @@ public class VentanaProfesoresViewController {
         gridPane.setVgap(10);
         gridPane.add(identificacionProfesorLabel, 0, 0);
         gridPane.add(identificacionProfesorTextField, 1, 0);
+
+        //obtener seleccion de la tabla de profesores registrados
+        profesoresRegistradosTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                //Poner automaticamente el codigo del profesor seleccionado
+                identificacionProfesorTextField.setText(newSelection.getIdentificacion());
+            }
+        });
 
         Button boton = new Button("Consultar");
 
@@ -850,8 +874,15 @@ public class VentanaProfesoresViewController {
         gridPane.add(codigoCursoLabel, 0, 0);
         gridPane.add(codigoCursoTextField, 1, 0);
 
-        Button boton = new Button("Eliminar");
+        //Obtener la seleccion de la tabla de cursos registrados
+        cursosRegistradosTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                //Poner automaticamente el codigo del curso seleccionado
+                codigoCursoTextField.setText(newSelection.getCodigo());
+            }
+        });
 
+        Button boton = new Button("Eliminar");
         //Vincular la funcion al boton creado
         boton.setOnAction(e -> {
             //Verificar que el campo del String este diligenciado
@@ -904,8 +935,15 @@ public class VentanaProfesoresViewController {
         gridPane.add(codigoCursoLabel, 0, 0);
         gridPane.add(codigoCursoTextField, 1, 0);
 
-        Button boton = new Button("Consultar");
+        //Obtener la seleccion de la tabla de cursos registrados
+        cursosRegistradosTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                //Poner automaticamente el codigo del curso seleccionado
+                codigoCursoTextField.setText(newSelection.getCodigo());
+            }
+        });
 
+        Button boton = new Button("Consultar");
         //Vincular la funcion al boton creado
         boton.setOnAction(e -> {
             //Verificar que el campo del String este diligenciado
@@ -938,7 +976,7 @@ public class VentanaProfesoresViewController {
         Label modificacionCursoLabel = new Label("Modificación:");
         ChoiceBox<String> modificacionCursoChoiceBox = new ChoiceBox<>();
         //Añadir opciones al ChoiceBox
-        modificacionCursoChoiceBox.getItems().addAll("Cambiar horario", "Cambiar capacidad", "Cambiar profesor", "Asignar profesor", "Quitar profesor");
+        modificacionCursoChoiceBox.getItems().addAll("Cambiar horario", "Cambiar capacidad", "Asignar profesor", "Quitar profesor");
 
         //Asignar elementos creados a un GridPane
         GridPane gridPane = new GridPane();
@@ -949,9 +987,16 @@ public class VentanaProfesoresViewController {
         gridPane.add(modificacionCursoLabel, 0, 1);
         gridPane.add(modificacionCursoChoiceBox, 1, 1);
 
+        //Obtener la seleccion de la tabla de cursos registrados
+        cursosRegistradosTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                //Poner automaticamente el codigo del curso seleccionado
+                codigoCursoTextField.setText(newSelection.getCodigo());
+            }
+        });
+
         //Crear boton del VBox
         Button boton = new Button("Modificar");
-
         //Asginar funciones al boton creado
         boton.setOnAction(e -> {
             //Verificar que los campos esten diligenciados
@@ -985,18 +1030,6 @@ public class VentanaProfesoresViewController {
                         boton.setVisible(false); //Ocultar boton para evitar que el usuario pueda volver a crear la misma interfaz
                         boton.setDisable(true); //Desactivar el boton para evitar que el usuario pueda volver a crear la misma interfaz
                         gestionActual = "Cambiar capacidad";
-                        break;
-                    } else {
-                        mostrarAlerta("Curso no encontrado", "El código del curso no esta registrado");
-                        break;
-                    }
-                case "Cambiar profesor":
-                    //Verificar que exista el curso con ese codigo
-                    if (consultarExistenciaCurso(codigoCursoTextField.getText())) {
-                        mostrarMensaje("Cambiar profesor", "Bien");
-                        boton.setVisible(false); //Ocultar boton para evitar que el usuario pueda volver a crear la misma interfaz
-                        boton.setDisable(true); //Desactivar el boton para evitar que el usuario pueda volver a crear la misma interfaz
-                        gestionActual = "Cambiar profesor";
                         break;
                     } else {
                         mostrarAlerta("Curso no encontrado", "El código del curso no esta registrado");
@@ -1040,7 +1073,6 @@ public class VentanaProfesoresViewController {
                     boton.setDisable(true);
                 }
             });
-
         });
 
         //VBox adicional para la gestion deseada
@@ -1301,6 +1333,14 @@ public class VentanaProfesoresViewController {
         gridPane.add(label, 0, 0);
         gridPane.add(identificacionProfesorLabel, 1, 0);
 
+        //obtener seleccion de la tabla de profesores registrados
+        profesoresRegistradosTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                //Poner automaticamente el codigo del profesor seleccionado
+                identificacionProfesorLabel.setText(newSelection.getIdentificacion());
+            }
+        });
+
         //Crear boton adicional
         Button boton = new Button("Confirmar");
         //Agregar funcion al boton creado
@@ -1329,6 +1369,9 @@ public class VentanaProfesoresViewController {
 
     private void asignarProfesorCurso(String codigo, String identificacion) {
         Curso curso = buscarCurso(codigo);
+        if (curso.getProfesor() != null) {
+            curso.getProfesor().getListaCursosAsignados().remove(curso);
+        }
         Profesor profesor = buscarProfesor(identificacion);
         curso.setProfesor(profesor);
         profesor.getListaCursosAsignados().add(curso);
@@ -1348,6 +1391,14 @@ public class VentanaProfesoresViewController {
         gridPane.setVgap(10);
         gridPane.add(label, 0, 0);
         gridPane.add(identificacionProfesorLabel, 1, 0);
+
+        //obtener seleccion de la tabla de profesores registrados
+        profesoresRegistradosTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                //Poner automaticamente el codigo del profesor seleccionado
+                identificacionProfesorLabel.setText(newSelection.getIdentificacion());
+            }
+        });
 
         //Crear boton adicional
         Button boton = new Button("Confirmar");
@@ -1384,6 +1435,9 @@ public class VentanaProfesoresViewController {
 
     private void quitarProfesorCurso(String codigo) {
         Curso curso = buscarCurso(codigo);
+        if (curso.getProfesor() != null) {
+            curso.getProfesor().getListaCursosAsignados().remove(curso);
+        }
         curso.setProfesor(null);
         actualizarListaCursosRegistrados(); //Si no se actualiza la lista, no se ven reflejados los cambios
     }

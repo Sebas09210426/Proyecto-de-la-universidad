@@ -100,10 +100,11 @@ public class App extends Application {
         ventanaPersonalProfesorViewController.setAcademiaController(academiaController);
         ventanaPersonalProfesorViewController.setApp(this);
         ventanaPersonalProfesorViewController.setUsuario(usuario);
+        ventanaPersonalProfesorViewController.cargarDatosUsuario();
+        ventanaPersonalProfesorViewController.cargarDatos();
         stage.setScene(scene);
         stage.setTitle("Gestion personal profesor");
         stage.show();
-        ventanaPersonalProfesorViewController.cargarDatosUsuario();
     }
 
     //Volver a abrir el login

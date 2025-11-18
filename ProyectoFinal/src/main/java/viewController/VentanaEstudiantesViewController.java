@@ -353,6 +353,14 @@ public class VentanaEstudiantesViewController {
         gridPane.add(identificacionEstudianteLabel, 0, 0);
         gridPane.add(identificacionEstudianteTextField, 1, 0);
 
+        //Obtener la seleccion de la tabla de estudiantes registrados
+        estudiantesRegistradosTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                //Poner automaticamente el codigo del curso seleccionado
+                identificacionEstudianteLabel.setText(newSelection.getIdentificacion());
+            }
+        });
+
         Button boton = new Button("Eliminar");
 
         //Vincular la funcion al boton creado
@@ -410,6 +418,15 @@ public class VentanaEstudiantesViewController {
         gridPane.add(identificacionEstudianteTextField, 1, 0);
         gridPane.add(modificacionEstudianteLabel, 0, 1);
         gridPane.add(modificacionEstudianteChoiceBox, 1, 1);
+
+        //Obtener la seleccion de la tabla de estudiantes registrados
+        estudiantesRegistradosTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                //Poner automaticamente el codigo del curso seleccionado
+                identificacionEstudianteLabel.setText(newSelection.getIdentificacion());
+            }
+        });
+
 
         //Crear boton del VBox
         Button boton = new Button("Modificar");
@@ -772,6 +789,15 @@ public class VentanaEstudiantesViewController {
         gridPane.add(identificacionEstudianteLabel, 0, 0);
         gridPane.add(identificacionEstudianteTextField, 1, 0);
 
+        //Obtener la seleccion de la tabla de estudiantes registrados
+        estudiantesRegistradosTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                //Poner automaticamente el codigo del curso seleccionado
+                identificacionEstudianteLabel.setText(newSelection.getIdentificacion());
+            }
+        });
+
+
         Button boton = new Button("Consultar");
 
         //Vincular la funcion al boton creado
@@ -1014,6 +1040,14 @@ public class VentanaEstudiantesViewController {
         gridPane.add(codigoCursoLabel, 0, 0);
         gridPane.add(codigoCursoTextField, 1, 0);
 
+        //Obtener la seleccion de la tabla de cursos registrados
+        cursosRegistradosTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                //Poner automaticamente el codigo del curso seleccionado
+                codigoCursoTextField.setText(newSelection.getCodigo());
+            }
+        });
+
         Button boton = new Button("Eliminar");
 
         //Vincular la funcion al boton creado
@@ -1068,6 +1102,14 @@ public class VentanaEstudiantesViewController {
         gridPane.add(codigoCursoLabel, 0, 0);
         gridPane.add(codigoCursoTextField, 1, 0);
 
+        //Obtener la seleccion de la tabla de cursos registrados
+        cursosRegistradosTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                //Poner automaticamente el codigo del curso seleccionado
+                codigoCursoTextField.setText(newSelection.getCodigo());
+            }
+        });
+
         Button boton = new Button("Consultar");
 
         //Vincular la funcion al boton creado
@@ -1112,6 +1154,14 @@ public class VentanaEstudiantesViewController {
         gridPane.add(codigoCursoTextField, 1, 0);
         gridPane.add(modificacionCursoLabel, 0, 1);
         gridPane.add(modificacionCursoChoiceBox, 1, 1);
+
+        //Obtener la seleccion de la tabla de cursos registrados
+        cursosRegistradosTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                //Poner automaticamente el codigo del curso seleccionado
+                codigoCursoTextField.setText(newSelection.getCodigo());
+            }
+        });
 
         //Crear boton del VBox
         Button boton = new Button("Modificar");
@@ -1492,6 +1542,11 @@ public class VentanaEstudiantesViewController {
                     mostrarAlerta("Estudinate ya registrado", "El estudiante con la identificación suministrada ya está registrado en el curso");
                     return;
                 }
+            }
+            //Verificar que haya cupos disponibles
+            if (curso.getCapacidad() - curso.getEstudiantesRegistrados().size() <= 0) {
+                mostrarAlerta("Sin cupos disponibles", "El curso seleccionado no tiene cupos disponibles, por favor, seleccione otro curso");
+                return;
             }
             asignarEstudianteCurso(codigo, identificacionEstudianteLabel.getText());
             mostrarMensaje("Curso actualizado", "Curso actualizado exitosamente");

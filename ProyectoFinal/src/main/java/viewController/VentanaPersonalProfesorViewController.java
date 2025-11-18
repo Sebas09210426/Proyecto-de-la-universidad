@@ -150,10 +150,8 @@ public class VentanaPersonalProfesorViewController implements Actualizable{
         this.academiaController = academiaController;
     }
 
-    @FXML
-    private void initialize() {
-
-        //Preparar columnas de los cursos registrados
+    public void cargarDatos() {
+        //Preparar columnas de los cursos asignados
         fechaCursoTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().getFecha()));
         horaCursoTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().getHora()));
         aulaCursoTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getAulaAsignada() != null ? cellData.getValue().getAulaAsignada().getId() : "Sin asignar"));
@@ -168,7 +166,7 @@ public class VentanaPersonalProfesorViewController implements Actualizable{
         cursosRegistradosTableView.setItems(cursosRegistradosObservableList);
 
         //Cargar lista de cursos registrados por si se cambia de pestana
-        cargarListaCursosRegistrados();
+        cargarListaCursosAsignados();
 
         //Preparar columnas de las clases individuales registradas
         fechaClaseIndividualTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().getFecha()));
@@ -182,8 +180,10 @@ public class VentanaPersonalProfesorViewController implements Actualizable{
         //Enlazar la lista de clases individuales al TableView
         clasesIndividualesTableView.setItems(clasesIndividualesObservableList);
 
-        //Cargar lista de clases individuales por si se cambia de pestana no se puede poner aqui, entonces se va a poner en cargar datos
+    }
 
+    @FXML
+    private void initialize() {
         //Darle una funcion al boton de cerrar sesion
         cerrarSesionButton.setOnAction(event -> {
             if(mostrarConfirmacion("Confirmación", "¿Seguro que quiere salir de la ventana actual?")) {
@@ -206,7 +206,7 @@ public class VentanaPersonalProfesorViewController implements Actualizable{
             if (newTab != null) {
                 String nuevoTab = newTab.getText();
                 switch (nuevoTab) {
-                    case "Cursos registrados":
+                    case "Cursos asignados":
                         gestionChoiceBox.getItems().clear();
                         gestionChoiceBox.getItems().addAll("Crear Curso", "Consultar Curso", "Modificar Curso");
                         break;
@@ -1068,6 +1068,10 @@ public class VentanaPersonalProfesorViewController implements Actualizable{
         actualizarListaCursosRegistrados(); //Si no se actualiza la lista, no se ven reflejados los cambios
     }
 
+    private void mostrarRequisitosAsignarNotaEstudiante() {
+
+    }
+
 
 
 
@@ -1091,9 +1095,9 @@ public class VentanaPersonalProfesorViewController implements Actualizable{
         return academiaController.buscarEstudiante(identificacion);
     }
 
-    private void cargarListaCursosRegistrados() {
+    private void cargarListaCursosAsignados() {
         cursosRegistradosObservableList.clear();
-        cursosRegistradosObservableList.addAll(academiaController.getCursosRegistrados());
+        cursosRegistradosObservableList.addAll(profesorActual.getListaCursosAsignados());
         cursosRegistradosTableView.setItems(cursosRegistradosObservableList);
     }
 
