@@ -13,6 +13,7 @@ module java {
     requires java.desktop;
     requires javafx.graphics;
     requires javafx.base;
+    requires java.rmi;
 
     opens app to javafx.fxml;
     exports app;

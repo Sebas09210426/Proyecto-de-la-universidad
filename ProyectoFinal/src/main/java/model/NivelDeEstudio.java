@@ -1,6 +1,8 @@
 package model;
 
-public enum NivelDeEstudio {
+import java.io.Serializable;
+
+public enum NivelDeEstudio implements Serializable {
     BASICO("Básico"), MEDIO("Medio"), AVANZADO("Avanzado"), DEFAULT("Predeterminado");
 
     private final String nivelDeEstudio;

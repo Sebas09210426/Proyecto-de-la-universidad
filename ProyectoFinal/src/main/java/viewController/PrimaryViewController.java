@@ -28,9 +28,12 @@ public class PrimaryViewController {
         this.app = app;
     }
 
+    public void setAcademiaController(AcademiaController academiaController) {
+        this.academiaController = academiaController;
+    }
+
     @FXML
     public void initialize() {
-        academiaController = new AcademiaController(App.academia);
 
         //Darle las funciones al boton
         iniciarSesionButton.setOnAction(event -> {

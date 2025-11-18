@@ -1,9 +1,10 @@
 package model;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-public class ClaseAsignada {
+public class ClaseAsignada implements Serializable {
     private Curso curso;
     private Profesor profesor;
     private Aula aula;

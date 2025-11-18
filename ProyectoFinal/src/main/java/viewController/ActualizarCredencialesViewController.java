@@ -8,7 +8,6 @@ import model.Rol;
 import model.Usuario;
 
 import java.io.IOException;
-import java.util.Optional;
 
 import static viewController.PrimaryViewController.mostrarAlerta;
 import static viewController.PrimaryViewController.mostrarMensaje;
@@ -41,10 +40,10 @@ public class ActualizarCredencialesViewController {
         this.usuarioActual = usuarioActual;
     }
 
+    public void setAcademiaController(AcademiaController academiaController) {this.academiaController = academiaController;}
+
     @FXML
     public void initialize() {
-        academiaController = new AcademiaController(App.academia);
-
         //Darle las funciones al boton
         actualizarButton.setOnAction(event -> {
             //Verificar que los campos esten llenos

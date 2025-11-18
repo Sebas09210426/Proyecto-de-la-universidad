@@ -103,10 +103,11 @@ public class VentanaProfesoresViewController {
         this.app = app;
     }
 
-    @FXML
-    private void initialize() {
-        academiaController = new AcademiaController(App.academia);
+    public void setAcademiaController(AcademiaController academiaController) {
+        this.academiaController = academiaController;
+    }
 
+    public void cargarDatos() {
         //Preparar columnas de los profesores registrados
         nombreProfesoresRegistradosTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getNombre()));
         apellidoProfesoresRegistradosTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getApellido()));
@@ -135,7 +136,10 @@ public class VentanaProfesoresViewController {
 
         //Cargar lista de estudiantes registrados por si se cambia de pestana
         cargarListaCursosRegistrados();
+    }
 
+    @FXML
+    private void initialize() {
         //Añadir opciones al ChoiceBox
         gestionChoiceBox.getItems().addAll("Crear profesor", "Eliminar profesor", "Modificar profesor", "Consultar profesor");
 

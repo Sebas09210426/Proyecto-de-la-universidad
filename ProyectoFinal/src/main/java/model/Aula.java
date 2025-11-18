@@ -1,9 +1,10 @@
 package model;
 
+import java.io.Serializable;
 import java.time.LocalTime;
 import java.util.LinkedList;
 
-public class Aula {
+public class Aula implements Serializable {
     private String id;
     private int capacidad;
     private LinkedList<ClaseAsignada> clasesAsignadas;

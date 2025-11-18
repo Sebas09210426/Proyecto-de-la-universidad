@@ -1,10 +1,12 @@
 package model;
 
+import java.io.Serializable;
+import java.rmi.ServerError;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.LinkedList;
 
-public class Curso {
+public class Curso implements Serializable {
     //Atributos
     private int capacidad;
     private LinkedList<Estudiante> estudiantesRegistrados;

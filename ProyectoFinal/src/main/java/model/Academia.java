@@ -1,11 +1,12 @@
 package model;
 
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.LinkedList;
 
-public class Academia {
+public class Academia implements Serializable {
     public boolean buscarCurso;
     //Atributos
     private String nombre;

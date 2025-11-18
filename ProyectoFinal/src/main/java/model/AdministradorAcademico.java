@@ -1,6 +1,8 @@
 package model;
 
-public class AdministradorAcademico extends Persona {
+import java.io.Serializable;
+
+public class AdministradorAcademico extends Persona implements Serializable {
     //Atributos no tiene
 
     //Constructor

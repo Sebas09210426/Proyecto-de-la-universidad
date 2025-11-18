@@ -1,6 +1,8 @@
 package model;
 
-public enum Rol {
+import java.io.Serializable;
+
+public enum Rol implements Serializable {
 ESTUDIANTE("Estudiante"), PROFESOR("Profesor"), ADMINISTRADOR("Administrador"), DEFAULT("Default");
 
     private final String rol;

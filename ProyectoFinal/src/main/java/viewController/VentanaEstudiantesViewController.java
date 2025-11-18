@@ -103,9 +103,11 @@ public class VentanaEstudiantesViewController {
         this.app = app;
     }
 
-    @FXML
-    private void initialize() {
-        academiaController = new AcademiaController(App.academia);
+    public void setAcademiaController(AcademiaController academiaController) {
+        this.academiaController = academiaController;
+    }
+
+    public void cargarDatos() {
 
         //Preparar columnas de los estudiantes registrados
         nombreEstudiantesRegistradosTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getNombre()));
@@ -138,6 +140,10 @@ public class VentanaEstudiantesViewController {
         //Cargar lista de estudiantes registrados por si se cambia de pestana
         cargarListaCursosRegistrados();
 
+    }
+
+    @FXML
+    private void initialize() {
         //Añadir opciones al ChoiceBox
         gestionChoiceBox.getItems().addAll("Crear Estudiante", "Eliminar Estudiante", "Modificar Estudiante", "Consultar Estudiante");
 

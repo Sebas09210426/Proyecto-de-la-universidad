@@ -5,15 +5,10 @@ import controller.AcademiaController;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
-import model.Rol;
-import model.Usuario;
 
 import java.io.IOException;
 
 import static viewController.PrimaryViewController.mostrarAlerta;
-import static viewController.PrimaryViewController.mostrarMensaje;
 
 public class VentanaPrincipalViewController {
     App app;
@@ -30,10 +25,12 @@ public class VentanaPrincipalViewController {
         this.app = app;
     }
 
+    public void setAcademiaController(AcademiaController academiaController) {
+        this.academiaController = academiaController;
+    }
 
     @FXML
     public void initialize() {
-        academiaController = new AcademiaController(App.academia);
 
         //Agregar opciones al choiceBox
         choiceBox.getItems().addAll("Gestionar Estudiantes", "Gestionar Profesores");

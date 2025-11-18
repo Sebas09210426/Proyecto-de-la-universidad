@@ -1,8 +1,9 @@
 package model;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 
-public class Profesor extends Persona {
+public class Profesor extends Persona implements Serializable {
     //Atributos
     private LinkedList<Estudiante> listaEstudiantesAsignados;
     private LinkedList<Curso> listaCursosAsignados;

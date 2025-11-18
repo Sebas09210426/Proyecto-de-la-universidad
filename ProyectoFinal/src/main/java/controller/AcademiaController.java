@@ -1,5 +1,6 @@
 package controller;
 
+import app.App;
 import model.*;
 
 import java.time.LocalDate;
@@ -92,4 +93,8 @@ public class AcademiaController {
     }
 
     public boolean consultarDisponibilidadAula(String id, LocalDate fecha, LocalTime hora) {return academia.consultarDisponibilidadAula(id, fecha, hora);}
+
+    public void guardarTodo() {
+        DataManager.guardarDatos(academia);
+    }
 }

@@ -76,10 +76,12 @@ public class VentanaPersonalEstudianteViewController implements Actualizable {
         }
     }
 
+    public void setAcademiaController(AcademiaController academiaController) {
+        this.academiaController = academiaController;
+    }
+
     @FXML
     private void initialize() {
-        academiaController = new AcademiaController(App.academia);
-
         //Darle una funcion al boton de cerrar sesion
         cerrarSesionButton.setOnAction(event -> {
             if(mostrarConfirmacion("Confirmación", "¿Seguro que quiere salir de la ventana actual?")) {

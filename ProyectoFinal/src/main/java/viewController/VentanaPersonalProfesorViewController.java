@@ -146,9 +146,12 @@ public class VentanaPersonalProfesorViewController implements Actualizable{
         }
     }
 
+    public void setAcademiaController(AcademiaController academiaController) {
+        this.academiaController = academiaController;
+    }
+
     @FXML
     private void initialize() {
-        academiaController = new AcademiaController(App.academia);
 
         //Preparar columnas de los cursos registrados
         fechaCursoTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().getFecha()));
