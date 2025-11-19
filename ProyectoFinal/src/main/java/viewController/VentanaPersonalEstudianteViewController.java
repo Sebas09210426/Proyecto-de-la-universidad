@@ -163,7 +163,7 @@ public class VentanaPersonalEstudianteViewController implements Actualizable {
 
         Label consultaLabel = new Label("Seleccione su consulta:");
         ChoiceBox<String> consultaChoiceBox = new ChoiceBox<>();
-        consultaChoiceBox.getItems().addAll("Actualizar nombre", "Actualizar apellido");
+        consultaChoiceBox.getItems().addAll("Actualizar nombre", "Actualizar apellido", "Actualizar credenciales");
         consultaChoiceBox.setValue("Seleccione una opción");
 
         GridPane gridPane = new GridPane();
@@ -187,6 +187,13 @@ public class VentanaPersonalEstudianteViewController implements Actualizable {
                     mostrarRequisitosActualzarIdentificacion();
                     break;
                  */
+                case "Actualizar credenciales":
+                    try {
+                        app.abrirActualizarCredenciales(usuarioActual);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    break;
                 default:
                     mostrarAlerta("Opción no seleccionada", "Por favor, seleccione su actualización");
                     break;

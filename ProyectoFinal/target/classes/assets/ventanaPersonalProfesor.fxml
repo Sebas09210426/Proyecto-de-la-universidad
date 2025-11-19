@@ -145,8 +145,8 @@
                                    <TableColumn fx:id="aulaClaseIndividualTableColumn" prefWidth="49.600006103515625" text="Aula" />
                                    <TableColumn fx:id="instrumentoClaseIndividualTableColumn" prefWidth="88.4000244140625" text="Instrumento" />
                                    <TableColumn fx:id="estudianteClaseIndividualTableColumn" prefWidth="152.800048828125" text="Estudiante" />
-                                   <TableColumn fx:id="estadoClaseIndividualTableColumn" prefWidth="68.79998779296875" text="Estado" />
-                                   <TableColumn fx:id="codigoClaseIndividualTableColumn" prefWidth="102.39999389648438" text="Código" />
+                                   <TableColumn fx:id="estadoClaseIndividualTableColumn" prefWidth="83.20001220703125" text="Estado" />
+                                   <TableColumn fx:id="codigoClaseIndividualTableColumn" prefWidth="88.79998779296875" text="Código" />
                                </columns>
                            </TableView>
                        </children></AnchorPane>

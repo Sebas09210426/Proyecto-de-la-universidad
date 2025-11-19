@@ -1089,6 +1089,23 @@ public class VentanaEstudiantesViewController {
     }
 
     private void eliminarCurso(String codigo) {
+        //Borrar los datos de las demas clases
+        Curso curso = buscarCurso(codigo);
+        if (curso != null && curso.getProfesor() != null) {
+            curso.getProfesor().getListaCursosAsignados().remove(curso);
+        }
+        if (curso != null && curso.getAulaAsignada() != null) {
+            for (ClaseAsignada c : curso.getAulaAsignada().getClasesAsignadas()) {
+                if (c.getCurso().getCodigo().equals(codigo)) {
+                    curso.getAulaAsignada().getClasesAsignadas().remove(c);
+                }
+            }
+        }
+        if (curso != null && curso.getEstudiantesRegistrados() != null) {
+            for (Estudiante e : curso.getEstudiantesRegistrados()) {
+                e.getCursosAsignados().remove(curso);
+            }
+        }
         if (academiaController.eliminarCurso(codigo)) {
             quitarCursoEliminado(codigo);
             mostrarMensaje("Curso eliminado", "Curso eliminado exitosamente");

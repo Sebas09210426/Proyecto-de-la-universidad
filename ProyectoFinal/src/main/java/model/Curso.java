@@ -30,6 +30,7 @@ public class Curso implements Serializable {
         this.profesor = profesor;
         this.codigo = codigo;
         this.aulaAsignada = aulaAsignada;
+        this.estado = estado;
     }
 
     //Getters y Setters
