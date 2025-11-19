@@ -23,6 +23,7 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
+        if (academia == null) {academia = new Academia("Muscial UQ", "123456789");}
         academiaController = new AcademiaController(academia);
         cargarDatosInicialesSiEsNecesario();
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/assets/primary.fxml"));
@@ -99,12 +100,12 @@ public class App extends Application {
         VentanaPersonalProfesorViewController ventanaPersonalProfesorViewController = loader.getController();
         ventanaPersonalProfesorViewController.setAcademiaController(academiaController);
         ventanaPersonalProfesorViewController.setApp(this);
-        ventanaPersonalProfesorViewController.setUsuario(usuario);
-        ventanaPersonalProfesorViewController.cargarDatosUsuario();
-        ventanaPersonalProfesorViewController.cargarDatos();
         stage.setScene(scene);
         stage.setTitle("Gestion personal profesor");
         stage.show();
+        ventanaPersonalProfesorViewController.setUsuario(usuario);
+        ventanaPersonalProfesorViewController.cargarDatosUsuario();
+        ventanaPersonalProfesorViewController.cargarDatos();
     }
 
     //Volver a abrir el login

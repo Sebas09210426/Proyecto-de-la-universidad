@@ -2,6 +2,7 @@ package viewController;
 
 import app.App;
 import controller.AcademiaController;
+import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -9,6 +10,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.util.StringConverter;
 import model.*;
 
 import java.io.IOException;
@@ -112,8 +114,32 @@ public class VentanaPersonalProfesorViewController implements Actualizable{
 
     private ObservableList<Curso> clasesIndividualesObservableList = FXCollections.observableArrayList();
 
+    //Tabla de estudiantes registrados
+    @FXML
+    private TableView<Estudiante> estudiantesRegistradosTableView;
+
+    @FXML
+    private TableColumn<Estudiante, String> nombreEstudiantesRegistradosTableColumn;
+
+    @FXML
+    private TableColumn<Estudiante, String> apellidoEstudiantesRegistradosTableColumn;
+
+    @FXML
+    private TableColumn<Estudiante, String> identificacionEstudiantesRegistradosTableColumn;
+
+    @FXML
+    private TableColumn<Estudiante, String> nivelDeEstudioEstudiantesRegistradosTableColumn;
+
+    @FXML
+    private TableColumn<Estudiante, String> instrumentoEstudiantesRegistradosTableColumn;
+
+    private ObservableList<Estudiante> estudiantesAsignadosObservableList = FXCollections.observableArrayList();
 
 
+
+    //Crear listeners de seleccion para evitar errores
+    private ChangeListener<Curso> listenerCurso;
+    private ChangeListener<Estudiante> listenerEstudiante;
 
     public void setApp(App app) {
         this.app = app;
@@ -180,6 +206,20 @@ public class VentanaPersonalProfesorViewController implements Actualizable{
         //Enlazar la lista de clases individuales al TableView
         clasesIndividualesTableView.setItems(clasesIndividualesObservableList);
 
+        //Preparar columnas de los estudiantes registrados
+        nombreEstudiantesRegistradosTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getNombre()));
+        apellidoEstudiantesRegistradosTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getApellido()));
+        identificacionEstudiantesRegistradosTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getIdentificacion()));
+        nivelDeEstudioEstudiantesRegistradosTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getNivelDeEstudio().toString()));
+        instrumentoEstudiantesRegistradosTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getInstrumento().toString()));
+
+        //Enlazar la lista de estudiantes al TableView
+        estudiantesRegistradosTableView.setItems(estudiantesAsignadosObservableList);
+
+
+        //Cargar lista de estudiantes registrados por si se cambia de pestana
+        cargarListaEstudiantesRegistrados();
+
     }
 
     @FXML
@@ -208,7 +248,7 @@ public class VentanaPersonalProfesorViewController implements Actualizable{
                 switch (nuevoTab) {
                     case "Cursos asignados":
                         gestionChoiceBox.getItems().clear();
-                        gestionChoiceBox.getItems().addAll("Crear Curso", "Consultar Curso", "Modificar Curso");
+                        gestionChoiceBox.getItems().addAll("Crear Curso", "Consultar Curso", "Modificar Curso", "Gestionar notas curso");
                         break;
                     case "Datos personales":
                         gestionChoiceBox.getItems().clear();
@@ -243,6 +283,9 @@ public class VentanaPersonalProfesorViewController implements Actualizable{
                 case "Modificar clases pedidas":
                     break;
                 case "Consultar clases pedidas":
+                    break;
+                case "Gestionar notas curso":
+                    mostrarRequisitosGestionarNotasCurso();
                     break;
             }
         });
@@ -653,6 +696,18 @@ public class VentanaPersonalProfesorViewController implements Actualizable{
         gridPane.add(codigoCursoLabel, 0, 0);
         gridPane.add(codigoCursoTextField, 1, 0);
 
+        //Obtener la seleccion de la tabla de cursos registrados
+        if (listenerCurso != null) {
+            cursosRegistradosTableView.getSelectionModel().selectedItemProperty().removeListener(listenerCurso);
+        }
+        listenerCurso = (obs, oldValue, newValue) -> {
+            if (newValue != null) {
+                codigoCursoTextField.setText(newValue.getCodigo());
+            }
+        };
+        //Asignar el listener al tableview
+        cursosRegistradosTableView.getSelectionModel().selectedItemProperty().addListener(listenerCurso);
+
         Button boton = new Button("Consultar");
 
         //Vincular la funcion al boton creado
@@ -660,6 +715,12 @@ public class VentanaPersonalProfesorViewController implements Actualizable{
             //Verificar que el campo del String este diligenciado
             if (codigoCursoTextField.getText().isEmpty()) {
                 mostrarAlerta("Campo vacío", "Por favor, diligencie el codigo del curso");
+                return;
+            }
+
+            //Verificar que exista el curso
+            if (!consultarExistenciaCurso(codigoCursoTextField.getText())) {
+                mostrarAlerta("Curso no encontrado", "No se ha encontrado un curso registrado con el código suministrado, por favor, verifique el código");
                 return;
             }
             consultarCurso(codigoCursoTextField.getText());
@@ -697,6 +758,18 @@ public class VentanaPersonalProfesorViewController implements Actualizable{
         gridPane.add(codigoCursoTextField, 1, 0);
         gridPane.add(modificacionCursoLabel, 0, 1);
         gridPane.add(modificacionCursoChoiceBox, 1, 1);
+
+        //Obtener la seleccion de la tabla de cursos registrados
+        if (listenerCurso != null) {
+            cursosRegistradosTableView.getSelectionModel().selectedItemProperty().removeListener(listenerCurso);
+        }
+        listenerCurso = (obs, oldValue, newValue) -> {
+            if (newValue != null) {
+                codigoCursoTextField.setText(newValue.getCodigo());
+            }
+        };
+        //Asignar el listener al tableview
+        cursosRegistradosTableView.getSelectionModel().selectedItemProperty().addListener(listenerCurso);
 
         //Crear boton del VBox
         Button boton = new Button("Modificar");
@@ -822,6 +895,12 @@ public class VentanaPersonalProfesorViewController implements Actualizable{
                 return;
             }
 
+            //Verificar que exista el curso
+            if (!consultarExistenciaCurso(codigo)) {
+                mostrarAlerta("Curso no encontrado", "No se ha encontrado un curso registrado con el código suministrado, por favor, verifique el código");
+                return;
+            }
+
             //Verificar que la fecha y la hora no sean pasadas
             if (nuevaFechaCursoDatePicker.getValue().isBefore(LocalDate.now())) {
                 mostrarAlerta("Fecha no válida", "Por favor, seleccione una fecha a partir de hoy");
@@ -919,6 +998,11 @@ public class VentanaPersonalProfesorViewController implements Actualizable{
                 mostrarAlerta("Campo vacío", "Por favor, diligencie la nueva capacidad del curso");
                 return;
             }
+            //Verificar que exista el curso
+            if (!consultarExistenciaCurso(codigo)) {
+                mostrarAlerta("Curso no encontrado", "No se ha encontrado un curso registrado con el código suministrado, por favor, verifique el código");
+                return;
+            }
             //Verificar que la nueva capacidad no sea mayor que la capacidad del aula
             if (buscarCurso(codigo).getAulaAsignada().getCapacidad() < Integer.parseInt(nuevaCapacidadTextField.getText()) ) {
                 mostrarAlerta("Capacidad excedida", "La capacidad del curso excede la capacidad del aula, por favor, diligencie una capacidad menor");
@@ -945,7 +1029,7 @@ public class VentanaPersonalProfesorViewController implements Actualizable{
     private void mostrarRequisitosAsignarEstudianteCurso(String codigo) {
         //Crear elementos adicionales para el VBox
         Label label = new Label("Identificación del estudiante:");
-        TextField identificacionEstudianteLabel = new TextField();
+        TextField identificacionEstudianteTextField = new TextField();
 
         //Agregar los elementos creados a un GridPane
         GridPane gridPane = new GridPane();
@@ -953,24 +1037,42 @@ public class VentanaPersonalProfesorViewController implements Actualizable{
         gridPane.setHgap(10);
         gridPane.setVgap(10);
         gridPane.add(label, 0, 0);
-        gridPane.add(identificacionEstudianteLabel, 1, 0);
+        gridPane.add(identificacionEstudianteTextField, 1, 0);
+
+        //Obtener la seleccion de la tabla de estudiantes registrados
+        if (listenerEstudiante != null) {
+            estudiantesRegistradosTableView.getSelectionModel().selectedItemProperty().removeListener(listenerEstudiante);
+        }
+        listenerEstudiante = (obs, oldValue, newValue) -> {
+            if (newValue != null) {
+                identificacionEstudianteTextField.setText(newValue.getIdentificacion());
+            }
+        };
+        //Asignar el listener al tableview
+        estudiantesRegistradosTableView.getSelectionModel().selectedItemProperty().addListener(listenerEstudiante);
+
 
         //Crear boton adicional
         Button boton = new Button("Confirmar");
         //Agregar funcion al boton creado
         boton.setOnAction(e -> {
             //Verificar que el campo no este vacio
-            if (identificacionEstudianteLabel.getText() == null) {
+            if (identificacionEstudianteTextField.getText() == null) {
                 mostrarAlerta("Campo vacío", "Por favor, diligencie la identificación del estudiante");
                 return;
             }
+            //Verificar que exista el curso
+            if (!consultarExistenciaCurso(codigo)) {
+                mostrarAlerta("Curso no encontrado", "No se ha encontrado un curso registrado con el código suministrado, por favor, verifique el código");
+                return;
+            }
             //Verificar que exista un estudiante con esa identificacion
-            if (!consultarExistenciaEstudiante(identificacionEstudianteLabel.getText())) {
+            if (!consultarExistenciaEstudiante(identificacionEstudianteTextField.getText())) {
                 mostrarAlerta("Estudiante inexistente", "No se encontró un estudiante registrado con la identificación suministrada");
                 return;
             }
             //Verificar que el estudiante tenga el mismo instrumento que el curso
-            Estudiante estudiante = buscarEstudiante(identificacionEstudianteLabel.getText());
+            Estudiante estudiante = buscarEstudiante(identificacionEstudianteTextField.getText());
             Curso curso = buscarCurso(codigo);
             if (estudiante.getInstrumento() != curso.getInstrumento()) {
                 mostrarAlerta("Instrumento no válido", "El instrumento del estudiante no coincide con el instrumento del curso, por favor, seleccione otro curso que conicida con el instrumento del estudiante");
@@ -990,12 +1092,12 @@ public class VentanaPersonalProfesorViewController implements Actualizable{
             }
             //Verificar si el estudiante esta registrado en ese curso
             for (Estudiante est : curso.getEstudiantesRegistrados()) {
-                if (est.getIdentificacion().equals(identificacionEstudianteLabel.getText())) {
+                if (est.getIdentificacion().equals(identificacionEstudianteTextField.getText())) {
                     mostrarAlerta("Estudinate ya registrado", "El estudiante con la identificación suministrada ya está registrado en el curso");
                     return;
                 }
             }
-            asignarEstudianteCurso(codigo, identificacionEstudianteLabel.getText());
+            asignarEstudianteCurso(codigo, identificacionEstudianteTextField.getText());
             mostrarMensaje("Curso actualizado", "Curso actualizado exitosamente");
         });
 
@@ -1027,6 +1129,7 @@ public class VentanaPersonalProfesorViewController implements Actualizable{
         gridPane.add(label, 0, 0);
         gridPane.add(identificacionEstudianteLabel, 1, 0);
 
+
         //Crear boton adicional
         Button boton = new Button("Confirmar");
         //Agregar funcion al boton creado
@@ -1034,6 +1137,11 @@ public class VentanaPersonalProfesorViewController implements Actualizable{
             //Verificar que el campo no este vacio
             if (identificacionEstudianteLabel.getText() == null) {
                 mostrarAlerta("Campo vacío", "Por favor, diligencie la identificación del estudiante");
+                return;
+            }
+            //Verificar que exista el curso
+            if (!consultarExistenciaCurso(codigo)) {
+                mostrarAlerta("Curso no encontrado", "No se ha encontrado un curso registrado con el código suministrado, por favor, verifique el código");
                 return;
             }
             //Verificar que exista un estudiante con esa identificacion
@@ -1068,8 +1176,106 @@ public class VentanaPersonalProfesorViewController implements Actualizable{
         actualizarListaCursosRegistrados(); //Si no se actualiza la lista, no se ven reflejados los cambios
     }
 
-    private void mostrarRequisitosAsignarNotaEstudiante() {
 
+    private void mostrarRequisitosGestionarNotasCurso() {
+        //Crear elementos del VBox
+        Label cursoLabel = new Label("Gestionar notas curso");
+        Label codigoCursoLabel = new Label("Código:");
+        TextField codigoCursoTextField = new TextField();
+
+        //Asignar los elementos crados a un GridPane
+        GridPane gridPane = new GridPane();
+        gridPane.setHgap(10);
+        gridPane.setVgap(10);
+        gridPane.add(codigoCursoLabel, 0, 0);
+        gridPane.add(codigoCursoTextField, 1, 0);
+
+        Button boton = new Button("Confirmar");
+
+        //Vincular la funcion al boton creado
+        boton.setOnAction(e -> {
+            //Verificar que el campo del String este diligenciado
+            if (codigoCursoTextField.getText().isEmpty()) {
+                mostrarAlerta("Campo vacío", "Por favor, diligencie el codigo del curso");
+                return;
+            }
+
+            //Verificar que exista el curso
+            if (!consultarExistenciaCurso(codigoCursoTextField.getText())) {
+                mostrarAlerta("Curso no encontrado", "No se ha encontrado un curso registrado con el código suministrado, por favor, verifique el código");
+                return;
+            }
+
+            Label estudianteLabel = new Label("Seleccione un estudiante:");
+            ChoiceBox<Estudiante> estudiantesChoiceBox = new ChoiceBox<>();
+            //Obtener estudiantes registrados al curso
+            LinkedList<Estudiante> estudiantes = buscarCurso(codigoCursoTextField.getText()).getEstudiantesRegistrados();
+            for (Estudiante estudiante : estudiantes) {
+                estudiantesChoiceBox.getItems().add(estudiante);
+            }
+            //Convertir lo que muestra el ChoiceBox
+            estudiantesChoiceBox.setConverter(new StringConverter<Estudiante>() {
+                @Override
+                public String toString(Estudiante estudiante) {
+                    if (estudiante == null) {
+                        return "Seleccione un estudiante";
+                    }
+                    return estudiante.getNombre() + " " + estudiante.getApellido();
+                }
+                @Override
+                public Estudiante fromString(String string) {return null;}
+            });
+            Label notaLabel = new Label("Nota:");
+            TextField notaTextField = new TextField();
+            Label comentarioLabel = new Label("Comentario:");
+            TextField comentarioTextField = new TextField();
+
+            GridPane gridPane1 = new GridPane();
+            gridPane1.setHgap(10);
+            gridPane1.setVgap(10);
+            gridPane1.add(estudianteLabel, 0, 0);
+            gridPane1.add(estudiantesChoiceBox, 1, 0);
+            gridPane1.add(notaLabel, 0, 1);
+            gridPane1.add(notaTextField, 1, 1);
+            gridPane1.add(comentarioLabel, 0, 2);
+            gridPane1.add(comentarioTextField, 1, 2);
+
+            Button boton1 =  new Button("Gestionar");
+
+            boton1.setOnAction(evento -> {
+                //Verificar que esten diligenciados los datos
+                if (estudiantesChoiceBox.getSelectionModel().getSelectedItem() == null || estudiantesChoiceBox.getSelectionModel().getSelectedItem().toString().equals("Seleccione un estudiante") || comentarioTextField.getText().isEmpty()) {
+                    mostrarAlerta("Campo vacío", "Por favor, diligencie todos los datos");
+                    return;
+                }
+                //Verificar que la nota sea valida
+                if (Double.parseDouble(notaTextField.getText()) < 0 || Double.parseDouble(notaTextField.getText()) > 5.0) {
+                    mostrarAlerta("Nota no válida", "La nota no es válida, por favor, verifique la nota");
+                    return;
+                }
+                gestionarNotasCurso(Double.parseDouble(notaTextField.getText()) ,comentarioTextField.getText(), estudiantesChoiceBox.getValue().getIdentificacion());
+                mostrarMensaje("Nota asignada", "Nota asignada al estudiante exitosamente");
+            });
+
+            //Obtener la seleccion de la tabla de cursos registrados
+            cursosRegistradosTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+                if (newSelection != null) {
+                    //Poner automaticamente el codigo del curso seleccionado
+                    codigoCursoTextField.setText(newSelection.getCodigo());
+                }
+            });
+
+            requisitosGestionVBox.getChildren().addAll(gridPane1, boton1);
+        });
+
+        //Mostrar los requisitos en el VBox
+        requisitosGestionVBox.getChildren().clear();
+        requisitosGestionVBox.getChildren().addAll(cursoLabel, gridPane, boton);
+    }
+
+    private void gestionarNotasCurso(double nota, String comentario, String identificacion) {
+        Estudiante estudiante = buscarEstudiante(identificacion);
+        estudiante.getNotasRegistradas().add(new Nota(nota, comentario));
     }
 
 
@@ -1126,6 +1332,12 @@ public class VentanaPersonalProfesorViewController implements Actualizable{
 
     private boolean consultarDisponibildadAula(String id, LocalDate fecha, LocalTime hora) {
         return academiaController.consultarDisponibilidadAula(id, fecha, hora);
+    }
+
+    private void cargarListaEstudiantesRegistrados() {
+        estudiantesAsignadosObservableList.clear();
+        estudiantesAsignadosObservableList.addAll(academiaController.getEstudiantesRegsitrados());
+        estudiantesRegistradosTableView.setItems(estudiantesAsignadosObservableList);
     }
 
     private void actualizarListaCursosRegistrados() {

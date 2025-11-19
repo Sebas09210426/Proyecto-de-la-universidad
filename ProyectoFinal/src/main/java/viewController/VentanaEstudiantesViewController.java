@@ -7,6 +7,7 @@ import static viewController.PrimaryViewController.mostrarAlerta;
 import static viewController.PrimaryViewController.mostrarMensaje;
 import static viewController.PrimaryViewController.mostrarConfirmacion;
 import controller.AcademiaController;
+import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -98,6 +99,9 @@ public class VentanaEstudiantesViewController {
 
     private ObservableList<Curso> cursosRegistradosObservableList = FXCollections.observableArrayList();
 
+    //Crear listeners de seleccion para evitar errores
+    private ChangeListener<Curso> listenerCurso;
+    private ChangeListener<Estudiante> listenerEstudiante;
 
     public void setApp(App app) {
         this.app = app;
@@ -354,12 +358,15 @@ public class VentanaEstudiantesViewController {
         gridPane.add(identificacionEstudianteTextField, 1, 0);
 
         //Obtener la seleccion de la tabla de estudiantes registrados
-        estudiantesRegistradosTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-            if (newSelection != null) {
-                //Poner automaticamente el codigo del curso seleccionado
-                identificacionEstudianteLabel.setText(newSelection.getIdentificacion());
+        if (listenerEstudiante != null) {
+            estudiantesRegistradosTableView.getSelectionModel().selectedItemProperty().removeListener(listenerEstudiante);
+        }
+        listenerEstudiante = (obs, oldValue, newValue) -> {
+            if (newValue != null) {
+                identificacionEstudianteTextField.setText(newValue.getIdentificacion());
             }
-        });
+        };
+        estudiantesRegistradosTableView.getSelectionModel().selectedItemProperty().addListener(listenerEstudiante);
 
         Button boton = new Button("Eliminar");
 
@@ -420,12 +427,16 @@ public class VentanaEstudiantesViewController {
         gridPane.add(modificacionEstudianteChoiceBox, 1, 1);
 
         //Obtener la seleccion de la tabla de estudiantes registrados
-        estudiantesRegistradosTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-            if (newSelection != null) {
-                //Poner automaticamente el codigo del curso seleccionado
-                identificacionEstudianteLabel.setText(newSelection.getIdentificacion());
+        if (listenerEstudiante != null) {
+            estudiantesRegistradosTableView.getSelectionModel().selectedItemProperty().removeListener(listenerEstudiante);
+        }
+        listenerEstudiante = (obs, oldValue, newValue) -> {
+            if (newValue != null) {
+                identificacionEstudianteTextField.setText(newValue.getIdentificacion());
             }
-        });
+        };
+        //Asignar el listener al tableview
+        estudiantesRegistradosTableView.getSelectionModel().selectedItemProperty().addListener(listenerEstudiante);
 
 
         //Crear boton del VBox
@@ -790,12 +801,17 @@ public class VentanaEstudiantesViewController {
         gridPane.add(identificacionEstudianteTextField, 1, 0);
 
         //Obtener la seleccion de la tabla de estudiantes registrados
-        estudiantesRegistradosTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-            if (newSelection != null) {
-                //Poner automaticamente el codigo del curso seleccionado
-                identificacionEstudianteLabel.setText(newSelection.getIdentificacion());
+        if (listenerEstudiante != null) {
+            estudiantesRegistradosTableView.getSelectionModel().selectedItemProperty().removeListener(listenerEstudiante);
+        }
+        listenerEstudiante = (obs, oldValue, newValue) -> {
+            if (newValue != null) {
+                identificacionEstudianteTextField.setText(newValue.getIdentificacion());
             }
-        });
+        };
+        //Asignar el listener al tableview
+        estudiantesRegistradosTableView.getSelectionModel().selectedItemProperty().addListener(listenerEstudiante);
+
 
 
         Button boton = new Button("Consultar");
@@ -1041,12 +1057,17 @@ public class VentanaEstudiantesViewController {
         gridPane.add(codigoCursoTextField, 1, 0);
 
         //Obtener la seleccion de la tabla de cursos registrados
-        cursosRegistradosTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-            if (newSelection != null) {
-                //Poner automaticamente el codigo del curso seleccionado
-                codigoCursoTextField.setText(newSelection.getCodigo());
+        if (listenerCurso != null) {
+            cursosRegistradosTableView.getSelectionModel().selectedItemProperty().removeListener(listenerCurso);
+        }
+        listenerCurso = (obs, oldValue, newValue) -> {
+            if (newValue != null) {
+                codigoCursoTextField.setText(newValue.getCodigo());
             }
-        });
+        };
+        //Asignar el listener al tableview
+        cursosRegistradosTableView.getSelectionModel().selectedItemProperty().addListener(listenerCurso);
+
 
         Button boton = new Button("Eliminar");
 
@@ -1103,12 +1124,16 @@ public class VentanaEstudiantesViewController {
         gridPane.add(codigoCursoTextField, 1, 0);
 
         //Obtener la seleccion de la tabla de cursos registrados
-        cursosRegistradosTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-            if (newSelection != null) {
-                //Poner automaticamente el codigo del curso seleccionado
-                codigoCursoTextField.setText(newSelection.getCodigo());
+        if (listenerCurso != null) {
+            cursosRegistradosTableView.getSelectionModel().selectedItemProperty().removeListener(listenerCurso);
+        }
+        listenerCurso = (obs, oldValue, newValue) -> {
+            if (newValue != null) {
+                codigoCursoTextField.setText(newValue.getCodigo());
             }
-        });
+        };
+        //Asignar el listener al tableview
+        cursosRegistradosTableView.getSelectionModel().selectedItemProperty().addListener(listenerCurso);
 
         Button boton = new Button("Consultar");
 
@@ -1156,12 +1181,16 @@ public class VentanaEstudiantesViewController {
         gridPane.add(modificacionCursoChoiceBox, 1, 1);
 
         //Obtener la seleccion de la tabla de cursos registrados
-        cursosRegistradosTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-            if (newSelection != null) {
-                //Poner automaticamente el codigo del curso seleccionado
-                codigoCursoTextField.setText(newSelection.getCodigo());
+        if (listenerCurso != null) {
+            cursosRegistradosTableView.getSelectionModel().selectedItemProperty().removeListener(listenerCurso);
+        }
+        listenerCurso = (obs, oldValue, newValue) -> {
+            if (newValue != null) {
+                codigoCursoTextField.setText(newValue.getCodigo());
             }
-        });
+        };
+        //Asignar el listener al tableview
+        cursosRegistradosTableView.getSelectionModel().selectedItemProperty().addListener(listenerCurso);
 
         //Crear boton del VBox
         Button boton = new Button("Modificar");
