@@ -73,7 +73,7 @@
       </SplitPane>
        <TabPane fx:id="ventanasTabPane" layoutY="258.0" prefHeight="393.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE">
        <tabs>
-           <Tab text="Datos personales">
+           <Tab styleClass="card" text="Datos personales">
                <content>
                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                        <children>
@@ -114,7 +114,7 @@
                    </AnchorPane>
                </content>
            </Tab>
-           <Tab text="Cursos asignados">
+           <Tab styleClass="card" text="Cursos asignados">
                <content>
                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                        <children>
@@ -134,7 +134,7 @@
                        </children></AnchorPane>
                </content>
            </Tab>
-           <Tab text="Clases individuales">
+           <Tab styleClass="card" text="Clases individuales">
                <content>
                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                        <children>
@@ -152,7 +152,7 @@
                        </children></AnchorPane>
                </content>
            </Tab>
-               <Tab text="Estudiantes Registrados">
+               <Tab styleClass="card" text="Estudiantes Registrados">
                    <content>
                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                            <children>

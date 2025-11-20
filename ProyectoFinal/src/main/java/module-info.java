@@ -26,4 +26,7 @@ module java {
 
     opens controller to javafx.fxml;
     exports controller;
+
+    opens test to javafx.fxml;
+    exports test;
 }

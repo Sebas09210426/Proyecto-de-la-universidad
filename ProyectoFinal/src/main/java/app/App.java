@@ -31,6 +31,7 @@ public class App extends Application {
         PrimaryViewController primaryViewController = loader.getController();
         primaryViewController.setAcademiaController(academiaController);
         primaryViewController.setApp(this);
+        scene.getStylesheets().add(getClass().getResource("/assets/estilos.css").toExternalForm());
         this.stage = stage;
         this.stage.setScene(scene);
         this.stage.setTitle("Musical");
@@ -48,6 +49,7 @@ public class App extends Application {
         VentanaPrincipalViewController ventanaPrincipalViewController = loader.getController();
         ventanaPrincipalViewController.setAcademiaController(academiaController);
         ventanaPrincipalViewController.setApp(this);
+        scene.getStylesheets().add(getClass().getResource("/assets/estilos.css").toExternalForm());
         stage.setScene(scene);
         stage.setTitle("Musical");
         stage.show();
@@ -61,6 +63,7 @@ public class App extends Application {
         ventanaEstudiantesViewController.setAcademiaController(academiaController);
         ventanaEstudiantesViewController.cargarDatos();
         ventanaEstudiantesViewController.setApp(this);
+        scene.getStylesheets().add(getClass().getResource("/assets/estilos.css").toExternalForm());
         stage.setScene(scene);
         stage.setTitle("Musical gestión de estudiantes");
         stage.show();
@@ -74,6 +77,7 @@ public class App extends Application {
         ventanaProfesoresViewController.setAcademiaController(academiaController);
         ventanaProfesoresViewController.cargarDatos();
         ventanaProfesoresViewController.setApp(this);
+        scene.getStylesheets().add(getClass().getResource("/assets/estilos.css").toExternalForm());
         stage.setScene(scene);
         stage.setTitle("Musical getión de profesores");
         stage.show();
@@ -87,6 +91,7 @@ public class App extends Application {
         ventanaPersonalEstudianteViewController.setAcademiaController(academiaController);
         ventanaPersonalEstudianteViewController.setApp(this);
         ventanaPersonalEstudianteViewController.setUsuario(usuario);
+        scene.getStylesheets().add(getClass().getResource("/assets/estilos.css").toExternalForm());
         stage.setScene(scene);
         stage.setTitle("Gestion personal estudiante");
         stage.show();
@@ -101,6 +106,7 @@ public class App extends Application {
         VentanaPersonalProfesorViewController ventanaPersonalProfesorViewController = loader.getController();
         ventanaPersonalProfesorViewController.setAcademiaController(academiaController);
         ventanaPersonalProfesorViewController.setApp(this);
+        scene.getStylesheets().add(getClass().getResource("/assets/estilos.css").toExternalForm());
         stage.setScene(scene);
         stage.setTitle("Gestion personal profesor");
         stage.show();
@@ -116,6 +122,7 @@ public class App extends Application {
         PrimaryViewController primaryViewController = loader.getController();
         primaryViewController.setAcademiaController(academiaController);
         primaryViewController.setApp(this);
+        scene.getStylesheets().add(getClass().getResource("/assets/estilos.css").toExternalForm());
         stage.setScene(scene);
         stage.setTitle("Musical");
         stage.show();
@@ -129,6 +136,7 @@ public class App extends Application {
         actualizarCredencialesViewController.setAcademiaController(academiaController);
         actualizarCredencialesViewController.setApp(this);
         actualizarCredencialesViewController.setUsuario(usuario);
+        scene.getStylesheets().add(getClass().getResource("/assets/estilos.css").toExternalForm());
         stage.setScene(scene);
         stage.setTitle("Actualizar credenciales");
         stage.show();
