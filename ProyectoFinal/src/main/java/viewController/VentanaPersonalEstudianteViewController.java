@@ -3,6 +3,9 @@ package viewController;
 import app.App;
 import controller.AcademiaController;
 
+import javafx.beans.value.ChangeListener;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
@@ -11,6 +14,8 @@ import javafx.util.StringConverter;
 import model.*;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.LinkedList;
 
 import static viewController.PrimaryViewController.*;
@@ -46,6 +51,104 @@ public class VentanaPersonalEstudianteViewController implements Actualizable {
     @FXML
     private Label identificacionLabel;
 
+    //Tabla de cursos registrados
+    @FXML
+    private TableView<Curso> cursosRegistradosTableView;
+
+    @FXML
+    private TableColumn<Curso, LocalDate> fechaCursoTableColumn;
+
+    @FXML
+    private TableColumn<Curso, LocalTime> horaCursoTableColumn;
+
+    @FXML
+    private TableColumn<Curso, String> aulaCursoTableColumn;
+
+    @FXML
+    private TableColumn<Curso, String> instrumentoCursoTableColumn;
+
+    @FXML
+    private TableColumn<Curso, String> nivelCursoTableColumn;
+
+    @FXML
+    private TableColumn<Curso, Integer> estudiantesCursoTableColumn;
+
+    @FXML
+    private TableColumn<Curso, Integer> cuposCursoTableColumn;
+
+    @FXML
+    private TableColumn<Curso, String> profesorCursoTableColumn;
+
+    @FXML
+    private TableColumn<Curso, String> codigoCursoTableColumn;
+
+    private ObservableList<Curso> cursosRegistradosObservableList = FXCollections.observableArrayList();
+
+    //Tabla de clases individuales
+    @FXML
+    private TableView<Curso> clasesIndividualesTableView;
+
+    @FXML
+    private TableColumn<Curso, LocalDate> fechaClaseIndividualTableColumn;
+
+    @FXML
+    private TableColumn<Curso, LocalTime> horaClaseIndividualTableColumn;
+
+    @FXML
+    private TableColumn<Curso, String> aulaClaseIndividualTableColumn;
+
+    @FXML
+    private TableColumn<Curso, String> instrumentoClaseIndividualTableColumn;
+
+    @FXML
+    private TableColumn<Curso, String> estudianteClaseIndividualTableColumn;
+
+    @FXML
+    private TableColumn<Curso, String> estadoClaseIndividualTableColumn;
+
+    @FXML
+    private TableColumn<Curso, String> codigoClaseIndividualTableColumn;
+
+    private ObservableList<Curso> clasesIndividualesObservableList = FXCollections.observableArrayList();
+
+    //Tabla de cursos disponibles
+    @FXML
+    private TableView<Curso> cursosDisponiblesRegistradosTableView;
+
+    @FXML
+    private TableColumn<Curso, LocalDate> fechaCursosDisponiblesTableColumn;
+
+    @FXML
+    private TableColumn<Curso, LocalTime> horaCursosDisponiblesTableColumn;
+
+    @FXML
+    private TableColumn<Curso, String> aulaCursosDisponiblesTableColumn;
+
+    @FXML
+    private TableColumn<Curso, String> instrumentoCursosDisponiblesTableColumn;
+
+    @FXML
+    private TableColumn<Curso, String> nivelCursosDisponiblesTableColumn;
+
+    @FXML
+    private TableColumn<Curso, Integer> estudiantesCursosDisponiblesTableColumn;
+
+    @FXML
+    private TableColumn<Curso, Integer> cuposCursosDisponiblesTableColumn;
+
+    @FXML
+    private TableColumn<Curso, String> profesorCursosDisponiblesTableColumn;
+
+    @FXML
+    private TableColumn<Curso, String> codigoCursosDisponiblesTableColumn;
+
+    private ObservableList<Curso> cursosDisponiblesRegistradosObservableList = FXCollections.observableArrayList();
+
+    //Crear listeners de seleccion para evitar errores
+    private ChangeListener<Curso> listenerCurso;
+    private ChangeListener<Estudiante> listenerEstudiante;
+
+
     public void setApp(App app) {
         this.app = app;
     }
@@ -80,6 +183,56 @@ public class VentanaPersonalEstudianteViewController implements Actualizable {
         this.academiaController = academiaController;
     }
 
+    public void cargarDatos() {
+        //Preparar columnas de los cursos asignados
+        fechaCursoTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().getFecha()));
+        horaCursoTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().getHora()));
+        aulaCursoTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getAulaAsignada() != null ? cellData.getValue().getAulaAsignada().getId() : "Sin asignar"));
+        instrumentoCursoTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getInstrumento().toString()));
+        nivelCursoTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getNivelDeEstudio().toString()));
+        estudiantesCursoTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleIntegerProperty(cellData.getValue().getEstudiantesRegistrados().size()).asObject());
+        cuposCursoTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleIntegerProperty(cellData.getValue().getCapacidad() - cellData.getValue().getEstudiantesRegistrados().size()).asObject());
+        profesorCursoTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getProfesor() != null ? cellData.getValue().getProfesor().getNombre() + " " + cellData.getValue().getProfesor().getApellido() : "Sin asignar"));
+        codigoCursoTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getCodigo()));
+
+        //Enlazar la lista de cursos al TableView
+        cursosRegistradosTableView.setItems(cursosRegistradosObservableList);
+
+        //Cargar lista de cursos registrados por si se cambia de pestana
+        cargarListaCursosAsignados();
+
+        //Preparar columnas de las clases individuales registradas
+        fechaClaseIndividualTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().getFecha()));
+        horaClaseIndividualTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().getHora()));
+        aulaClaseIndividualTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getAulaAsignada() != null ? cellData.getValue().getAulaAsignada().getId() : "Sin asignar"));
+        instrumentoClaseIndividualTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getInstrumento().toString()));
+        estudianteClaseIndividualTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getEstudiantesRegistrados().getFirst().getNombre() + " " + cellData.getValue().getEstudiantesRegistrados().getFirst().getApellido()));
+        estadoClaseIndividualTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getEstado()));
+        codigoClaseIndividualTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getCodigo() != null ? cellData.getValue().getCodigo() : "Sin asignar"));
+
+        //Enlazar la lista de clases individuales al TableView
+        clasesIndividualesTableView.setItems(clasesIndividualesObservableList);
+
+        //Preparar columnas de los cursos disponibles
+        fechaCursosDisponiblesTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().getFecha()));
+        horaCursosDisponiblesTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().getHora()));
+        aulaCursosDisponiblesTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getAulaAsignada() != null ? cellData.getValue().getAulaAsignada().getId() : "Sin asignar"));
+        instrumentoCursosDisponiblesTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getInstrumento().toString()));
+        nivelCursosDisponiblesTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getNivelDeEstudio().toString()));
+        estudiantesCursosDisponiblesTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleIntegerProperty(cellData.getValue().getEstudiantesRegistrados().size()).asObject());
+        cuposCursosDisponiblesTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleIntegerProperty(cellData.getValue().getCapacidad() - cellData.getValue().getEstudiantesRegistrados().size()).asObject());
+        profesorCursosDisponiblesTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getProfesor() != null ? cellData.getValue().getProfesor().getNombre() + " " + cellData.getValue().getProfesor().getApellido() : "Sin asignar"));
+        codigoCursosDisponiblesTableColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getCodigo()));
+
+        //Enlazar la lista de cursos al TableView
+        cursosRegistradosTableView.setItems(cursosRegistradosObservableList);
+
+        //Cargar lista de cursos registrados por si se cambia de pestana
+        cargarListaCursosDisponibles();
+
+
+    }
+
     @FXML
     private void initialize() {
         //Darle una funcion al boton de cerrar sesion
@@ -95,7 +248,7 @@ public class VentanaPersonalEstudianteViewController implements Actualizable {
         });
 
         //Añadir opciones al ChoiceBox
-        gestionChoiceBox.getItems().addAll("Consultar", "Actualizar", "Solicitar clase individual");
+        gestionChoiceBox.getItems().addAll("Consultar", "Actualizar", "Solicitar clase individual", "Inscribirse a curso");
         gestionChoiceBox.setValue("Seleccione una opción");
 
         //Obtener el cambio de seleccion del ChoiceBox
@@ -109,6 +262,9 @@ public class VentanaPersonalEstudianteViewController implements Actualizable {
                     break;
                 case "Solicitar clase individual":
                     mostrarRequisitosSolicitarClaseIndividual();
+                    break;
+                case "Inscribirse a curso":
+                    mostrarRequisitosInscribirEstudiante();
                     break;
             }
         });
@@ -432,6 +588,72 @@ public class VentanaPersonalEstudianteViewController implements Actualizable {
         mostrarMensaje("Clase individual solicitada", "La clase individual ha sido solicitada, por favor, espere la respuesta del docente");
     }
 
+    private void mostrarRequisitosInscribirEstudiante() {
+        //Crear elementos del VBox
+        Label label = new Label("Inscribirse a un curso");
+        Label profesorLabel = new Label("Código:");
+        TextField codigoTextField = new TextField();
+
+        //Asignar los elementos crados a un GridPane
+        GridPane gridPane = new GridPane();
+        gridPane.setHgap(10);
+        gridPane.setVgap(10);
+        gridPane.add(profesorLabel, 0, 0);
+        gridPane.add(codigoTextField, 1, 0);
+
+        //Obtener la seleccion de la tabla de cursos registrados
+        if (listenerCurso != null) {
+            cursosRegistradosTableView.getSelectionModel().selectedItemProperty().removeListener(listenerCurso);
+        }
+        listenerCurso = (obs, oldValue, newValue) -> {
+            if (newValue != null) {
+                codigoTextField.setText(newValue.getCodigo());
+            }
+        };
+        //Asignar el listener al tableview
+        cursosRegistradosTableView.getSelectionModel().selectedItemProperty().addListener(listenerCurso);
+
+        Button boton = new Button("Confirmar");
+
+        //Vincular la funcion al boton creado
+        boton.setOnAction(e -> {
+            //Verificar que el campo del String este diligenciado
+            if (codigoTextField.getText() == null) {
+                mostrarAlerta("Campo vacío", "Por favor, diligencie el codigo del curso");
+                return;
+            }
+            //Verificar que exista el curso
+            if (!consultarExistenciaCurso(codigoTextField.getText())) {
+                mostrarAlerta("Curso no existente", "No se encontró un curso registrado con el código suministrado, por favor, verifique el código");
+                return;
+            }
+            if (inscribirEstudiante(codigoTextField.getText())) {
+                mostrarMensaje("Inscripicion completada", "Inscrito correctamente al curso");
+                actualizarListaCursosDisponibles();
+                actualizarListaCursosRegistrados();
+            } else {
+                mostrarAlerta("Inscripcion incorrecta", "Ya se encuentra inscrito al curso");
+            }
+        });
+
+        requisitosGestionVBox.getChildren().add(new VBox());
+        requisitosGestionVBox.getChildren().removeLast();
+        //Mostrar los requisitos en el VBox
+        requisitosGestionVBox.getChildren().clear();
+        requisitosGestionVBox.getChildren().addAll(label, gridPane, boton);
+    }
+
+    private boolean inscribirEstudiante(String codigo) {
+        Curso curso = buscarCurso(codigo);
+        for (Estudiante estudiante : curso.getEstudiantesRegistrados()) {
+            if (estudiante.getIdentificacion().equals(estudianteActual.getIdentificacion())) {
+                return false;
+            }
+        }
+        curso.getEstudiantesRegistrados().add(estudianteActual);
+        return true;
+    }
+
 
 
     private Estudiante buscarEstudiante(String identificacion) {
@@ -440,6 +662,44 @@ public class VentanaPersonalEstudianteViewController implements Actualizable {
 
     private void volverAlPrimary() throws IOException {
         app.abrirPrimary();
+    }
+
+    private void actualizarListaCursosRegistrados() {
+        cursosRegistradosTableView.refresh();
+    }
+
+    private Curso buscarCurso(String codigo) {
+        for(Curso curso : academiaController.getCursosRegistrados()) {
+            if (curso.getCodigo().equals(codigo)) {
+                return curso;}
+        }
+        return null;
+    }
+
+    private boolean consultarExistenciaCurso(String codigo) {
+        return academiaController.consultarExistenciaCurso(codigo);
+    }
+
+    private void cargarListaCursosAsignados() {
+        cursosRegistradosObservableList.clear();
+        cursosRegistradosObservableList.addAll(estudianteActual.getCursosAsignados());
+        cursosRegistradosTableView.setItems(cursosRegistradosObservableList);
+    }
+
+    private void cargarListaCursosDisponibles() {
+        cursosDisponiblesRegistradosObservableList.clear();
+        LinkedList<Curso> cursosDisponibles = new LinkedList<>();
+        for (Curso curso : academiaController.getCursosRegistrados()) {
+            if (curso.getEstado().equals("Programado") && curso.getInstrumento() == estudianteActual.getInstrumento() && curso.getNivelDeEstudio() == estudianteActual.getNivelDeEstudio()) {
+                cursosDisponibles.add(curso);
+            }
+        }
+        cursosDisponiblesRegistradosObservableList.addAll(cursosDisponibles);
+        cursosDisponiblesRegistradosTableView.setItems(cursosDisponiblesRegistradosObservableList);
+    }
+
+    private void actualizarListaCursosDisponibles() {
+        cursosDisponiblesRegistradosTableView.refresh();
     }
 
 }

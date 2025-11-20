@@ -1263,7 +1263,14 @@ public class VentanaPersonalProfesorViewController implements Actualizable{
                     mostrarAlerta("Nota no válida", "La nota no es válida, por favor, verifique la nota");
                     return;
                 }
-                gestionarNotasCurso(Double.parseDouble(notaTextField.getText()) ,comentarioTextField.getText(), estudiantesChoiceBox.getValue().getIdentificacion());
+                //Verificar que el estudiante no tenga nota de ese curso
+                for (Nota nota : estudiantesChoiceBox.getSelectionModel().getSelectedItem().getNotasRegistradas()) {
+                    if (nota.codigo().equals(codigoCursoTextField.getText())) {
+                        mostrarAlerta("El estudiante ya tiene una nota registrada", "El estudiante ya tiene una nota registrada en este curso, no se le puede poner otra");
+                        return;
+                    }
+                }
+                gestionarNotasCurso(Double.parseDouble(notaTextField.getText()) ,comentarioTextField.getText(), estudiantesChoiceBox.getValue().getIdentificacion(), codigoCursoTextField.getText());
                 mostrarMensaje("Nota asignada", "Nota asignada al estudiante exitosamente");
             });
 
@@ -1283,11 +1290,11 @@ public class VentanaPersonalProfesorViewController implements Actualizable{
         requisitosGestionVBox.getChildren().addAll(cursoLabel, gridPane, boton);
     }
 
-    private void gestionarNotasCurso(double nota, String comentario, String identificacion) {
+    private void gestionarNotasCurso(double nota, String comentario, String identificacion, String codigoCurso) {
         Estudiante estudiante = buscarEstudiante(identificacion);
-        estudiante.getNotasRegistradas().add(new Nota(nota, comentario));
+        estudiante.getNotasRegistradas().add(new Nota(nota, comentario, codigoCurso));
+        estudiante.setAsistencias(+1);
     }
-
 
     private void consultarClasesIndividualesSolicitadas() {
         String mensaje = "";

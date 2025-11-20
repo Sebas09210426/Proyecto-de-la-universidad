@@ -80,7 +80,7 @@ public class App extends Application {
     }
 
     //Cambiar a la ventana personal del estudiante
-    public void abrirVentanaPersonalEstudiante(Usuario usuario) throws IOException {
+    public void abrirVentanaPersonalEstudiante(Usuario usuario) throws IOException  {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/assets/ventanaPersonalEstudiante.fxml"));
         Scene scene = new Scene(loader.load());
         VentanaPersonalEstudianteViewController ventanaPersonalEstudianteViewController = loader.getController();
@@ -91,6 +91,7 @@ public class App extends Application {
         stage.setTitle("Gestion personal estudiante");
         stage.show();
         ventanaPersonalEstudianteViewController.cargarDatosUsuario();
+        ventanaPersonalEstudianteViewController.cargarDatos();
     }
 
     //Cambiar a la ventana personal del profesor
